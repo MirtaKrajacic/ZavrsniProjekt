@@ -1,18 +1,16 @@
 ## Funkcionalni zahtjevi
-- korisnik se može registrirati na stranicu ako u cilju ima dijeliti psihološke upitnike
-- registracija se odvija putem obrasca kojeg korisnik ispunjava te se on šalje na pregled adminu
-- postoje upitnici javno dostupni za rješavanje na stranici 
-- postoje privatni privatni upitnici koji su dostupni samo putem dijeljene adrese
+- neregistrirani korisnik 
+    - može se prijaviti za registraciju u sustav
+    - može pretraživati javne upitnike na temelju ključnih riječi iz naslova upitnika
+    - može proizvoljno rješavati objavljene upitnike
+    - dobiva rezultat rješenog upitnika putem e-pošte 
 - registrirani korisnik 
+    - može se prijaviti u sustav svojim korisničkim imenom i lozinkom
     - može učitati novi upitnik u XML formatu 
     - pri učitavanju upitnika zadaje formulu računanja rezultata upitnika
     - može označiti upitnik za javnu objavu na stranici
     - može upitnik napraviti privatnim i kopirati adresu putem koje je dostupan za rješavanje
-    - može pregledavati svoje upitnike
-- neregistrirani korisnik 
-    - može pretraživati javne upitnike na temelju ključnih riječi iz naslova upitnika
-    - može proizvoljno rješavati objavljene upitnike
-    - dobiva rezultat rješenog upitnika putem e-pošte 
+    - može pregledavati svoje upitnike (i brisati ih)
 - administrator (admin)
     - ima pregled nad obrascima za registraciju
     - može u bazi označiti je li korisnik odobren za registraciju 
