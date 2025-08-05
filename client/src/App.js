@@ -1,23 +1,33 @@
-import React, { useEffect, useState } from 'react'
+import Nav from './components/Nav';
+import Footer from './components/Footer';
+import SignUp from './components/SignUp';
+import PrivateComponent from './components/PrivateComponent';
+import Login from './components/Login';
+import AddProduct from './components/AddProduct';
+import ProductList from './components/ProductList';
+import UpdateProduct from './components/UpdateProduct';
+
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
 
 function App() {
-  const [backendData, setBackendData] = useState([{}]);
-
-  useEffect(() => {
-    fetch("/api")
-      .then(res => res.json())
-      .then(data => { setBackendData(data) });
-  }, []);
-
   return (
     <div>
-      {(typeof backendData.users === 'undefined') ? (
-        <p>Loading...</p>
-      ) : (
-        backendData.users.map((user, i) => (
-          <p key={i}>{user}</p>
-        ))
-      )}
+      <BrowserRouter>
+        <Nav />
+        <Routes>
+          <Route element={<PrivateComponent />}>
+            <Route path="/" element={<ProductList />} />
+            <Route path="/add" element={<AddProduct />} />
+            <Route path="/update/:id" element={<UpdateProduct />} />
+            <Route path="/logout" element={<h1>Logout Component</h1>} />
+            <Route path="/profile" element={<h1>Profile Component</h1>} />
+          </Route>
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/login" element={<Login />} />
+        </Routes>
+      </BrowserRouter>
+      <Footer />
     </div>
   );
 }
