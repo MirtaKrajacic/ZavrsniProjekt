@@ -7,25 +7,31 @@ const Login = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-        const auth = localStorage.getItem("user");
-        if (auth) {
-          navigate('/');
-        }
-      }, []);
+    const auth = localStorage.getItem("user");
+    if (auth) {
+      navigate("/");
+    }
+  }, []);
 
   const handleLogin = async () => {
     let result = await fetch("http://localhost:5000/login", {
-          method:'post',
-          body:JSON.stringify({email, password}),
-          headers: {
-            'Content-Type':'application/json'
-          }
-        });
-        result = await result.json(); // parses body of the response into a js object 
-        console.warn(result);
-        localStorage.setItem("user", JSON.stringify(result))
-        navigate('/');
-  }
+      method: "post",
+      body: JSON.stringify({ email, password }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    result = await result.json(); // parses body of the response into a js object
+    console.warn(result);
+    if (result.auth) {
+      localStorage.setItem("token", result.auth);
+      localStorage.setItem("user", JSON.stringify(result.user));      
+      navigate("/");
+    } else {
+      alert("Please enter connect details");
+    }
+
+  };
 
   return (
     <div>
@@ -53,7 +59,12 @@ const Login = () => {
           />
         </div>
 
-        <button className="btn btn-primary d-block mx-auto" onClick={handleLogin}>Log in</button>
+        <button
+          className="btn btn-primary d-block mx-auto"
+          onClick={handleLogin}
+        >
+          Log in
+        </button>
       </div>
     </div>
   );

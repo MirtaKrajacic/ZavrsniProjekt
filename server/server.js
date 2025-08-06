@@ -27,7 +27,6 @@ app.post("/register", async (req, res) => {
       [email, password]
     );
     const id = result.rows[0].id;
-    //res.status(201).send('User registered');
 
     const user = req.body;
     const filteredUser = {
@@ -35,7 +34,13 @@ app.post("/register", async (req, res) => {
       email: user.email,
       id: id,
     };
-    res.status(201).json(filteredUser);
+
+    const token = jwt.sign({ userid: user.id }, secretKey, { expiresIn: "1h" });
+    res.json({
+      auth: token,
+      user: filteredUser
+    });
+
     console.log("user saved!");
   } catch (err) {
     console.error(err);
@@ -60,7 +65,14 @@ app.post("/login", async (req, res) => {
         email: user.email,
         id: user.id,
       };
-      res.status(200).json(filteredUser); // rows[0] - prvi redak iz baze
+      //res.status(200).json(filteredUser); // rows[0] - prvi redak iz baze
+
+      const token = jwt.sign({ userid: user.id }, secretKey, { expiresIn: "1h" });
+      res.json({
+        auth: token,
+        user: filteredUser
+      });
+
     } else {
       res.status(401).json("No user found");
     }
@@ -70,7 +82,7 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.post("/add-product", async (req, res) => {
+app.post("/add-product", verifyToken, async (req, res) => {
   let { name, price, category, company, userid } = req.body;
   userid = parseInt(userid);
   console.log(req.body);
@@ -86,7 +98,7 @@ app.post("/add-product", async (req, res) => {
   }
 });
 
-app.get("/products", async (req, res) => {
+app.get("/products", verifyToken, async (req, res) => {
   try {
     const products = await pool.query("SELECT * FROM proizvod");
 
@@ -125,7 +137,7 @@ app.get("/product/:id", async (req, res) => {
   }
 });
 
-app.put("/product/:id", async (req, res) => {
+app.put("/product/:id", verifyToken, async (req, res) => {
   try {
     const { name, price, category, company } = req.body;
     const fields = [];
@@ -191,6 +203,25 @@ app.get("/search/:key", async (req, res) => {
     console.log(err.message);
   }
 });
+
+function verifyToken(req, res, next) {
+  let token = req.headers["authorization"];
+  
+  if (token) {
+    token = token.split(" ")[1];
+    jwt.verify(token, secretKey, (err, succ) => {
+      if (err) {
+        res.status(401).send("provide valid token");
+      } else {
+        console.log("good token");
+        next();
+      }
+    });
+  } else {
+    console.log("provide token");
+    res.status(403).send("provide token");
+  }
+}
 
 app.listen(5000, () => {
   console.log("Server started on port 5000");

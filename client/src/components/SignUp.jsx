@@ -24,7 +24,8 @@ const SignUp = () => {
         });
         result = await result.json(); // parses body of the response into a js object 
         console.warn(result);
-        localStorage.setItem("user", JSON.stringify(result))
+        localStorage.setItem("token", result.auth);
+        localStorage.setItem("user", JSON.stringify(result.user));
         navigate('/');
     };
 
