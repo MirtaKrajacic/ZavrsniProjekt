@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
-const UpdateProduct = () => {
+const UrediUpitnik = () => {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("");
@@ -14,16 +14,16 @@ const UpdateProduct = () => {
   }, []);
 
   const getProductDetails = async () => {
-    let result = await fetch(`http://localhost:5000/product/${params.id}`);
+    /*let result = await fetch(`http://localhost:5000/product/${params.id}`);
     result = await result.json();
     setName(result.name);
     setPrice(result.price);
     setCategory(result.category);
-    setCompany(result.company);
+    setCompany(result.company);*/
   };
 
-  const updateProduct = async () => {
-    let result = await fetch(`http://localhost:5000/product/${params.id}`, {
+  const urediUpitnik = async () => {
+    /*let result = await fetch(`http://localhost:5000/product/${params.id}`, {
       method: "put",
       body: JSON.stringify({ name, price, category, company }),
       headers: {
@@ -33,12 +33,12 @@ const UpdateProduct = () => {
     });
     result = await result.json();
     console.log(result);
-    navigate("/");
+    navigate("/");*/
   };
 
   return (
     <div>
-      <h1>Update product</h1>
+      <h1>Uredi upitnik</h1>
 
       <div className="container w-50">
         <div className="mb-3">
@@ -84,7 +84,7 @@ const UpdateProduct = () => {
 
         <button
           className="btn btn-secondary d-block mx-auto"
-          onClick={updateProduct}
+          onClick={urediUpitnik}
         >
           Update
         </button>
@@ -93,4 +93,4 @@ const UpdateProduct = () => {
   );
 };
 
-export default UpdateProduct;
+export default UrediUpitnik;

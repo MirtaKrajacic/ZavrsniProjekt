@@ -1,20 +1,12 @@
 import {useState} from 'react';
 
-const AddProduct = () => {
+const NapraviUpitnik = () => {
     const [name, setName] = useState('');
     const [price, setPrice] = useState('');
     const [category, setCategory] = useState('');
     const [company, setCompany] = useState('');
-    const [err, setErr] = useState(false); // doesnt work yet
 
-    const addProduct = async() => {
-        if (!name || !price || !company || !category) {
-            
-            setErr(true);
-            console.log('nije dobro: ' + err);
-            return false;
-        }
-
+    const napraviUpitnik = async() => {
         const userid = JSON.parse(localStorage.getItem('user')).id; // dohvacanje ida usera koji je to dodao
         let result = await fetch("http://localhost:5000/add-product", {
           method:'post',
@@ -24,13 +16,11 @@ const AddProduct = () => {
             'Authorization': `Bearer ${localStorage.getItem("token")}`,
           }
         });
-        
         console.log(result);
     }
 
   return (
     <div>
-      <h1>Add product</h1>
       <div className="container w-50">
         <div className="mb-3">
           <label className="form-label">Name</label>
@@ -41,7 +31,6 @@ const AddProduct = () => {
             onChange={(e) => setName(e.target.value)}
             value={name} 
           />
-          {err && !name && <span>enter valid name</span>} 
         </div>
         <div className="mb-3">
           <label className="form-label">Price</label>
@@ -74,10 +63,10 @@ const AddProduct = () => {
           />
         </div>
 
-        <button className="btn btn-secondary d-block mx-auto" onClick={addProduct}>Add</button>
+        <button className="btn btn-secondary d-block mx-auto" onClick={napraviUpitnik}>Add</button>
       </div>
     </div>
   );
 };
 
-export default AddProduct;
+export default NapraviUpitnik;

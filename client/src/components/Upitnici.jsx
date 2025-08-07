@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-const ProductList = () => {
+const Upitnici = () => {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
@@ -9,26 +9,26 @@ const ProductList = () => {
   }, []); // pokrece se samo pri prvom renderu komponente
 
   const getProducts = async () => {
-    let result = await fetch("http://localhost:5000/products", {
+    /*let result = await fetch("http://localhost:5000/products", {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem("token")}`,
       }
     });
     result = await result.json();
-    setProducts(result);
+    setProducts(result);*/
   };
 
   const deleteProduct = async (id) => {
-    let result = await fetch(`http://localhost:5000/product/${id}`, {
+    /*let result = await fetch(`http://localhost:5000/product/${id}`, {
       method: "Delete",
     });
     result = await result.json();
     console.log("product deleted!");
-    getProducts();
+    getProducts();*/
   };
 
   const searchHandle = async (event) => {
-    let key = event.target.value;
+    /*let key = event.target.value;
     if (key) {
       let result = await fetch(`http://localhost:5000/search/${key}`);
       result = await result.json();
@@ -37,30 +37,19 @@ const ProductList = () => {
       }
     } else {
       getProducts();
-    }
+    }*/
   };
 
   return (
     <>
-      <h3>Product list</h3>
+      <h3>Upitnici</h3>
 
       <input
         type="text"
         className="form-control"
-        placeholder="Search products..."
+        placeholder="Pretraži upitnike..."
         onChange={searchHandle}
       />
-
-      <div className="container text-center">
-        <div className="row text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-3">
-          <div className="col">S. No.</div>
-          <div className="col">Name</div>
-          <div className="col">Price</div>
-          <div className="col">Category</div>
-          <div className="col">Operation</div>
-        </div>
-      </div>
-
       {
         products.length > 0 ? 
         <div className="container text-center">
@@ -80,10 +69,10 @@ const ProductList = () => {
             );
           })}
       </div>
-      : <h1>No result found.</h1>
+      : <h1>Nema pronađenih upitnika</h1>
       }
     </>
   );
 };
 
-export default ProductList;
+export default Upitnici;

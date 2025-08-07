@@ -19,12 +19,10 @@ app.post("/register", async (req, res) => {
   const { name, email, password } = req.body;
   try {
     await pool.query(
-      "INSERT INTO korisnik (name, email, password) VALUES ($1, $2, $3)",
-      [name, email, password]
+      "INSERT INTO korisnik (ime, email, sifra) VALUES ($1, $2, $3)", [name, email, password]
     );
     const result = await pool.query(
-      "SELECT id FROM korisnik WHERE email = $1 AND password = $2",
-      [email, password]
+      "SELECT id FROM korisnik WHERE email = $1 AND sifra = $2", [email, password]
     );
     const id = result.rows[0].id;
 
@@ -54,7 +52,7 @@ app.post("/login", async (req, res) => {
 
   try {
     const result = await pool.query(
-      "SELECT name, email, id FROM korisnik WHERE email = $1 AND password = $2",
+      "SELECT id, ime, email FROM korisnik WHERE email = $1 AND sifra = $2",
       [email, password]
     );
 
@@ -82,6 +80,23 @@ app.post("/login", async (req, res) => {
   }
 });
 
+app.get("/api/get-xml/:id", async (req, res) => {
+  try {
+    const upitnikId = req.params.id;
+    const result = await pool.query(
+      "SELECT * FROM upitnik WHERE id = $1",
+      [upitnikId]
+    );
+
+    // result.rows - polje JS objekata gdje je svaki row tablice jedan objekt
+    res.json({xml : result.rows[0].sadrzaj}); // prikazuje sve koji matchaju sa searchom u imenu
+  } catch (err) {
+    res.status(500).send("Internal server error: " + err.message);
+    console.log(err.message);
+  }
+});
+
+/*
 app.post("/add-product", verifyToken, async (req, res) => {
   let { name, price, category, company, userid } = req.body;
   userid = parseInt(userid);
@@ -221,7 +236,7 @@ function verifyToken(req, res, next) {
     console.log("provide token");
     res.status(403).send("provide token");
   }
-}
+}*/
 
 app.listen(5000, () => {
   console.log("Server started on port 5000");
