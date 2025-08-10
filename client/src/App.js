@@ -1,15 +1,15 @@
 import Nav from './components/Nav';
-import Footer from './components/Footer';
-import SignUp from './components/SignUp';
-import PrivateComponent from './components/PrivateComponent';
-import Login from './components/Login';
-import NapraviUpitnik from './components/NapraviUpitnik';
-import Upitnici from './components/Upitnici';
-import UrediUpitnik from './components/UrediUpitnik';
-import Upitnik from './components/Upitnik';
+import SignUp from './pages/SignUp';
+import PrivateComponent from './pages/PrivateComponent';
+import Login from './pages/Login';
+import Naslovna from './pages/Naslovna';
+import UrediUpitnik from './pages/UrediUpitnik';
+import AddUpitnik from './pages/AddUpitnik';
+import UrediProfil from './pages/UrediProfil';
+import Upitnici from './pages/Upitnici';
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import MojiUpitnici from './components/MojiUpitnici';
+import MojiUpitnici from './pages/MojiUpitnici';
 
 
 function App() {
@@ -18,20 +18,20 @@ function App() {
       <BrowserRouter>
         <Nav />
         <Routes>
-          <Route path="/" element={<Upitnici />} />
-          <Route element={<PrivateComponent />}>
-            <Route path="/view" element={<MojiUpitnici />} />
-            <Route path="/add" element={<Upitnik />} />
-            <Route path="/update/:id" element={<UrediUpitnik />} />
-            <Route path="/logout" element={<h1>Logout Component</h1>} />
-            <Route path="/profile" element={<h1>Moj profil</h1>} />
-          </Route>
+          {/* Public rute */}
+          <Route path="/" element={<Naslovna />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/login" element={<Login />} />
+
+          {/* Privatme rute */}
+          <Route element={<PrivateComponent />}>
+            <Route path="/view" element={<MojiUpitnici />} />
+            <Route path="/add" element={<Upitnici />} />
+            <Route path="/update/:id" element={<UrediUpitnik />} />
+            <Route path="/profile" element={<UrediProfil />} />
+          </Route>          
         </Routes>
       </BrowserRouter>
-      
-      
     </div>
   );
 }

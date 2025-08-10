@@ -1,21 +1,24 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import Upitnici from "./Upitnici";
 
-const Upitnici = () => {
+const Naslovna = () => {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    getProducts();
-  }, []); // pokrece se samo pri prvom renderu komponente
+    document.title = "Naslovnica";
+  }, []);
 
-  const getProducts = async () => {
-    /*let result = await fetch("http://localhost:5000/products", {
+  useEffect(() => {}, []); // pokrece se samo pri prvom renderu komponente
+
+  const getUpitnici = async () => {
+    let result = await fetch("http://localhost:5000/products", {
       headers: {
-        'Authorization': `Bearer ${localStorage.getItem("token")}`,
-      }
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
     });
     result = await result.json();
-    setProducts(result);*/
+    setProducts(result);
   };
 
   const deleteProduct = async (id) => {
@@ -42,15 +45,26 @@ const Upitnici = () => {
 
   return (
     <>
-      <h3>Upitnici</h3>
-
       <input
         type="text"
         className="form-control"
         placeholder="Pretraži upitnike..."
         onChange={searchHandle}
+        style={{
+          borderRadius: "50px",
+          margin: "40px auto",
+          maxWidth: "50rem",
+          transition: "all 0.3s ease",
+        }}
+        onFocus={(e) => {
+          e.target.style.boxShadow = "0 4px 15px rgba(0, 123, 255, 0.3)";
+        }}
+        onBlur={(e) => {
+          e.target.style.boxShadow = "0 4px 10px rgba(0, 123, 255, 0.1)";
+        }}
       />
-      {
+
+      {/*
         products.length > 0 ? 
         <div className="container text-center">
         {Array.isArray(products) &&
@@ -70,9 +84,10 @@ const Upitnici = () => {
           })}
       </div>
       : <h1>Nema pronađenih upitnika</h1>
-      }
+      */}
+      <Upitnici />
     </>
   );
 };
 
-export default Upitnici;
+export default Naslovna;

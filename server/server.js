@@ -80,7 +80,8 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.get("/api/get-xml/:id", async (req, res) => {
+// dohvacanje xml zapisa upitnika sa zadanim id-em
+app.get("/get-xml/:id", async (req, res) => {
   try {
     const upitnikId = req.params.id;
     const result = await pool.query(
@@ -96,31 +97,30 @@ app.get("/api/get-xml/:id", async (req, res) => {
   }
 });
 
-/*
-app.post("/add-product", verifyToken, async (req, res) => {
-  let { name, price, category, company, userid } = req.body;
-  userid = parseInt(userid);
-  console.log(req.body);
+// ruta za dodavanje upitnika u bazu - jos se treba editat
+app.post("/add-questionnaire", async (req, res) => {
+  let {naslov, autor_id, status } = req.body;
   try {
     await pool.query(
-      "INSERT INTO proizvod (name, price, category, company, userid) VALUES ($1, $2, $3, $4, $5)",
-      [name, price, category, company, userid]
+      "INSERT INTO upitnik (naslov, autor_id, status) VALUES ($1, $2, $3)",
+      [naslov, parseInt(autor_id), status]
     );
-    res.status(201).send("Product added successfully");
+    res.status(201).send("upitnik dodan!");
   } catch (err) {
     console.log("Database error:", err);
     res.status(500).send("Internal server error");
   }
 });
 
-app.get("/products", verifyToken, async (req, res) => {
+
+app.get("/get-upitnici", async (req, res) => {
   try {
-    const products = await pool.query("SELECT * FROM proizvod");
+    const products = await pool.query("SELECT * FROM upitnik");
 
     if (products.rows.length > 0) {
       res.send(products.rows);
     } else {
-      res.status(401).json("No product found");
+      res.status(401).json("nisu produnađeni upitnici");
     }
   } catch (err) {
     console.error("Database error:", err);
@@ -128,6 +128,7 @@ app.get("/products", verifyToken, async (req, res) => {
   }
 });
 
+/*
 app.delete("/product/:id", async (req, res) => {
   let result = await pool.query("DELETE FROM proizvod WHERE id = $1", [
     req.params.id,
@@ -217,7 +218,7 @@ app.get("/search/:key", async (req, res) => {
     res.status(500).send("Internal server error: " + err.message);
     console.log(err.message);
   }
-});
+});*/
 
 function verifyToken(req, res, next) {
   let token = req.headers["authorization"];
@@ -236,7 +237,7 @@ function verifyToken(req, res, next) {
     console.log("provide token");
     res.status(403).send("provide token");
   }
-}*/
+}
 
 app.listen(5000, () => {
   console.log("Server started on port 5000");

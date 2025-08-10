@@ -7,6 +7,10 @@ const Login = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    document.title = "Prijava";
+  }, []);
+
+  useEffect(() => {
     const auth = localStorage.getItem("user");
     if (auth) {
       navigate("/");
