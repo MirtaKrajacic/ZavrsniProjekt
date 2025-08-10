@@ -4,9 +4,9 @@ import PrivateComponent from './pages/PrivateComponent';
 import Login from './pages/Login';
 import Naslovna from './pages/Naslovna';
 import UrediUpitnik from './pages/UrediUpitnik';
-import AddUpitnik from './pages/AddUpitnik';
 import UrediProfil from './pages/UrediProfil';
 import Upitnici from './pages/Upitnici';
+import RjesiUpitnik from './pages/RjesiUpitnik';
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import MojiUpitnici from './pages/MojiUpitnici';
@@ -22,12 +22,13 @@ function App() {
           <Route path="/" element={<Naslovna />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/upitnik/:id" element={<RjesiUpitnik mod={"javni"}/>} />
+          <Route path="/upitnik/p/:uuid" element={<RjesiUpitnik mod={"privatni"}/>} />
 
           {/* Privatme rute */}
           <Route element={<PrivateComponent />}>
             <Route path="/view" element={<MojiUpitnici />} />
             <Route path="/add" element={<Upitnici />} />
-            <Route path="/update/:id" element={<UrediUpitnik />} />
             <Route path="/profile" element={<UrediProfil />} />
           </Route>          
         </Routes>

@@ -99,6 +99,25 @@ app.get("/get-xml/:id", async (req, res) => {
   }
 });
 
+// dohvacanje xml zapisa upitnika sa zadanim uuid-em
+app.get("/get-xml/token/:uuid", async (req, res) => {
+  try {
+    const token = req.params.uuid;
+    const result = await pool.query("SELECT * FROM upitnik WHERE link_token = $1", [
+      token,
+    ]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).send("Nema upitnika s danim tokenom");
+    }
+
+    res.json({ xml: result.rows[0].sadrzaj }); // prikazuje sve koji matchaju sa searchom u imenu
+  } catch (err) {
+    res.status(500).send("Internal server error: " + err.message);
+    console.log(err.message);
+  }
+});
+
 // ruta za dodavanje upitnika u bazu - jos se treba editat
 app.post("/add-questionnaire", async (req, res) => {
   let { naslov, autor_id, status } = req.body;
@@ -114,6 +133,7 @@ app.post("/add-questionnaire", async (req, res) => {
   }
 });
 
+// ruta za dohvacanje svih upitnika iz baze
 app.get("/get-upitnici", async (req, res) => {
   try {
     const products = await pool.query(`
@@ -134,6 +154,7 @@ app.get("/get-upitnici", async (req, res) => {
   }
 });
 
+// ruta za dohvacanje svih upitnika koji matchaju search
 app.get("/search/:key", async (req, res) => {
   try {
     const searchKey = req.params.key;
