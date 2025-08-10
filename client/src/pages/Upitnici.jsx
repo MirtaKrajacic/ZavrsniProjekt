@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 // prikazuje sved upitnike iz baze
 
@@ -28,10 +28,9 @@ function Upitnici({ data }) {
                 <h5 className="card-title text-primary fw-bold">{u.naslov}</h5>
                 <p className="card-text text-secondary">{u.kratki_opis}</p>
                 <p>{u.ime}</p>
-
                 <button
                   className="btn btn-primary btn-sm mt-2"
-                  onClick={() => console.log("res")}
+                  
                 >
                   <Link
                     to={"/upitnik/" + u.id}

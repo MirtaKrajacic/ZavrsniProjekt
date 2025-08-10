@@ -17,8 +17,8 @@ function Upitnik({xmlData}) {
       return (
         <div className="row align-items-start">
           {cats.map((c) => (
-            <div>
-              <label key={c.value}>
+            <div key={c.value}>
+              <label>
                 <input type="radio" name={q.response.varName} value={c.value} />
                 {c.label}
               </label>
