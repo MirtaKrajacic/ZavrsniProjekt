@@ -48,11 +48,11 @@ function Upitnici() {
                       {u.naslov}
                     </h5>
                     <p className="card-text text-secondary">
-                      *preview upitnika*
+                      {u.kratki_opis}
                     </p>
-                    <p>autor id: {u.autor_id}</p>
+                    <p>{u.ime}</p>
                     <button className="btn btn-primary btn-sm mt-2">
-                      Otvori upitnik
+                      Rješi upitnik
                     </button>
                   </div>
                 </div>

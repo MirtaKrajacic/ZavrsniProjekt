@@ -3,44 +3,34 @@ import { Link, useNavigate } from "react-router-dom";
 import Upitnici from "./Upitnici";
 
 const Naslovna = () => {
-  const [products, setProducts] = useState([]);
+  const [upitnici, setUpitnici] = useState([]);
 
   useEffect(() => {
     document.title = "Naslovnica";
   }, []);
 
-  useEffect(() => {}, []); // pokrece se samo pri prvom renderu komponente
-
   const getUpitnici = async () => {
-    let result = await fetch("http://localhost:5000/products", {
+    let result = await fetch("http://localhost:5000/upitnici", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
     });
     result = await result.json();
-    setProducts(result);
+    setUpitnici(result);
   };
 
-  const deleteProduct = async (id) => {
-    /*let result = await fetch(`http://localhost:5000/product/${id}`, {
-      method: "Delete",
-    });
-    result = await result.json();
-    console.log("product deleted!");
-    getProducts();*/
-  };
 
   const searchHandle = async (event) => {
-    /*let key = event.target.value;
+    let key = event.target.value;
     if (key) {
       let result = await fetch(`http://localhost:5000/search/${key}`);
       result = await result.json();
       if (result) {
-        setProducts(result);
+        setUpitnici(result);
       }
     } else {
-      getProducts();
-    }*/
+      getUpitnici();
+    }
   };
 
   return (
@@ -64,11 +54,13 @@ const Naslovna = () => {
         }}
       />
 
+      <Upitnici />
+      
       {/*
-        products.length > 0 ? 
+        upitnici.length > 0 ? 
         <div className="container text-center">
-        {Array.isArray(products) &&
-          products.map((item, index) => {
+        {Array.isArray(upitnici) &&
+          upitnici.map((item, index) => {
             return (
               <div className="row" key={index}>
                 <div className="col">{index + 1}</div>
@@ -85,7 +77,7 @@ const Naslovna = () => {
       </div>
       : <h1>Nema pronađenih upitnika</h1>
       */}
-      <Upitnici />
+      
     </>
   );
 };

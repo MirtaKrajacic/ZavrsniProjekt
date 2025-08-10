@@ -1,8 +1,8 @@
 import express from "express";
 import pool from "./db/config.js";
 import cors from "cors";
-import jwt from 'jsonwebtoken';
-const secretKey = 'secret-key';
+import jwt from "jsonwebtoken";
+const secretKey = "secret-key";
 const app = express();
 
 app.use(cors());
@@ -19,10 +19,12 @@ app.post("/register", async (req, res) => {
   const { name, email, password } = req.body;
   try {
     await pool.query(
-      "INSERT INTO korisnik (ime, email, sifra) VALUES ($1, $2, $3)", [name, email, password]
+      "INSERT INTO korisnik (ime, email, sifra) VALUES ($1, $2, $3)",
+      [name, email, password]
     );
     const result = await pool.query(
-      "SELECT id FROM korisnik WHERE email = $1 AND sifra = $2", [email, password]
+      "SELECT id FROM korisnik WHERE email = $1 AND sifra = $2",
+      [email, password]
     );
     const id = result.rows[0].id;
 
@@ -36,7 +38,7 @@ app.post("/register", async (req, res) => {
     const token = jwt.sign({ userid: user.id }, secretKey, { expiresIn: "1h" });
     res.json({
       auth: token,
-      user: filteredUser
+      user: filteredUser,
     });
 
     console.log("user saved!");
@@ -65,12 +67,13 @@ app.post("/login", async (req, res) => {
       };
       //res.status(200).json(filteredUser); // rows[0] - prvi redak iz baze
 
-      const token = jwt.sign({ userid: user.id }, secretKey, { expiresIn: "1h" });
+      const token = jwt.sign({ userid: user.id }, secretKey, {
+        expiresIn: "1h",
+      });
       res.json({
         auth: token,
-        user: filteredUser
+        user: filteredUser,
       });
-
     } else {
       res.status(401).json("No user found");
     }
@@ -84,13 +87,12 @@ app.post("/login", async (req, res) => {
 app.get("/get-xml/:id", async (req, res) => {
   try {
     const upitnikId = req.params.id;
-    const result = await pool.query(
-      "SELECT * FROM upitnik WHERE id = $1",
-      [upitnikId]
-    );
+    const result = await pool.query("SELECT * FROM upitnik WHERE id = $1", [
+      upitnikId,
+    ]);
 
     // result.rows - polje JS objekata gdje je svaki row tablice jedan objekt
-    res.json({xml : result.rows[0].sadrzaj}); // prikazuje sve koji matchaju sa searchom u imenu
+    res.json({ xml: result.rows[0].sadrzaj }); // prikazuje sve koji matchaju sa searchom u imenu
   } catch (err) {
     res.status(500).send("Internal server error: " + err.message);
     console.log(err.message);
@@ -99,7 +101,7 @@ app.get("/get-xml/:id", async (req, res) => {
 
 // ruta za dodavanje upitnika u bazu - jos se treba editat
 app.post("/add-questionnaire", async (req, res) => {
-  let {naslov, autor_id, status } = req.body;
+  let { naslov, autor_id, status } = req.body;
   try {
     await pool.query(
       "INSERT INTO upitnik (naslov, autor_id, status) VALUES ($1, $2, $3)",
@@ -112,10 +114,13 @@ app.post("/add-questionnaire", async (req, res) => {
   }
 });
 
-
 app.get("/get-upitnici", async (req, res) => {
   try {
-    const products = await pool.query("SELECT * FROM upitnik");
+    const products = await pool.query(`
+      SELECT u.*, k.ime
+      FROM upitnik u
+      JOIN korisnik k ON k.id = u.autor_id`
+    );
 
     if (products.rows.length > 0) {
       res.send(products.rows);
@@ -125,6 +130,25 @@ app.get("/get-upitnici", async (req, res) => {
   } catch (err) {
     console.error("Database error:", err);
     res.status(500).send("Internal server error");
+  }
+});
+
+app.get("/search/:key", async (req, res) => {
+  try {
+    const searchKey = req.params.key;
+    const result = await pool.query(
+      `SELECT u.*, k.ime 
+        FROM upitnik u
+        JOIN korisnik k ON k.id = u.autor_id
+        WHERE u.naslov ILIKE '%' || $1 || '%'
+        OR k.ime ILIKE '%' || $1 || '%'`,
+      [searchKey]
+    );
+
+    res.send(result.rows); // prikazuje sve koji matchaju sa searchom 
+  } catch (err) {
+    res.status(500).send("Internal server error: " + err.message);
+    console.log(err.message);
   }
 });
 
@@ -202,27 +226,13 @@ app.put("/product/:id", verifyToken, async (req, res) => {
   }
 });
 
-app.get("/search/:key", async (req, res) => {
-  try {
-    const searchKey = req.params.key;
-    const result = await pool.query(
-      `SELECT * FROM proizvod
-        WHERE name ILIKE '%' || $1 || '%'
-        OR company ILIKE '%' || $1 || '%'
-        OR category ILIKE '%' || $1 || '%'`,
-      [searchKey]
-    );
+*/
 
-    res.send(result.rows); // prikazuje sve koji matchaju sa searchom u imenu
-  } catch (err) {
-    res.status(500).send("Internal server error: " + err.message);
-    console.log(err.message);
-  }
-});*/
+
 
 function verifyToken(req, res, next) {
   let token = req.headers["authorization"];
-  
+
   if (token) {
     token = token.split(" ")[1];
     jwt.verify(token, secretKey, (err, succ) => {
