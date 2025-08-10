@@ -119,7 +119,8 @@ app.get("/get-upitnici", async (req, res) => {
     const products = await pool.query(`
       SELECT u.*, k.ime
       FROM upitnik u
-      JOIN korisnik k ON k.id = u.autor_id`
+      JOIN korisnik k ON k.id = u.autor_id
+      ORDER BY u.naslov ASC`
     );
 
     if (products.rows.length > 0) {
@@ -141,7 +142,9 @@ app.get("/search/:key", async (req, res) => {
         FROM upitnik u
         JOIN korisnik k ON k.id = u.autor_id
         WHERE u.naslov ILIKE '%' || $1 || '%'
-        OR k.ime ILIKE '%' || $1 || '%'`,
+        OR u.kratki_opis ILIKE '%' || $1 || '%'
+        OR k.ime ILIKE '%' || $1 || '%'
+        ORDER BY naslov ASC`,
       [searchKey]
     );
 

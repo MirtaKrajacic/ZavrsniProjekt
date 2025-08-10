@@ -1,70 +1,52 @@
-import AddUpitnik from "./AddUpitnik";
-import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 // prikazuje sved upitnike iz baze
 
-function Upitnici() {
-  const [upitnici, setUpitnici] = useState([]);
-
-  useEffect(() => {
-    try {
-      const result = async () => {
-        let response = await fetch(`http://localhost:5000/get-upitnici`);
-        response = await response.json();
-        setUpitnici(response);
-        console.log(response);
-      };
-      result();
-    } catch (err) {
-      console.error("error: ", err);
-    }
-  }, []);
-
+function Upitnici({ data }) {
   return (
-    <>
-      {upitnici.length === 0 ? (
-        <p>Učitavanje...</p>
-      ) : (
-        <div className="container text-center">
-          <div className="row  g-4">
-            {upitnici.map((u) => (
-              <div className="col" key={u.id}>
-                <div
-                  className="card h-100 shadow border-0"
-                  style={{ width: "18rem", transition: "transform 0.2s ease, box-shadow 0.2s ease" }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = "scale(1.05)";
-                    e.currentTarget.style.boxShadow =
-                      "0 8px 20px rgba(0,0,0,0.2)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = "scale(1)";
-                    e.currentTarget.style.boxShadow =
-                      "0 4px 10px rgba(0,0,0,0.1)";
-                  }}
+    <div className="container text-center">
+      <div className="row  g-4">
+        {data.map((u) => (
+          u.status === 'javni' && (
+            <div className="col" key={u.id}>
+            <div
+              className="card h-100 shadow border-0"
+              style={{
+                width: "18rem",
+                transition: "transform 0.2s ease, box-shadow 0.2s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "scale(1.05)";
+                e.currentTarget.style.boxShadow = "0 8px 20px rgba(0,0,0,0.2)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "scale(1)";
+                e.currentTarget.style.boxShadow = "0 4px 10px rgba(0,0,0,0.1)";
+              }}
+            >
+              <div className="card-body">
+                <h5 className="card-title text-primary fw-bold">{u.naslov}</h5>
+                <p className="card-text text-secondary">{u.kratki_opis}</p>
+                <p>{u.ime}</p>
+
+                <button
+                  className="btn btn-primary btn-sm mt-2"
+                  onClick={() => console.log("res")}
                 >
-                  <div className="card-body">
-                    <h5 className="card-title text-primary fw-bold">
-                      {u.naslov}
-                    </h5>
-                    <p className="card-text text-secondary">
-                      {u.kratki_opis}
-                    </p>
-                    <p>{u.ime}</p>
-                    <button className="btn btn-primary btn-sm mt-2">
-                      Rješi upitnik
-                    </button>
-                  </div>
-                </div>
+                  <Link
+                    to={"/upitnik/" + u.id}
+                    style={{ textDecoration: "none", color: "inherit" }}
+                  >
+                    Rješi upitnik
+                  </Link>
+                </button>
               </div>
-            ))}
+            </div>
           </div>
-        </div>
-      )}
-      {/*
-        
-    */}
-    </>
+          )
+        ))}
+      </div>
+    </div>
   );
 }
 

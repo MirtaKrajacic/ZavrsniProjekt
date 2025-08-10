@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
 import Upitnici from "./Upitnici";
 
 const Naslovna = () => {
@@ -9,22 +8,26 @@ const Naslovna = () => {
     document.title = "Naslovnica";
   }, []);
 
-  const getUpitnici = async () => {
-    let result = await fetch("http://localhost:5000/upitnici", {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    });
-    result = await result.json();
-    setUpitnici(result);
-  };
+  useEffect(() => {
+    getUpitnici();
+  }, []); // pokrece se samo pri prvom renderu komponente
 
+  const getUpitnici = async () => {
+    try {
+      let result = await fetch(`http://localhost:5000/get-upitnici`);
+      result = await result.json();
+      setUpitnici(result);
+    } catch (err) {
+      console.error("error: ", err);
+    }
+  };
 
   const searchHandle = async (event) => {
     let key = event.target.value;
     if (key) {
       let result = await fetch(`http://localhost:5000/search/${key}`);
       result = await result.json();
+      console.log(result);
       if (result) {
         setUpitnici(result);
       }
@@ -54,30 +57,11 @@ const Naslovna = () => {
         }}
       />
 
-      <Upitnici />
-      
-      {/*
-        upitnici.length > 0 ? 
-        <div className="container text-center">
-        {Array.isArray(upitnici) &&
-          upitnici.map((item, index) => {
-            return (
-              <div className="row" key={index}>
-                <div className="col">{index + 1}</div>
-                <div className="col">{item.name}</div>
-                <div className="col">{item.price}</div>
-                <div className="col">{item.category}</div>
-                <div className="col">
-                  <button onClick={() => deleteProduct(item.id)}>Delete</button>
-                  <Link to={"/update/" + item.id}>Update</Link>
-                </div>
-              </div>
-            );
-          })}
-      </div>
-      : <h1>Nema pronađenih upitnika</h1>
-      */}
-      
+      {upitnici.length > 0 ? (
+        <Upitnici data={upitnici} />
+      ) : (
+        <p>Nema pronađenih upitnika...</p>
+      )}
     </>
   );
 };
