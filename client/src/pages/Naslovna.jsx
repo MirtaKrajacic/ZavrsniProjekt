@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
+import api from "../api";
 import Upitnici from "./Upitnici";
 
 const Naslovna = () => {
@@ -16,25 +17,26 @@ const Naslovna = () => {
 
   const getUpitnici = async () => {
     try {
-      let result = await fetch(`http://localhost:5000/get-upitnici`);
-      result = await result.json();
-      setUpitnici(result);
+      const result = await api.get("/get-upitnici");
+      setUpitnici(result.data);
     } catch (err) {
-      console.error("error: ", err);
+      console.error(err);
     }
   };
 
   const searchHandle = async (event) => {
-    let key = event.target.value;
-    if (key) {
-      let result = await fetch(`http://localhost:5000/search/${key}`);
-      result = await result.json();
-      console.log(result);
-      if (result) {
-        setUpitnici(result);
+    try {
+      let key = event.target.value;
+      if (key) {
+        const { data } = await api.get(`/search/${key}`);
+        if (data) {
+          setUpitnici(data);
+        }
+      } else {
+        getUpitnici();
       }
-    } else {
-      getUpitnici();
+    } catch (err) {
+      console.error(err);
     }
   };
 

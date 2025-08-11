@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { XMLParser } from "fast-xml-parser";
+
+import api from "../api";
 import Upitnik from "../components/Upitnik";
 
 function RjesiUpitnik({ mod }) {
@@ -9,21 +11,20 @@ function RjesiUpitnik({ mod }) {
 
   useEffect(() => {
     const fetchData = async () => {
-      let result = await fetch(
+      const { data } = await api.get(
         mod === "javni"
-          ? `http://localhost:5000/get-xml/${params.id}`
-          : `http://localhost:5000/get-xml/token/${params.uuid}`
+          ? `/get-xml/${params.id}`
+          : `/get-xml/token/${params.uuid}`
       );
-      result = await result.json();
 
       const parser = new XMLParser({
         ignoreAttributes: false,
         attributeNamePrefix: "",
       });
-      const parsedObj = parser.parse(result.xml);
+      const parsedObj = parser.parse(data.xml);
 
       console.log(parsedObj);
-      setXmlData(parsedObj); // see note below
+      setXmlData(parsedObj);
     };
 
     fetchData();

@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import api from "../api";
+
 const SignUp = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -19,19 +21,15 @@ const SignUp = () => {
   }, []);
 
   const collectData = async () => {
-    //console.warn(name, email);
-    let result = await fetch("http://localhost:5000/register", {
-      method: "post",
-      body: JSON.stringify({ name, email, password }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    result = await result.json(); // parses body of the response into a js object
-    console.warn(result);
-    localStorage.setItem("token", result.auth);
-    localStorage.setItem("user", JSON.stringify(result.user));
-    navigate("/");
+    try {
+      const { data } = await api.post("/register", { name, email, password });
+
+      localStorage.setItem("token", data.auth);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      navigate("/");
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (

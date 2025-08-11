@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import api from "../api";
+
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -18,23 +20,19 @@ const Login = () => {
   }, []);
 
   const handleLogin = async () => {
-    let result = await fetch("http://localhost:5000/login", {
-      method: "post",
-      body: JSON.stringify({ email, password }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    result = await result.json(); // parses body of the response into a js object
-    console.warn(result);
-    if (result.auth) {
-      localStorage.setItem("token", result.auth);
-      localStorage.setItem("user", JSON.stringify(result.user));      
-      navigate("/");
-    } else {
-      alert("Please enter connect details");
-    }
+    try {
+      const { data } = await api.post("/login", { email, password });
 
+      if (data.auth) {
+        localStorage.setItem("token", data.auth);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        navigate("/");
+      } else {
+        alert("Please provide token");
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (

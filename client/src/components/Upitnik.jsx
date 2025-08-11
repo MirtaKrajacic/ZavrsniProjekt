@@ -12,7 +12,7 @@ function Upitnik({ xmlData }) {
     if (q.response.fixed) {
       const cats = [].concat(q.response.fixed.category); // idemo po svim ponudenim odgovorima
       return (
-        <div className="row" style={{ padding: "10px"}}>
+        <div className="row" style={{ padding: "10px" }}>
           {cats.map((c) => (
             <div key={c.value} className="col">
               <div className="form-check">
@@ -51,9 +51,10 @@ function Upitnik({ xmlData }) {
       const questions = arr(sec.question);
 
       return (
-        <section key={sec.id}
-        >
-          <h2><b>{title}</b></h2>
+        <section key={sec.id}>
+          <h2>
+            <b>{title}</b>
+          </h2>
 
           {questions.map((q) => {
             const subs = arr(q.subQuestion);
@@ -72,7 +73,7 @@ function Upitnik({ xmlData }) {
                           ...sq,
                           response: {
                             ...q.response,
-                            varName: sq.varName, 
+                            varName: sq.varName,
                           },
                         }}
                       />
