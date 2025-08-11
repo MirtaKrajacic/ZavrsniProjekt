@@ -2,15 +2,20 @@ import express from "express";
 import pool from "./db/config.js";
 import cors from "cors";
 import jwt from "jsonwebtoken";
+
 const secretKey = "secret-key";
 const app = express();
 const protectedRouter = express.Router();
+
 app.use(cors());
+
 app.get("/", (req, res) => {
   res.json({ users: ["userOne", "userTwo", "userThree"] });
 });
+
 app.use(express.json()); // parsira sve requestove sa json bodyem u js objekt req.body
 // probni zapis novog korisnika u bazu
+
 app.post("/register", async (req, res) => {
   console.log(req.body);
   const { name, email, password } = req.body;
@@ -42,6 +47,7 @@ app.post("/register", async (req, res) => {
     res.status(500).send("Database error");
   }
 });
+
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -56,10 +62,11 @@ app.post("/login", async (req, res) => {
         email: user.email,
         id: user.id,
       };
-      //res.status(200).json(filteredUser); // rows[0] - prvi redak iz baze
+
       const token = jwt.sign({ userid: user.id }, secretKey, {
         expiresIn: "1h",
       });
+
       res.json({
         auth: token,
         user: filteredUser,
@@ -156,7 +163,7 @@ app.post("/add-questionnaire", async (req, res) => {
   }
 });
 // ruta za dohvacanje svih upitnika iz baze od autora zadanog id-a
-app.get("/get-upitnici/:autor_id", async (req, res) => {
+protectedRouter.get("/get-upitnici/:autor_id", async (req, res) => {
   try {
     const products = await pool.query(`
       SELECT u.*, k.ime
@@ -169,19 +176,20 @@ app.get("/get-upitnici/:autor_id", async (req, res) => {
     if (products.rows.length > 0) {
       res.send(products.rows);
     } else {
-      res.status(401).json("nisu produnađeni upitnici");
+      res.status(401).json("nisu pronađeni upitnici");
     }
   } catch (err) {
+    console.log(err);
     console.error("Database error:", err);
     res.status(500).send("Internal server error");
   }
 });
 // brisanje upitnika zadanog id-a iz baze 
-app.delete("/upitnik/:id", async (req, res) => {
+protectedRouter.delete("/upitnik/:id", async (req, res) => {
   let result = await pool.query("DELETE FROM upitnik WHERE id = $1", [
     req.params.id,
   ]);
-  res.send(result);
+  res.send(result); 
 });
 /*
 app.get("/product/:id", async (req, res) => {
