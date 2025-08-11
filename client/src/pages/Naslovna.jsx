@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+
 import Upitnici from "./Upitnici";
 
 const Naslovna = () => {
@@ -58,7 +60,18 @@ const Naslovna = () => {
       />
 
       {upitnici.length > 0 ? (
-        <Upitnici data={upitnici} />
+        <Upitnici data={upitnici}>
+          {(u) => (
+            <button className="btn btn-primary btn-sm mt-2">
+              <Link
+                to={"/upitnik/" + u.id}
+                style={{ textDecoration: "none", color: "inherit" }}
+              >
+                Rješi
+              </Link>
+            </button>
+          )}
+        </Upitnici>
       ) : (
         <p>Nema pronađenih upitnika...</p>
       )}

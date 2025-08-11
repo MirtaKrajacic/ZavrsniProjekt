@@ -4,15 +4,12 @@ import cors from "cors";
 import jwt from "jsonwebtoken";
 const secretKey = "secret-key";
 const app = express();
-
+const protectedRouter = express.Router();
 app.use(cors());
-
 app.get("/", (req, res) => {
   res.json({ users: ["userOne", "userTwo", "userThree"] });
 });
-
 app.use(express.json()); // parsira sve requestove sa json bodyem u js objekt req.body
-
 // probni zapis novog korisnika u bazu
 app.post("/register", async (req, res) => {
   console.log(req.body);
@@ -27,20 +24,17 @@ app.post("/register", async (req, res) => {
       [email, password]
     );
     const id = result.rows[0].id;
-
     const user = req.body;
     const filteredUser = {
       name: user.name,
       email: user.email,
       id: id,
     };
-
     const token = jwt.sign({ userid: user.id }, secretKey, { expiresIn: "1h" });
     res.json({
       auth: token,
       user: filteredUser,
     });
-
     console.log("user saved!");
   } catch (err) {
     console.error(err);
@@ -48,16 +42,13 @@ app.post("/register", async (req, res) => {
     res.status(500).send("Database error");
   }
 });
-
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
-
   try {
     const result = await pool.query(
       "SELECT id, ime, email FROM korisnik WHERE email = $1 AND sifra = $2",
       [email, password]
     );
-
     if (result.rows.length > 0) {
       const user = result.rows[0];
       const filteredUser = {
@@ -66,7 +57,6 @@ app.post("/login", async (req, res) => {
         id: user.id,
       };
       //res.status(200).json(filteredUser); // rows[0] - prvi redak iz baze
-
       const token = jwt.sign({ userid: user.id }, secretKey, {
         expiresIn: "1h",
       });
@@ -82,57 +72,6 @@ app.post("/login", async (req, res) => {
     res.status(500).send("Internal server error");
   }
 });
-
-// dohvacanje xml zapisa upitnika sa zadanim id-em
-app.get("/get-xml/:id", async (req, res) => {
-  try {
-    const upitnikId = req.params.id;
-    const result = await pool.query("SELECT * FROM upitnik WHERE id = $1", [
-      upitnikId,
-    ]);
-
-    // result.rows - polje JS objekata gdje je svaki row tablice jedan objekt
-    res.json({ xml: result.rows[0].sadrzaj }); // prikazuje sve koji matchaju sa searchom u imenu
-  } catch (err) {
-    res.status(500).send("Internal server error: " + err.message);
-    console.log(err.message);
-  }
-});
-
-// dohvacanje xml zapisa upitnika sa zadanim uuid-em
-app.get("/get-xml/token/:uuid", async (req, res) => {
-  try {
-    const token = req.params.uuid;
-    const result = await pool.query("SELECT * FROM upitnik WHERE link_token = $1", [
-      token,
-    ]);
-
-    if (result.rows.length === 0) {
-      return res.status(404).send("Nema upitnika s danim tokenom");
-    }
-
-    res.json({ xml: result.rows[0].sadrzaj }); // prikazuje sve koji matchaju sa searchom u imenu
-  } catch (err) {
-    res.status(500).send("Internal server error: " + err.message);
-    console.log(err.message);
-  }
-});
-
-// ruta za dodavanje upitnika u bazu - jos se treba editat
-app.post("/add-questionnaire", async (req, res) => {
-  let { naslov, autor_id, status } = req.body;
-  try {
-    await pool.query(
-      "INSERT INTO upitnik (naslov, autor_id, status) VALUES ($1, $2, $3)",
-      [naslov, parseInt(autor_id), status]
-    );
-    res.status(201).send("upitnik dodan!");
-  } catch (err) {
-    console.log("Database error:", err);
-    res.status(500).send("Internal server error");
-  }
-});
-
 // ruta za dohvacanje svih upitnika iz baze
 app.get("/get-upitnici", async (req, res) => {
   try {
@@ -142,7 +81,6 @@ app.get("/get-upitnici", async (req, res) => {
       JOIN korisnik k ON k.id = u.autor_id
       ORDER BY u.naslov ASC`
     );
-
     if (products.rows.length > 0) {
       res.send(products.rows);
     } else {
@@ -153,7 +91,6 @@ app.get("/get-upitnici", async (req, res) => {
     res.status(500).send("Internal server error");
   }
 });
-
 // ruta za dohvacanje svih upitnika koji matchaju search
 app.get("/search/:key", async (req, res) => {
   try {
@@ -168,28 +105,90 @@ app.get("/search/:key", async (req, res) => {
         ORDER BY naslov ASC`,
       [searchKey]
     );
-
     res.send(result.rows); // prikazuje sve koji matchaju sa searchom 
   } catch (err) {
     res.status(500).send("Internal server error: " + err.message);
     console.log(err.message);
   }
 });
-
-/*
-app.delete("/product/:id", async (req, res) => {
-  let result = await pool.query("DELETE FROM proizvod WHERE id = $1", [
+// dohvacanje xml zapisa upitnika sa zadanim id-em
+app.get("/get-xml/:id", async (req, res) => {
+  try {
+    const upitnikId = req.params.id;
+    const result = await pool.query("SELECT * FROM upitnik WHERE id = $1", [
+      upitnikId,
+    ]);
+    // result.rows - polje JS objekata gdje je svaki row tablice jedan objekt
+    res.json({ xml: result.rows[0].sadrzaj }); // prikazuje sve koji matchaju sa searchom u imenu
+  } catch (err) {
+    res.status(500).send("Internal server error: " + err.message);
+    console.log(err.message);
+  }
+});
+// dohvacanje xml zapisa privatnog upitnika sa zadanim uuid-em
+app.get("/get-xml/token/:uuid", async (req, res) => {
+  try {
+    const token = req.params.uuid;
+    const result = await pool.query("SELECT * FROM upitnik WHERE link_token = $1", [
+      token,
+    ]);
+    if (result.rows.length === 0) {
+      return res.status(404).send("Nema upitnika s danim tokenom");
+    }
+    res.json({ xml: result.rows[0].sadrzaj }); // prikazuje sve koji matchaju sa searchom u imenu
+  } catch (err) {
+    res.status(500).send("Internal server error: " + err.message);
+    console.log(err.message);
+  }
+});
+// ruta za dodavanje upitnika u bazu - jos se treba editat
+app.post("/add-questionnaire", async (req, res) => {
+  let { naslov, autor_id, status, kratki_opis } = req.body;
+  try {
+    await pool.query(
+      "INSERT INTO upitnik (naslov, autor_id, status, kratki_opis) VALUES ($1, $2, $3, $4)",
+      [naslov, parseInt(autor_id), status, kratki_opis]
+    );
+    res.status(201).send("upitnik dodan!");
+  } catch (err) {
+    console.log("Database error:", err);
+    res.status(500).send("Internal server error");
+  }
+});
+// ruta za dohvacanje svih upitnika iz baze od autora zadanog id-a
+app.get("/get-upitnici/:autor_id", async (req, res) => {
+  try {
+    const products = await pool.query(`
+      SELECT u.*, k.ime
+      FROM upitnik u
+      JOIN korisnik k ON k.id = u.autor_id
+      WHERE u.autor_id = $1
+      ORDER BY u.naslov ASC`,
+      [req.params.autor_id]
+    );
+    if (products.rows.length > 0) {
+      res.send(products.rows);
+    } else {
+      res.status(401).json("nisu produnađeni upitnici");
+    }
+  } catch (err) {
+    console.error("Database error:", err);
+    res.status(500).send("Internal server error");
+  }
+});
+// brisanje upitnika zadanog id-a iz baze 
+app.delete("/upitnik/:id", async (req, res) => {
+  let result = await pool.query("DELETE FROM upitnik WHERE id = $1", [
     req.params.id,
   ]);
   res.send(result);
 });
-
+/*
 app.get("/product/:id", async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM proizvod WHERE id = $1", [
       req.params.id,
     ]);
-
     if (result.rows.length > 0) {
       const product = result.rows[0];
       res.status(200).json(product);
@@ -200,14 +199,12 @@ app.get("/product/:id", async (req, res) => {
     res.status(500).send("Internal server error: " + err.message);
   }
 });
-
 app.put("/product/:id", verifyToken, async (req, res) => {
   try {
     const { name, price, category, company } = req.body;
     const fields = [];
     const values = [];
     let paramIndex = 1;
-
     if (name !== undefined) {
       fields.push(`name = $${paramIndex++}`);
       values.push(name);
@@ -224,11 +221,9 @@ app.put("/product/:id", verifyToken, async (req, res) => {
       fields.push(`company = $${paramIndex++}`);
       values.push(company);
     }
-
     if (fields.length === 0) {
       return res.status(400).send("No valid fields provided for update.");
     }
-
     // Add the id as the last parameter
     values.push(req.params.id);
     const query = `
@@ -237,26 +232,19 @@ app.put("/product/:id", verifyToken, async (req, res) => {
       WHERE id = $${paramIndex}
       RETURNING *;
     `;
-
     const result = await pool.query(query, values);
-
     if (result.rows.length === 0) {
       return res.status(404).send("Product not found.");
     }
-
     res.status(200).json(result.rows[0]);
   } catch (err) {
     res.status(500).send("Internal server error: " + err.message);
   }
 });
-
 */
-
-
-
+app.use("/secure", verifyToken, protectedRouter);
 function verifyToken(req, res, next) {
   let token = req.headers["authorization"];
-
   if (token) {
     token = token.split(" ")[1];
     jwt.verify(token, secretKey, (err, succ) => {
@@ -272,7 +260,6 @@ function verifyToken(req, res, next) {
     res.status(403).send("provide token");
   }
 }
-
 app.listen(5000, () => {
   console.log("Server started on port 5000");
 });

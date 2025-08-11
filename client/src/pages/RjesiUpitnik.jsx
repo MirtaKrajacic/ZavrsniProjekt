@@ -12,7 +12,7 @@ function RjesiUpitnik({ mod }) {
       let result = await fetch(
         mod === "javni"
           ? `http://localhost:5000/get-xml/${params.id}`
-          : `http://localhost:5000/get-xml/token/${params.uuid}` 
+          : `http://localhost:5000/get-xml/token/${params.uuid}`
       );
       result = await result.json();
 
@@ -29,7 +29,16 @@ function RjesiUpitnik({ mod }) {
     fetchData();
   }, []); // [params.id]
 
-  return xmlData && <Upitnik xmlData={xmlData} />;
+  return (
+    <>
+      {xmlData && (
+        <div className="container mb-5 p-4 bg-primary-subtle border border-primary-subtle rounded-3 d-flex flex-column align-items-center">
+          <Upitnik xmlData={xmlData} />
+          <button className="btn btn-primary mt-3">Submit</button>
+        </div>
+      )}
+    </>
+  );
 }
 
 export default RjesiUpitnik;

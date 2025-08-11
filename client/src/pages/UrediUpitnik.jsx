@@ -83,7 +83,7 @@ const UrediUpitnik = () => {
         </div>
 
         <button
-          className="btn btn-secondary d-block mx-auto"
+          className="btn btn-primary d-block mx-auto"
           onClick={urediUpitnik}
         >
           Update

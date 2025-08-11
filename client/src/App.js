@@ -29,6 +29,7 @@ function App() {
           <Route element={<PrivateComponent />}>
             <Route path="/view" element={<MojiUpitnici />} />
             <Route path="/add" element={<Upitnici />} />
+            <Route path="/upitnik/edit/:id" element={<UrediUpitnik />} />
             <Route path="/profile" element={<UrediProfil />} />
           </Route>          
         </Routes>

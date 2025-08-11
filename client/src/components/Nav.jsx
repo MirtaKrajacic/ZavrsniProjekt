@@ -31,7 +31,7 @@ function Nav() {
                     </Link>
                   </li>
                   <li className="nav-item mx-2">
-                    <Link className="nav-link" to="/view">
+                    <Link className="nav-link" to={`/view`}>
                       Moji upitnici
                     </Link>
                   </li>

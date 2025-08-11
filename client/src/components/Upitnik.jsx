@@ -1,9 +1,6 @@
-import { useEffect, useState } from "react";
-import { XMLParser } from "fast-xml-parser";
 // import validateXML from "./validateQueXML.js";
 
-function Upitnik({xmlData}) {
-
+function Upitnik({ xmlData }) {
   function RenderQuestion({ q }) {
     if (q.response.free) {
       return (
@@ -13,15 +10,26 @@ function Upitnik({xmlData}) {
       );
     }
     if (q.response.fixed) {
-      const cats = [].concat(q.response.fixed.category); // supports single or array
+      const cats = [].concat(q.response.fixed.category); // idemo po svim ponudenim odgovorima
       return (
-        <div className="row align-items-start">
+        <div className="row" style={{ padding: "10px"}}>
           {cats.map((c) => (
-            <div key={c.value}>
-              <label>
-                <input type="radio" name={q.response.varName} value={c.value} />
-                {c.label}
-              </label>
+            <div key={c.value} className="col">
+              <div className="form-check">
+                <input
+                  className="form-check-input"
+                  type="radio"
+                  name={q.response.varName}
+                  value={c.value}
+                  id={`${q.response.varName}-${c.value}`}
+                />
+                <label
+                  className="form-check-label"
+                  htmlFor={`${q.response.varName}-${c.value}`}
+                >
+                  {c.label}
+                </label>
+              </div>
             </div>
           ))}
         </div>
@@ -43,8 +51,9 @@ function Upitnik({xmlData}) {
       const questions = arr(sec.question);
 
       return (
-        <section key={sec.id}>
-          <h2>{title}</h2>
+        <section key={sec.id}
+        >
+          <h2><b>{title}</b></h2>
 
           {questions.map((q) => {
             const subs = arr(q.subQuestion);
@@ -63,7 +72,7 @@ function Upitnik({xmlData}) {
                           ...sq,
                           response: {
                             ...q.response,
-                            varName: sq.varName, // override the varName to be per-subquestion
+                            varName: sq.varName, 
                           },
                         }}
                       />
@@ -81,7 +90,9 @@ function Upitnik({xmlData}) {
   }
 
   return (
-    <Questionnaire data={xmlData.questionnaire} />
+    <div className="container my-5">
+      <Questionnaire data={xmlData.questionnaire} />
+    </div>
   );
 }
 

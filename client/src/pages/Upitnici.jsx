@@ -1,11 +1,9 @@
-import { Link } from "react-router-dom";
+// prikazuje sve upitnike iz data
 
-// prikazuje sved upitnike iz baze
-
-function Upitnici({ data }) {
+function Upitnici({ data, children }) {
   return (
     <div className="container text-center">
-      <div className="row  g-4">
+      <div className="row g-4 mb-5">
         {data.map((u) => (
           u.status === 'javni' && (
             <div className="col" key={u.id}>
@@ -28,17 +26,8 @@ function Upitnici({ data }) {
                 <h5 className="card-title text-primary fw-bold">{u.naslov}</h5>
                 <p className="card-text text-secondary">{u.kratki_opis}</p>
                 <p>{u.ime}</p>
-                <button
-                  className="btn btn-primary btn-sm mt-2"
-                  
-                >
-                  <Link
-                    to={"/upitnik/" + u.id}
-                    style={{ textDecoration: "none", color: "inherit" }}
-                  >
-                    Rješi upitnik
-                  </Link>
-                </button>
+                {children(u)}
+                
               </div>
             </div>
           </div>
