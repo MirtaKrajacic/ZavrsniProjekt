@@ -1,15 +1,27 @@
-import { useEffect, useState } from "react";
-import { XMLParser } from "fast-xml-parser";
+import { useEffect, useState, useRef } from "react";
+import { Modal, Button, Form } from "react-bootstrap";
+import { v4 as uuidv4 } from "uuid";
 // import validateXML from "./validateQueXML.js";
 
 import api from "../../api";
-import Upitnik from "../../components/Upitnik";
 
 function AddUpitnik({ upitnikId }) {
   const [naslov, setNaslov] = useState(""); // naslov upitnika
   const [opis, setOpis] = useState(""); // kratki opis upitnika
   const [status, setStatus] = useState(""); // status upitnika - 'javni' ili 'privatni'
   const [sadrzaj, setSadrzaj] = useState(""); // xml forma upitnika
+  const [showShare, setShowShare] = useState(false);
+  const [uuid, setUuid] = useState(uuidv4());
+  const fileInput = useRef(null);
+
+  const resetView = () => {
+    setNaslov("");
+    setOpis("");
+    setSadrzaj("");
+    setStatus("");
+    setUuid(uuidv4());
+    fileInput.current.value = "";
+  };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -20,13 +32,7 @@ function AddUpitnik({ upitnikId }) {
       // onload je funkcija koja se poziva kada se datoteka učita (load event)
       reader.onload = (event) => {
         const xmlSadrzaj = event.target.result; // sadrzaj datoteke (string)
-        /*const parser = new XMLParser({
-          ignoreAttributes: false,
-          attributeNamePrefix: "",
-        });
-        const parsedXml = parser.parse(xmlSadrzaj);*/
         setSadrzaj(xmlSadrzaj);
-        console.log(xmlSadrzaj);
       };
 
       reader.readAsText(file); // čita file i poziva onload kada je gotov
@@ -35,13 +41,35 @@ function AddUpitnik({ upitnikId }) {
 
   const spremiUpitnik = async () => {
     try {
-      const result = await api.post("/secure/add-upitnik", {
-        naslov,
-        sadrzaj,
-        status,
-        kratki_opis: opis,
-      });
-      console.log(result.data);
+      console.log("pozvali su me, spremiUpitnik!");
+      if (status === "privatni") {
+        setShowShare(true);
+      } else {
+        const result = await api.post("/secure/add-upitnik", {
+          naslov,
+          sadrzaj,
+          status,
+          kratki_opis: opis,
+        });
+        console.log(result.data);
+        resetView();
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  const privatniUpitnikHandle = async () => {
+    try {
+      const result = await api.post(`/secure/add-privatni-upitnik/${uuid}`, {
+          naslov,
+          sadrzaj,
+          status,
+          kratki_opis: opis,
+          link_token: uuid
+        });
+        console.log(result.data);
+        setShowShare(false);
+        resetView();      
     } catch (err) {
       console.error(err);
     }
@@ -89,6 +117,7 @@ function AddUpitnik({ upitnikId }) {
                 type="radio"
                 name="visibility"
                 value="javni"
+                checked={status === "javni"}
                 onChange={(e) => setStatus(e.target.value)}
                 required
               />
@@ -100,6 +129,7 @@ function AddUpitnik({ upitnikId }) {
                 type="radio"
                 name="visibility"
                 value="privatni"
+                checked={status === "privatni"}
                 onChange={(e) => setStatus(e.target.value)}
               />
               privatni
@@ -115,6 +145,7 @@ function AddUpitnik({ upitnikId }) {
             id="xmlFile"
             type="file"
             className="form-control"
+            ref={fileInput}
             accept=".xml"
             onChange={handleFileChange}
           />
@@ -126,6 +157,39 @@ function AddUpitnik({ upitnikId }) {
           Dodaj
         </button>
       </div>
+
+      <Modal show={showShare} onHide={() => setShowShare(false)} centered>
+        <Modal.Header>
+          <Modal.Title>Podijeli upitnik</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group>
+              <Form.Label>URL upitnika</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Upiši ovdje..."
+                value={`http://localhost:3000/upitnik/p/${uuid}`}
+                readOnly
+              />
+            </Form.Group>
+          </Form>
+          <Button variant="outline-success">Share</Button>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="outline-secondary"
+            onClick={() => setShowShare(false)}
+          >
+            Odustani
+          </Button>
+          <Button 
+          variant="primary"
+          onClick={() => privatniUpitnikHandle()}
+          >
+            Pošalji i uploadaj</Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }

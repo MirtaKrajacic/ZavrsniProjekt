@@ -169,6 +169,21 @@ secureRouter.post("/add-upitnik", async (req, res) => {
   }
 });
 
+// ruta za dodavanje privatnog upitnika u bazu 
+secureRouter.post("/add-privatni-upitnik/:uuid", async (req, res) => {
+  let { naslov, sadrzaj, status, kratki_opis } = req.body;
+  try {
+    await pool.query(
+      "INSERT INTO upitnik (naslov, autor_id, sadrzaj, status, kratki_opis, link_token) VALUES ($1, $2, $3, $4, $5, $6)",
+      [naslov, req.userid, sadrzaj, status, kratki_opis, req.params.uuid]
+    );
+    res.status(201).send("upitnik dodan!");
+  } catch (err) {
+    console.log("Database error:", err);
+    res.status(500).send("Internal server error");
+  }
+});
+
 // ruta za dohvacanje svih upitnika iz baze od autora zadanog id-a
 secureRouter.get("/get-moji-upitnici", async (req, res) => {
   try {
@@ -195,11 +210,49 @@ secureRouter.get("/get-moji-upitnici", async (req, res) => {
 
 // brisanje upitnika zadanog id-a iz baze
 secureRouter.delete("/del-upitnik/:id", async (req, res) => {
-  let result = await pool.query(
-    "DELETE FROM upitnik WHERE id = $1 AND autor_id = $2",
-    [req.params.id, req.userid]
-  );
-  res.send(result);
+  try {
+    let result = await pool.query(
+      "DELETE FROM upitnik WHERE id = $1 AND autor_id = $2",
+      [req.params.id, req.userid]
+    );
+    res.send(result);
+  } catch (err) {
+    console.log("Database error:", err);
+    res.status(500).send("Internal server error");
+  }
+});
+
+// dohvat podataka korisnika iz baze
+secureRouter.get("/get-korisnik", async (req, res) => {
+  try {
+    let result = await pool.query(
+      "SELECT ime, email, opis FROM korisnik WHERE id = $1",
+      [req.userid]
+    );
+    res.send(result.rows[0]);
+  } catch (err) {
+    console.log("Database error:", err);
+    res.status(500).send("Internal server error");
+  }
+});
+
+secureRouter.put("/update-korisnik", async (req, res) => {
+  try {
+    const { ime, opis } = req.body;
+
+    let result = await pool.query(
+      `UPDATE korisnik SET 
+      ime = $1, 
+      opis = $2 
+      WHERE id = $3
+      RETURNING *`,
+      [ime, opis, req.userid]
+    );
+
+    res.status(200).json(result.rows[0]);
+  } catch (err) {
+    res.status(500).send("Internal server error: " + err.message);
+  }
 });
 
 /*
