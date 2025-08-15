@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
-import api from "../api";
-import UpitniciCards from "./UpitniciCards";
-import AddUpitnik from "./AddUpitnik";
+import api from "../../api";
+import UpitniciCards from "../UpitniciCards";
 
 const MojiUpitnici = () => {
   const [upitnici, setUpitnici] = useState([]);
@@ -18,8 +17,7 @@ const MojiUpitnici = () => {
 
   const getUpitnici = async () => {
     try {
-      const userId = JSON.parse(localStorage.getItem("user")).id;
-      const { data } = await api.get(`secure/get-upitnici/${userId}`);
+      const { data } = await api.get(`secure/get-moji-upitnici`);
       console.log(data);
 
       if (Array.isArray(data)) {
@@ -51,7 +49,9 @@ const MojiUpitnici = () => {
   return (
     <>
       <div className="d-flex justify-content-begin p-3 border-bottom mb-5">
-        <Link to={"/add"} className="btn btn-light btn-lg shadow">Dodaj novi upitnik</Link>
+        <Link to={"/add"} className="btn btn-light btn-lg shadow">
+          Dodaj novi upitnik
+        </Link>
       </div>
       {upitnici.length > 0 ? (
         <>

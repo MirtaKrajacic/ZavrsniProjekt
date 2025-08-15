@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { XMLParser } from "fast-xml-parser";
 
-import api from "../api";
-import Upitnik from "../components/Upitnik";
+import api from "../../api";
+import Upitnik from "../../components/Upitnik";
 
 function RjesiUpitnik({ mod }) {
   const [xmlData, setXmlData] = useState(null);

@@ -9,15 +9,12 @@ const secureRouter = express.Router(); // ruter za secure rutu
 
 app.use(cors());
 
-app.get("/", (req, res) => {
-});
+app.get("/", (req, res) => {});
 
 app.use(express.json()); // parsira sve requestove sa json bodyem u js objekt req.body
 // probni zapis novog korisnika u bazu
 
-
 app.post("/register", async (req, res) => {
-  console.log(req.body);
   const { name, email, password } = req.body;
   try {
     await pool.query(
@@ -87,12 +84,12 @@ app.get("/get-upitnici", async (req, res) => {
       SELECT u.*, k.ime
       FROM upitnik u
       JOIN korisnik k ON k.id = u.autor_id
-      ORDER BY u.naslov ASC`
-    );
+      WHERE u.status = 'javni'
+      ORDER BY u.naslov ASC`);
     if (products.rows.length > 0) {
       res.send(products.rows);
     } else {
-      res.status(401).json("nisu produnađeni upitnici");
+      res.json("nisu produnađeni upitnici");
     }
   } catch (err) {
     console.error("Database error:", err);
@@ -117,7 +114,7 @@ app.get("/search/:key", async (req, res) => {
         ORDER BY naslov ASC`,
       [searchKey]
     );
-    res.send(result.rows); // prikazuje sve koji matchaju sa searchom 
+    res.send(result.rows); // prikazuje sve koji matchaju sa searchom
   } catch (err) {
     res.status(500).send("Internal server error: " + err.message);
     console.log(err.message);
@@ -143,9 +140,10 @@ app.get("/get-xml/:id", async (req, res) => {
 app.get("/get-xml/private/:uuid", async (req, res) => {
   try {
     const token = req.params.uuid;
-    const result = await pool.query("SELECT * FROM upitnik WHERE link_token = $1", [
-      token,
-    ]);
+    const result = await pool.query(
+      "SELECT * FROM upitnik WHERE link_token = $1",
+      [token]
+    );
     if (result.rows.length === 0) {
       return res.status(404).send("Nema upitnika s danim tokenom");
     }
@@ -157,13 +155,12 @@ app.get("/get-xml/private/:uuid", async (req, res) => {
 });
 
 // ruta za dodavanje upitnika u bazu - jos se treba editat
-app.post("/add-upitnik", async (req, res) => {
-  let { naslov, autor_id, sadrzaj, status, kratki_opis } = req.body;
-  console.log('got request: ', autor_id);
+secureRouter.post("/add-upitnik", async (req, res) => {
+  let { naslov, sadrzaj, status, kratki_opis } = req.body;
   try {
     await pool.query(
       "INSERT INTO upitnik (naslov, autor_id, sadrzaj, status, kratki_opis) VALUES ($1, $2, $3, $4, $5)",
-      [naslov, parseInt(autor_id), sadrzaj, status, kratki_opis]
+      [naslov, req.userid, sadrzaj, status, kratki_opis]
     );
     res.status(201).send("upitnik dodan!");
   } catch (err) {
@@ -173,20 +170,21 @@ app.post("/add-upitnik", async (req, res) => {
 });
 
 // ruta za dohvacanje svih upitnika iz baze od autora zadanog id-a
-secureRouter.get("/get-upitnici/:autor_id", async (req, res) => {
+secureRouter.get("/get-moji-upitnici", async (req, res) => {
   try {
-    const products = await pool.query(`
+    const products = await pool.query(
+      `
       SELECT u.*, k.ime
       FROM upitnik u
       JOIN korisnik k ON k.id = u.autor_id
       WHERE u.autor_id = $1
       ORDER BY u.naslov ASC`,
-      [req.params.autor_id]
+      [req.userid]
     );
     if (products.rows.length > 0) {
       res.send(products.rows);
     } else {
-      res.status(401).json("nisu pronađeni upitnici");
+      res.json("nisu pronađeni upitnici");
     }
   } catch (err) {
     console.log(err);
@@ -195,12 +193,13 @@ secureRouter.get("/get-upitnici/:autor_id", async (req, res) => {
   }
 });
 
-// brisanje upitnika zadanog id-a iz baze 
+// brisanje upitnika zadanog id-a iz baze
 secureRouter.delete("/del-upitnik/:id", async (req, res) => {
-  let result = await pool.query("DELETE FROM upitnik WHERE id = $1", [
-    req.params.id,
-  ]);
-  res.send(result); 
+  let result = await pool.query(
+    "DELETE FROM upitnik WHERE id = $1 AND autor_id = $2",
+    [req.params.id, req.userid]
+  );
+  res.send(result);
 });
 
 /*
@@ -259,7 +258,8 @@ function verifyToken(req, res, next) {
       if (err) {
         res.status(401).send("provide valid token");
       } else {
-        console.log("good token");
+        //console.log("good token");
+        req.userid = succ.userid; // spremi userid u req objekt koji se prosljeđuje ruteru
         next();
       }
     });

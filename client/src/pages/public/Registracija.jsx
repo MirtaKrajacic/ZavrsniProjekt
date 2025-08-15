@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import api from "../api";
+import api from "../../api";
 
 const Registracija = () => {
   const [name, setName] = useState("");
@@ -13,19 +13,11 @@ const Registracija = () => {
     document.title = "Prijava";
   }, []);
 
-  useEffect(() => {
-    const auth = localStorage.getItem("user");
-    if (auth) {
-      navigate("/");
-    }
-  }, []);
-
   const collectData = async () => {
     try {
       const { data } = await api.post("/register", { name, email, password });
 
       localStorage.setItem("token", data.auth);
-      localStorage.setItem("user", JSON.stringify(data.user));
       navigate("/");
     } catch (err) {
       console.error(err);

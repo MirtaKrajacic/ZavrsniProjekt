@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
-import api from "../api";
+import api from "../../api";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -12,20 +13,12 @@ const Login = () => {
     document.title = "Prijava";
   }, []);
 
-  useEffect(() => {
-    const auth = localStorage.getItem("user");
-    if (auth) {
-      navigate("/");
-    }
-  }, []);
-
   const handleLogin = async () => {
     try {
       const { data } = await api.post("/login", { email, password });
 
       if (data.auth) {
         localStorage.setItem("token", data.auth);
-        localStorage.setItem("user", JSON.stringify(data.user));
         navigate("/");
       } else {
         alert("Please provide token");
@@ -60,6 +53,8 @@ const Login = () => {
             value={password}
           />
         </div>
+
+        <Link to="/signup">Nemate još korisnički račun? Registrirajte se.</Link>
 
         <button
           className="btn btn-primary d-block mx-auto"

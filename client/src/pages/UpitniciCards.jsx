@@ -5,7 +5,7 @@ function UpitniciCards({ data, children }) {
     <div className="container text-center">
       <div className="row g-4 mb-5">
         {data.map((u) => (
-          u.status === 'javni' && (
+          
             <div className="col" key={u.id}>
             <div
               className="card h-100 shadow border-0"
@@ -27,12 +27,11 @@ function UpitniciCards({ data, children }) {
                 <p className="card-text text-secondary">{u.kratki_opis}</p>
                 <p>{u.ime}</p>
                 {children(u)}
-                
               </div>
             </div>
           </div>
           )
-        ))}
+        )}
       </div>
     </div>
   );

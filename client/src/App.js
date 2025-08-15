@@ -1,15 +1,15 @@
 import Nav from './components/Nav';
-import Registracija from './pages/Registracija';
-import PrivateComponent from './pages/PrivateComponent';
-import Prijava from './pages/Prijava';
-import Naslovnica from './pages/Naslovnica';
-import UrediUpitnik from './pages/UrediUpitnik';
-import UrediProfil from './pages/UrediProfil';
-import RjesiUpitnik from './pages/RjesiUpitnik';
-import AddUpitnik from './pages/AddUpitnik';
+import Registracija from './pages/public/Registracija';
+import PrivateComponent from './pages/public/PrivateComponent';
+import Prijava from './pages/public/Prijava';
+import Naslovnica from './pages/public/Naslovnica';
+import UrediUpitnik from './pages/admin/UrediUpitnik';
+import UrediProfil from './pages/admin/UrediProfil';
+import RjesiUpitnik from './pages/public/RjesiUpitnik';
+import AddUpitnik from './pages/admin/AddUpitnik';
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import MojiUpitnici from './pages/MojiUpitnici';
+import MojiUpitnici from './pages/admin/MojiUpitnici';
 
 
 function App() {

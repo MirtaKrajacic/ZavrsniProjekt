@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
-import api from "../api";
-import UpitniciCards from "./UpitniciCards";
+import api from "../../api";
+import UpitniciCards from "../UpitniciCards";
 
 const Naslovnica = () => {
   const [upitnici, setUpitnici] = useState([]);

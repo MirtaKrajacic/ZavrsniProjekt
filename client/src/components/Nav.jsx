@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 
 function Nav() {
-  const auth = localStorage.getItem("user");
+  const auth = localStorage.getItem("token");
 
   const navigate = useNavigate();
   const logout = () => {
@@ -23,13 +23,13 @@ function Nav() {
 
           <div className="flex-grow-1 d-flex justify-content-center">
             <ul className="navbar-nav flex-row">
+              <li className="nav-item mx-2">
+                <Link className="nav-link" to="/">
+                  Naslovnica
+                </Link>
+              </li>
               {auth && (
                 <>
-                  <li className="nav-item mx-2">
-                    <Link className="nav-link" to="/">
-                      Naslovnica
-                    </Link>
-                  </li>
                   <li className="nav-item mx-2">
                     <Link className="nav-link" to={`/view`}>
                       Moji upitnici
