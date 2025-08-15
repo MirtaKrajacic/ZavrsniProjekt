@@ -2,9 +2,9 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 import api from "../api";
-import Upitnici from "./Upitnici";
+import UpitniciCards from "./UpitniciCards";
 
-const Naslovna = () => {
+const Naslovnica = () => {
   const [upitnici, setUpitnici] = useState([]);
 
   useEffect(() => {
@@ -29,6 +29,7 @@ const Naslovna = () => {
       let key = event.target.value;
       if (key) {
         const { data } = await api.get(`/search/${key}`);
+        console.log('search handle je dohvatio: ', data);
         if (data) {
           setUpitnici(data);
         }
@@ -62,7 +63,7 @@ const Naslovna = () => {
       />
 
       {upitnici.length > 0 ? (
-        <Upitnici data={upitnici}>
+        <UpitniciCards data={upitnici}>
           {(u) => (
             <button className="btn btn-primary btn-sm mt-2">
               <Link
@@ -73,7 +74,7 @@ const Naslovna = () => {
               </Link>
             </button>
           )}
-        </Upitnici>
+        </UpitniciCards>
       ) : (
         <p>Nema pronađenih upitnika...</p>
       )}
@@ -81,4 +82,4 @@ const Naslovna = () => {
   );
 };
 
-export default Naslovna;
+export default Naslovnica;

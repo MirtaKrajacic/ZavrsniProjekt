@@ -1,5 +1,7 @@
 // import validateXML from "./validateQueXML.js";
 
+// element upitnika dobiven parsiranjem uploadanog XML-a
+
 function Upitnik({ xmlData }) {
   function RenderQuestion({ q }) {
     if (q.response.free) {

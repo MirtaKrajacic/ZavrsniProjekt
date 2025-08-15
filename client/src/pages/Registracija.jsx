@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import api from "../api";
 
-const SignUp = () => {
+const Registracija = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -82,4 +82,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default Registracija;

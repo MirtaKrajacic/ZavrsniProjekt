@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 
 import api from "../api";
-import Upitnici from "./Upitnici";
+import UpitniciCards from "./UpitniciCards";
+import AddUpitnik from "./AddUpitnik";
 
 const MojiUpitnici = () => {
   const [upitnici, setUpitnici] = useState([]);
@@ -20,6 +20,7 @@ const MojiUpitnici = () => {
     try {
       const userId = JSON.parse(localStorage.getItem("user")).id;
       const { data } = await api.get(`secure/get-upitnici/${userId}`);
+      console.log(data);
 
       if (Array.isArray(data)) {
         // provjera u slučaju da korisnik nema još ni jedan upitnik koji dolazi iz baze
@@ -40,7 +41,7 @@ const MojiUpitnici = () => {
       );
       if (!confirmDelete) return;
 
-      await api.delete(`secure/upitnik/${id}`);
+      await api.delete(`secure/del-upitnik/${id}`);
       getUpitnici();
     } catch (err) {
       console.error(err);
@@ -50,11 +51,11 @@ const MojiUpitnici = () => {
   return (
     <>
       <div className="d-flex justify-content-begin p-3 border-bottom mb-5">
-        <Link className="btn btn-light btn-lg shadow">Dodaj novi upitnik</Link>
+        <Link to={"/add"} className="btn btn-light btn-lg shadow">Dodaj novi upitnik</Link>
       </div>
       {upitnici.length > 0 ? (
         <>
-          <Upitnici data={upitnici}>
+          <UpitniciCards data={upitnici}>
             {(u) => (
               <div className="gap-2">
                 <Link
@@ -71,7 +72,7 @@ const MojiUpitnici = () => {
                 </button>
               </div>
             )}
-          </Upitnici>
+          </UpitniciCards>
         </>
       ) : (
         <p>Još nemate ni jedan upitnik</p>

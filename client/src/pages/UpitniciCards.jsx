@@ -1,6 +1,6 @@
 // prikazuje sve upitnike iz data
 
-function Upitnici({ data, children }) {
+function UpitniciCards({ data, children }) {
   return (
     <div className="container text-center">
       <div className="row g-4 mb-5">
@@ -38,4 +38,4 @@ function Upitnici({ data, children }) {
   );
 }
 
-export default Upitnici;
+export default UpitniciCards;

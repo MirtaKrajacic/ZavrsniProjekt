@@ -14,12 +14,12 @@ function RjesiUpitnik({ mod }) {
       const { data } = await api.get(
         mod === "javni"
           ? `/get-xml/${params.id}`
-          : `/get-xml/token/${params.uuid}`
+          : `/get-xml/private/${params.uuid}`
       );
 
       const parser = new XMLParser({
-        ignoreAttributes: false,
-        attributeNamePrefix: "",
+        ignoreAttributes: false, 
+        attributeNamePrefix: "", // atributi se parsiraju kao obični ključevi (kao i tagovi), bez prefiksa 
       });
       const parsedObj = parser.parse(data.xml);
 

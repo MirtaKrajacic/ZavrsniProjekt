@@ -5,16 +5,16 @@ import jwt from "jsonwebtoken";
 
 const secretKey = "secret-key";
 const app = express();
-const protectedRouter = express.Router();
+const secureRouter = express.Router(); // ruter za secure rutu
 
 app.use(cors());
 
 app.get("/", (req, res) => {
-  res.json({ users: ["userOne", "userTwo", "userThree"] });
 });
 
 app.use(express.json()); // parsira sve requestove sa json bodyem u js objekt req.body
 // probni zapis novog korisnika u bazu
+
 
 app.post("/register", async (req, res) => {
   console.log(req.body);
@@ -35,7 +35,7 @@ app.post("/register", async (req, res) => {
       email: user.email,
       id: id,
     };
-    const token = jwt.sign({ userid: user.id }, secretKey, { expiresIn: "1h" });
+    const token = jwt.sign({ userid: id }, secretKey, { expiresIn: "1h" });
     res.json({
       auth: token,
       user: filteredUser,
@@ -79,6 +79,7 @@ app.post("/login", async (req, res) => {
     res.status(500).send("Internal server error");
   }
 });
+
 // ruta za dohvacanje svih upitnika iz baze
 app.get("/get-upitnici", async (req, res) => {
   try {
@@ -98,7 +99,8 @@ app.get("/get-upitnici", async (req, res) => {
     res.status(500).send("Internal server error");
   }
 });
-// ruta za dohvacanje svih upitnika koji matchaju search
+
+// ruta za dohvacanje javnih upitnika koji matchaju search
 app.get("/search/:key", async (req, res) => {
   try {
     const searchKey = req.params.key;
@@ -106,9 +108,12 @@ app.get("/search/:key", async (req, res) => {
       `SELECT u.*, k.ime 
         FROM upitnik u
         JOIN korisnik k ON k.id = u.autor_id
-        WHERE u.naslov ILIKE '%' || $1 || '%'
-        OR u.kratki_opis ILIKE '%' || $1 || '%'
-        OR k.ime ILIKE '%' || $1 || '%'
+        WHERE u.status = 'javni'
+        AND (
+          u.naslov ILIKE '%' || $1 || '%'
+          OR u.kratki_opis ILIKE '%' || $1 || '%'
+          OR k.ime ILIKE '%' || $1 || '%'
+        )
         ORDER BY naslov ASC`,
       [searchKey]
     );
@@ -118,6 +123,7 @@ app.get("/search/:key", async (req, res) => {
     console.log(err.message);
   }
 });
+
 // dohvacanje xml zapisa upitnika sa zadanim id-em
 app.get("/get-xml/:id", async (req, res) => {
   try {
@@ -132,8 +138,9 @@ app.get("/get-xml/:id", async (req, res) => {
     console.log(err.message);
   }
 });
+
 // dohvacanje xml zapisa privatnog upitnika sa zadanim uuid-em
-app.get("/get-xml/token/:uuid", async (req, res) => {
+app.get("/get-xml/private/:uuid", async (req, res) => {
   try {
     const token = req.params.uuid;
     const result = await pool.query("SELECT * FROM upitnik WHERE link_token = $1", [
@@ -148,13 +155,15 @@ app.get("/get-xml/token/:uuid", async (req, res) => {
     console.log(err.message);
   }
 });
+
 // ruta za dodavanje upitnika u bazu - jos se treba editat
-app.post("/add-questionnaire", async (req, res) => {
-  let { naslov, autor_id, status, kratki_opis } = req.body;
+app.post("/add-upitnik", async (req, res) => {
+  let { naslov, autor_id, sadrzaj, status, kratki_opis } = req.body;
+  console.log('got request: ', autor_id);
   try {
     await pool.query(
-      "INSERT INTO upitnik (naslov, autor_id, status, kratki_opis) VALUES ($1, $2, $3, $4)",
-      [naslov, parseInt(autor_id), status, kratki_opis]
+      "INSERT INTO upitnik (naslov, autor_id, sadrzaj, status, kratki_opis) VALUES ($1, $2, $3, $4, $5)",
+      [naslov, parseInt(autor_id), sadrzaj, status, kratki_opis]
     );
     res.status(201).send("upitnik dodan!");
   } catch (err) {
@@ -162,8 +171,9 @@ app.post("/add-questionnaire", async (req, res) => {
     res.status(500).send("Internal server error");
   }
 });
+
 // ruta za dohvacanje svih upitnika iz baze od autora zadanog id-a
-protectedRouter.get("/get-upitnici/:autor_id", async (req, res) => {
+secureRouter.get("/get-upitnici/:autor_id", async (req, res) => {
   try {
     const products = await pool.query(`
       SELECT u.*, k.ime
@@ -184,29 +194,16 @@ protectedRouter.get("/get-upitnici/:autor_id", async (req, res) => {
     res.status(500).send("Internal server error");
   }
 });
+
 // brisanje upitnika zadanog id-a iz baze 
-protectedRouter.delete("/upitnik/:id", async (req, res) => {
+secureRouter.delete("/del-upitnik/:id", async (req, res) => {
   let result = await pool.query("DELETE FROM upitnik WHERE id = $1", [
     req.params.id,
   ]);
   res.send(result); 
 });
+
 /*
-app.get("/product/:id", async (req, res) => {
-  try {
-    const result = await pool.query("SELECT * FROM proizvod WHERE id = $1", [
-      req.params.id,
-    ]);
-    if (result.rows.length > 0) {
-      const product = result.rows[0];
-      res.status(200).json(product);
-    } else {
-      res.status(401).json("No product found");
-    }
-  } catch (err) {
-    res.status(500).send("Internal server error: " + err.message);
-  }
-});
 app.put("/product/:id", verifyToken, async (req, res) => {
   try {
     const { name, price, category, company } = req.body;
@@ -250,7 +247,10 @@ app.put("/product/:id", verifyToken, async (req, res) => {
   }
 });
 */
-app.use("/secure", verifyToken, protectedRouter);
+
+// secure rute su one kojima pristup ima samo prijavljeni korisnik
+// koriste token kako bi znale s kojim korisnikom se komunicira (na temelju id-a)
+app.use("/secure", verifyToken, secureRouter);
 function verifyToken(req, res, next) {
   let token = req.headers["authorization"];
   if (token) {
@@ -268,6 +268,7 @@ function verifyToken(req, res, next) {
     res.status(403).send("provide token");
   }
 }
+
 app.listen(5000, () => {
   console.log("Server started on port 5000");
 });
