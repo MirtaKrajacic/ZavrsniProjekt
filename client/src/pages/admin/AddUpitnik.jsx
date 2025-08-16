@@ -1,5 +1,5 @@
-import { useEffect, useState, useRef } from "react";
-import { Modal, Button, Form } from "react-bootstrap";
+import { useState, useRef } from "react";
+import { Modal, Button, Form, Alert } from "react-bootstrap";
 import { v4 as uuidv4 } from "uuid";
 // import validateXML from "./validateQueXML.js";
 
@@ -12,6 +12,8 @@ function AddUpitnik({ upitnikId }) {
   const [sadrzaj, setSadrzaj] = useState(""); // xml forma upitnika
   const [showShare, setShowShare] = useState(false);
   const [uuid, setUuid] = useState(uuidv4());
+  const [clicked, setClicked] = useState(false);
+  const [copied, setCopied] = useState(false);
   const fileInput = useRef(null);
 
   const resetView = () => {
@@ -61,17 +63,27 @@ function AddUpitnik({ upitnikId }) {
   const privatniUpitnikHandle = async () => {
     try {
       const result = await api.post(`/secure/add-privatni-upitnik/${uuid}`, {
-          naslov,
-          sadrzaj,
-          status,
-          kratki_opis: opis,
-          link_token: uuid
-        });
-        console.log(result.data);
-        setShowShare(false);
-        resetView();      
+        naslov,
+        sadrzaj,
+        status,
+        kratki_opis: opis,
+        link_token: uuid,
+      });
+      console.log(result.data);
+      setShowShare(false);
+      resetView();
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const checkInput = () => {
+    setClicked(true);
+    if (naslov === "" || opis === "" || status === "" || sadrzaj === "") {
+      console.log("not valid input");
+    } else {
+      spremiUpitnik();
+      setClicked(false);
     }
   };
 
@@ -85,11 +97,18 @@ function AddUpitnik({ upitnikId }) {
             Naslov upitnika
             <input
               type="text"
-              className="form-control"
+              className={`form-control ${
+                clicked && naslov === "" ? "is-invalid" : ""
+              }`}
               placeholder="Naslov u nekoliko riječi"
               onChange={(e) => setNaslov(e.target.value)}
               value={naslov}
             />
+            {naslov === "" && (
+              <div className="invalid-feedback">
+                Molimo unesite naslov upitnika.
+              </div>
+            )}
           </label>
         </div>
 
@@ -100,42 +119,58 @@ function AddUpitnik({ upitnikId }) {
               name="message"
               rows="4"
               cols="100"
-              className="form-control"
+              className={`form-control ${
+                clicked && opis === "" ? "is-invalid" : ""
+              }`}
               placeholder="Kratki opis toga za što upitnik služi"
               onChange={(e) => setOpis(e.target.value)}
               value={opis}
             />
+            {opis === "" && (
+              <div className="invalid-feedback">
+                Molimo unesite opis upitnika.
+              </div>
+            )}
           </label>
         </div>
 
-        <form className="mb-5">
-          <fieldset>
-            <legend>Označi dostupnost upitnika</legend>
+        <div className="mb-5">
+          <legend>Označi dostupnost upitnika</legend>
 
-            <label>
+          <div className="form-check">
+            <label className="form-check-label">
               <input
                 type="radio"
                 name="visibility"
                 value="javni"
                 checked={status === "javni"}
                 onChange={(e) => setStatus(e.target.value)}
-                required
+                className={`form-check-input`}
               />
               javni
             </label>
+          </div>
 
-            <label>
+          <div className="form-check">
+            <label className="form-check-label">
               <input
                 type="radio"
                 name="visibility"
                 value="privatni"
                 checked={status === "privatni"}
                 onChange={(e) => setStatus(e.target.value)}
+                className={`form-check-input`}
               />
               privatni
             </label>
-          </fieldset>
-        </form>
+          </div>
+
+          {clicked && status === "" && (
+            <div className="invalid-feedback d-block">
+              Molimo označite status upitnika.
+            </div>
+          )}
+        </div>
 
         <div className="mb-5">
           <label htmlFor="xmlFile" className="form-label">
@@ -144,22 +179,28 @@ function AddUpitnik({ upitnikId }) {
           <input
             id="xmlFile"
             type="file"
-            className="form-control"
+            className={`form-control ${
+              clicked && sadrzaj === "" ? "is-invalid" : ""
+            }`}
             ref={fileInput}
             accept=".xml"
             onChange={handleFileChange}
           />
+          {clicked && sadrzaj === "" && (
+            <div className="invalid-feedback">Molimo učitajte datoteku.</div>
+          )}
         </div>
+
         <button
           className="btn btn-primary d-block mx-auto"
-          onClick={spremiUpitnik}
+          onClick={checkInput}
         >
           Dodaj
         </button>
       </div>
 
-      <Modal show={showShare} onHide={() => setShowShare(false)} centered>
-        <Modal.Header>
+      <Modal show={showShare} onHide={() => {setShowShare(false); setCopied(false)}} centered>
+        <Modal.Header closeButton>
           <Modal.Title>Podijeli upitnik</Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -170,10 +211,32 @@ function AddUpitnik({ upitnikId }) {
                 type="text"
                 value={`http://localhost:3000/upitnik/p/${uuid}`}
                 readOnly
+                id="share-url"
               />
             </Form.Group>
           </Form>
-          <Button variant="outline-success">Share</Button>
+          <Button
+            variant="outline-success"
+            onClick={async () => {
+              const url = `http://localhost:3000/upitnik/p/${uuid}`;
+              try {
+                await navigator.clipboard.writeText(url);
+                setCopied(true);
+              } catch (err) {
+                console.error("Greška kod kopiranja:", err);
+              }
+            }}
+          >
+            Share
+          </Button>
+          {copied && (
+            <Alert
+              variant="success"
+              className="mt-3 mb-0"
+            >
+              <strong>Link kopiran.</strong>
+            </Alert>
+          )}
         </Modal.Body>
         <Modal.Footer>
           <Button
@@ -182,11 +245,9 @@ function AddUpitnik({ upitnikId }) {
           >
             Odustani
           </Button>
-          <Button 
-          variant="primary"
-          onClick={() => privatniUpitnikHandle()}
-          >
-            Pošalji i uploadaj</Button>
+          <Button variant="primary" onClick={() => privatniUpitnikHandle()}>
+            Pošalji i uploadaj
+          </Button>
         </Modal.Footer>
       </Modal>
     </div>

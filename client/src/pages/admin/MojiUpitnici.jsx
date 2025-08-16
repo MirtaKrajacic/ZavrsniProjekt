@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { Modal, Button, Form } from "react-bootstrap";
 
 import api from "../../api";
 import UpitniciCards from "../UpitniciCards";
 
 const MojiUpitnici = () => {
   const [upitnici, setUpitnici] = useState([]);
+  const [showShare, setShowShare] = useState(false);
+  const [id, setId] = useState("");
 
   useEffect(() => {
     document.title = "Moji upitnici";
@@ -31,15 +34,21 @@ const MojiUpitnici = () => {
     }
   };
 
+  const setForDeletion = (upitnikId) => {
+    setId(upitnikId);
+    setShowShare(true);
+  };
+
   const deleteUpitnik = async (id) => {
     try {
       // doraditi - confirmation da zelimo izbrisati
-      const confirmDelete = window.confirm(
+      /*const confirmDelete = window.confirm(
         "Jeste li sigurni da želite trajno izbrisati ovaj upitnik?"
       );
-      if (!confirmDelete) return;
+      if (!confirmDelete) return;*/
 
       await api.delete(`secure/del-upitnik/${id}`);
+      setShowShare(false);
       getUpitnici();
     } catch (err) {
       console.error(err);
@@ -66,7 +75,7 @@ const MojiUpitnici = () => {
                 </Link>
                 <button
                   className="btn btn-danger btn-sm m-2"
-                  onClick={() => deleteUpitnik(u.id)}
+                  onClick={() => setForDeletion(u.id)}
                 >
                   Izbriši
                 </button>
@@ -77,6 +86,26 @@ const MojiUpitnici = () => {
       ) : (
         <p>Još nemate ni jedan upitnik</p>
       )}
+
+      <Modal show={showShare} onHide={() => setShowShare(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Brisanje upitnika</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Jeste li sigurni da želite trajno izbrisati ovaj upitnik?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="outline-secondary"
+            onClick={() => setShowShare(false)}
+          >
+            Odustani
+          </Button>
+          <Button variant="outline-danger" onClick={() => deleteUpitnik(id)}>
+            Izbriši
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 };
