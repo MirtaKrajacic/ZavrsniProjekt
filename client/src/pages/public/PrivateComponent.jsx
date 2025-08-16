@@ -15,7 +15,7 @@ const PrivateComponent = () => {
 
   if (!token || !isTokenValid(token)) {
     localStorage.removeItem("token"); // ako je expired
-    return <Navigate to="login" />;
+    return <Navigate to="/login" />;
   }
 
   return <Outlet />;

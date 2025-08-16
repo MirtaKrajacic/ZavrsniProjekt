@@ -168,7 +168,6 @@ function AddUpitnik({ upitnikId }) {
               <Form.Label>URL upitnika</Form.Label>
               <Form.Control
                 type="text"
-                placeholder="Upiši ovdje..."
                 value={`http://localhost:3000/upitnik/p/${uuid}`}
                 readOnly
               />
