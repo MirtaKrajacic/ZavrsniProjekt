@@ -1,32 +1,42 @@
 import { useEffect, useState } from "react";
+import { Alert } from "react-bootstrap";
 // import validateXML from "./validateQueXML.js";
 
 import api from "../../api";
 
 function UrediProfil() {
-  const [ime, setIme] = useState(""); 
+  const [ime, setIme] = useState("");
   const [opis, setOpis] = useState("");
   const [email, setEmail] = useState("");
+  const [success, setSuccess] = useState(false);
 
   useEffect(() => {
     dohvatiPodatke();
   }, []);
 
   const dohvatiPodatke = async () => {
-    const {data} = await api.get("/secure/get-korisnik");
-    setIme(data.ime);
-    setEmail(data.email);
-    if (data.opis) {
-      setOpis(data.opis);
+    try {
+      const { data } = await api.get("/secure/get-korisnik");
+      setIme(data.ime);
+      setEmail(data.email);
+      if (data.opis) {
+        setOpis(data.opis);
+      }
+      console.log(data);
+    } catch (err) {
+      console.log(err);
     }
-    
-    console.log(data);
-  }
+  };
 
   const urediProfil = async () => {
-    let {data} = await api.put("/secure/update-korisnik", {ime, opis});
-    
-    console.log(data);
+    try {
+      let { data } = await api.put("/secure/update-korisnik", { ime, opis });
+      setSuccess(true);
+      setTimeout(() => setSuccess(false), 2000); // automatski nestane nakon 3s
+      console.log(data);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
@@ -55,7 +65,7 @@ function UrediProfil() {
               className="form-control"
               placeholder={email}
               value={email}
-              style={{ cursor: "not-allowed"}}
+              style={{ cursor: "not-allowed" }}
               disabled
             />
           </label>
@@ -69,7 +79,9 @@ function UrediProfil() {
               rows="4"
               cols="100"
               className="form-control"
-              placeholder={opis || 'Kratki opis toga tko ste, čime se bavite,...'}
+              placeholder={
+                opis || "Kratki opis toga tko ste, čime se bavite,..."
+              }
               onChange={(e) => setOpis(e.target.value)}
               value={opis}
             />
@@ -82,6 +94,12 @@ function UrediProfil() {
         >
           Spremi
         </button>
+
+        {success && (
+          <Alert variant="success" className="mt-3 text-center">
+            Promjene su uspješno spremljene!
+          </Alert>
+        )}
       </div>
     </div>
   );
