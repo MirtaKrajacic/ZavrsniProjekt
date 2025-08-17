@@ -13,8 +13,8 @@ function RjesiUpitnik({ mod }) {
     const fetchData = async () => {
       const { data } = await api.get(
         mod === "javni"
-          ? `/get-xml/${params.id}`
-          : `/get-xml/private/${params.uuid}`
+          ? `/upitnik/get-xml/${params.id}`
+          : `/upitnik/get-xml/private/${params.uuid}`
       );
 
       const parser = new XMLParser({

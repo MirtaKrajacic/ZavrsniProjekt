@@ -15,7 +15,7 @@ const Registracija = () => {
 
   const collectData = async () => {
     try {
-      const { data } = await api.post("/register", { name, email, password });
+      const { data } = await api.post("/auth/register", { name, email, password });
 
       localStorage.setItem("token", data.auth);
       navigate("/");

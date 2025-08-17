@@ -17,7 +17,7 @@ const Naslovnica = () => {
 
   const getUpitnici = async () => {
     try {
-      const result = await api.get("/get-upitnici");
+      const result = await api.get("/upitnik/get-upitnici");
       setUpitnici(result.data);
     } catch (err) {
       console.error(err);
@@ -28,7 +28,7 @@ const Naslovnica = () => {
     try {
       let key = event.target.value;
       if (key) {
-        const { data } = await api.get(`/search/${key}`);
+        const { data } = await api.get(`/upitnik/search/${key}`);
         console.log('search handle je dohvatio: ', data);
         if (data) {
           setUpitnici(data);

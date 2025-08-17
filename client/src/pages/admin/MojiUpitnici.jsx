@@ -20,7 +20,7 @@ const MojiUpitnici = () => {
 
   const getUpitnici = async () => {
     try {
-      const { data } = await api.get(`secure/get-moji-upitnici`);
+      const { data } = await api.get(`/upitnik/get-moji-upitnici`);
       console.log(data);
 
       if (Array.isArray(data)) {
@@ -47,7 +47,7 @@ const MojiUpitnici = () => {
       );
       if (!confirmDelete) return;*/
 
-      await api.delete(`secure/del-upitnik/${id}`);
+      await api.delete(`/upitnik/del-upitnik/${id}`);
       setShowShare(false);
       getUpitnici();
     } catch (err) {

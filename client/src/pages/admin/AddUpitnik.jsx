@@ -47,7 +47,7 @@ function AddUpitnik({ upitnikId }) {
       if (status === "privatni") {
         setShowShare(true);
       } else {
-        const result = await api.post("/secure/add-upitnik", {
+        const result = await api.post("/upitnik/add-upitnik", {
           naslov,
           sadrzaj,
           status,
@@ -62,7 +62,7 @@ function AddUpitnik({ upitnikId }) {
   };
   const privatniUpitnikHandle = async () => {
     try {
-      const result = await api.post(`/secure/add-privatni-upitnik/${uuid}`, {
+      const result = await api.post(`/upitnik/add-privatni-upitnik/${uuid}`, {
         naslov,
         sadrzaj,
         status,

@@ -16,7 +16,7 @@ function UrediProfil() {
 
   const dohvatiPodatke = async () => {
     try {
-      const { data } = await api.get("/secure/get-korisnik");
+      const { data } = await api.get("/korisnik/get-korisnik");
       setIme(data.ime);
       setEmail(data.email);
       if (data.opis) {
@@ -30,7 +30,7 @@ function UrediProfil() {
 
   const urediProfil = async () => {
     try {
-      let { data } = await api.put("/secure/update-korisnik", { ime, opis });
+      let { data } = await api.put("/korisnik/update-korisnik", { ime, opis });
       setSuccess(true);
       setTimeout(() => setSuccess(false), 2000); // automatski nestane nakon 3s
       console.log(data);
