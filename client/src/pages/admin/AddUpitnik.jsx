@@ -199,7 +199,7 @@ function AddUpitnik({ upitnikId }) {
         </button>
       </div>
 
-      <Modal show={showShare} onHide={() => {setShowShare(false); setCopied(false)}} centered>
+      <Modal show={showShare} onHide={() => {setShowShare(false); setCopied(false);}} centered>
         <Modal.Header closeButton>
           <Modal.Title>Podijeli upitnik</Modal.Title>
         </Modal.Header>
@@ -241,7 +241,7 @@ function AddUpitnik({ upitnikId }) {
         <Modal.Footer>
           <Button
             variant="outline-secondary"
-            onClick={() => setShowShare(false)}
+            onClick={() => {setShowShare(false); setCopied(false);}}
           >
             Odustani
           </Button>
