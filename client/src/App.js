@@ -18,14 +18,14 @@ function App() {
       <BrowserRouter>
         <Nav />
         <Routes>
-          {/* Public rute */}
+          {/* Javne rute */}
           <Route path="/" element={<Naslovnica />} />
           <Route path="/signup" element={<Registracija />} />
           <Route path="/login" element={<Prijava />} />
           <Route path="/upitnik/:id" element={<RjesiUpitnik mod={"javni"}/>} />
           <Route path="/upitnik/p/:uuid" element={<RjesiUpitnik mod={"privatni"}/>} />
-
-          {/* Privatme rute */}
+          
+          {/* Privatne rute */}
           <Route element={<PrivateComponent />}>
             <Route path="/view" element={<MojiUpitnici />} />
             <Route path="/add" element={<AddUpitnik />} />

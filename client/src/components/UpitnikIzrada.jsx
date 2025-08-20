@@ -1,18 +1,20 @@
 // import validateXML from "./validateQueXML.js";
+import { useEffect } from "react";
 
 // element upitnika dobiven parsiranjem uploadanog XML-a
 
-function Upitnik({ xmlData }) {
+function UpitnikIzrada({ xmlData, obrnutoKodirani, min, max }) {
+    useEffect(() => {
+        console.log('data promijenjena:', xmlData);
+    }, [xmlData]);
 
-  // definiranje skale odgovora pitanja q
+    useEffect(() => {
+        if (obrnutoKodirani) {
+            console.log('Obrnuto kodirani:', obrnutoKodirani);
+        }
+    }, [obrnutoKodirani]);
+
   function Response({ q }) {
-    /*if (q.response.free) {
-      return (
-        <div>
-          <input type="text" maxLength={q.response.free.length} />
-        </div>
-      );
-    }*/ // ne dopuštam ovu opciju 
     if (q.response.fixed) {
       const cats = [].concat(q.response.fixed.category); // idemo po svim ponudenim odgovorima
       return (
@@ -24,7 +26,7 @@ function Upitnik({ xmlData }) {
                   className="form-check-input"
                   type="radio"
                   name={q.response.varName}
-                  value={c.value}
+                  value={ (obrnutoKodirani && obrnutoKodirani.has(q.varName)) ? min+max-c.value : c.value} //
                   id={`${q.varName}-${c.value}`}
                 />
                 <label
@@ -39,7 +41,7 @@ function Upitnik({ xmlData }) {
         </div>
       );
     }
-    return <em>Unsupported response</em>;
+    return <em>Unsupported response type</em>;
   }
 
   const arr = (x) => (Array.isArray(x) ? x : x ? [x] : []);
@@ -52,7 +54,8 @@ function Upitnik({ xmlData }) {
       const titleInfo = infos.find((i) => i.position === "title");
       const title = titleInfo?.text || "Sekcija";
 
-      const questions = arr(sec.question);
+      const q = sec.question; // pretpostavljam da je samo jedno pitanje po sekciji
+      const subQuestions = arr(q.subQuestion); // te ono ima više podpitanja
 
       return (
         <section key={sec.id}>
@@ -60,35 +63,25 @@ function Upitnik({ xmlData }) {
             <b>{title}</b>
           </h2>
 
-          {questions.map((q) => {
-            const subs = arr(q.subQuestion);
+          <div key={q.varName || q.text}>
+            <h4 dangerouslySetInnerHTML={{ __html: q.text }} />
 
-            return (
-              <div key={q.varName || q.text}>
-                <h4 dangerouslySetInnerHTML={{ __html: q.text }} />
+            {subQuestions.map((sq, ind) => (
+              <div key={sq.varName}>
+                {ind + 1 + ". " + sq.text}
 
-                {subs.length ? ( // ako ima subQuestiona u Questionu
-                  subs.map((sq, ind) => (
-                    <div key={sq.varName}>
-                      {ind+1 + '. ' + sq.text}
-
-                      <Response
-                        q={{
-                          ...sq,
-                          response: { // zelimo da svaki subQuestion ima svoj nezavisni response objekt
-                            ...q.response,
-                            varName: sq.varName, // svaki subQuestion ima svoj varName
-                          },
-                        }}
-                      />
-                    </div>
-                  ))
-                ) : (
-                  <Response q={q} />
-                )}
+                <Response
+                  q={{
+                    ...sq,
+                    response: {
+                      ...q.response,
+                      varName: sq.varName,
+                    },
+                  }}
+                />
               </div>
-            );
-          })}
+            ))}
+          </div>
         </section>
       );
     });
@@ -101,4 +94,4 @@ function Upitnik({ xmlData }) {
   );
 }
 
-export default Upitnik;
+export default UpitnikIzrada;

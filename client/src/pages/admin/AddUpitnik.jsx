@@ -1,11 +1,12 @@
 import { useState, useRef } from "react";
 import { Modal, Button, Form, Alert } from "react-bootstrap";
 import { v4 as uuidv4 } from "uuid";
+import DefinirajBodovanje from "../../components/DefinirajBodovanje.jsx";
 // import validateXML from "./validateQueXML.js";
 
 import api from "../../api";
 
-function AddUpitnik({ upitnikId }) {
+function AddUpitnik() {
   const [naslov, setNaslov] = useState(""); // naslov upitnika
   const [opis, setOpis] = useState(""); // kratki opis upitnika
   const [status, setStatus] = useState(""); // status upitnika - 'javni' ili 'privatni'
@@ -91,7 +92,7 @@ function AddUpitnik({ upitnikId }) {
     <div className="container">
       <h1>Dodaj upitnik</h1>
 
-      <div className="container w-50">
+      <div className="container-lg">
         <div className="mb-5">
           <label className="form-label">
             Naslov upitnika
@@ -191,6 +192,15 @@ function AddUpitnik({ upitnikId }) {
           )}
         </div>
 
+        {sadrzaj && (
+          <div className="card mb-4">
+            <div className="card-header">Definiraj bodovanje upitnika</div>
+            <div className="card-body">
+              <DefinirajBodovanje xmlData={sadrzaj} />
+            </div>
+          </div>
+        )}
+
         <button
           className="btn btn-primary d-block mx-auto"
           onClick={checkInput}
@@ -199,7 +209,14 @@ function AddUpitnik({ upitnikId }) {
         </button>
       </div>
 
-      <Modal show={showShare} onHide={() => {setShowShare(false); setCopied(false);}} centered>
+      <Modal
+        show={showShare}
+        onHide={() => {
+          setShowShare(false);
+          setCopied(false);
+        }}
+        centered
+      >
         <Modal.Header closeButton>
           <Modal.Title>Podijeli upitnik</Modal.Title>
         </Modal.Header>
@@ -230,10 +247,7 @@ function AddUpitnik({ upitnikId }) {
             Share
           </Button>
           {copied && (
-            <Alert
-              variant="success"
-              className="mt-3 mb-0"
-            >
+            <Alert variant="success" className="mt-3 mb-0">
               <strong>Link kopiran.</strong>
             </Alert>
           )}
@@ -241,7 +255,10 @@ function AddUpitnik({ upitnikId }) {
         <Modal.Footer>
           <Button
             variant="outline-secondary"
-            onClick={() => {setShowShare(false); setCopied(false);}}
+            onClick={() => {
+              setShowShare(false);
+              setCopied(false);
+            }}
           >
             Odustani
           </Button>
