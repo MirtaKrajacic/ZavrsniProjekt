@@ -2,15 +2,21 @@ import { useEffect, useState } from "react";
 import { XMLParser, XMLBuilder } from "fast-xml-parser";
 import UpitnikIzrada from "./UpitnikIzrada.jsx";
 
-function DefinirajBodovanje({ xmlData, updateParentData }) {
+// radim s pretpostavkom da svaki upitnik koji se unese ima jedan section i unutar njega jedan question
+// unutar questiona su subquestions
+
+function DefinirajBodovanje({
+  xmlData,
+  updateParentData,
+  setParentVrednovanje,
+  setParentFormula,
+}) {
   const [data, setData] = useState(null); // parsirani xml u obliku js objekta
   const [checked, setChecked] = useState(new Set()); // set id-eva podpitanja koja su obrnuto kodirana
   const [min, setMin] = useState(0); // min bodovi
   const [max, setMax] = useState(0); // max bodovi
   const [vrednovanje, setVrednovanje] = useState("");
-  const [skupinePitanja, setSkupinePitanja] = useState({}); // subskupine pitanja unutar sekcije
-  const [countSkupina, setCountSkupina] = useState(0);
-  const [sekcije, setSekcije] = useState({});
+  const [skupinePitanja, setSkupinePitanja] = useState([]); // subskupine pitanja unutar sekcije
 
   useEffect(() => {
     // postavljanje js objekta iz dobivenog xml-a
@@ -33,7 +39,7 @@ function DefinirajBodovanje({ xmlData, updateParentData }) {
 
       const xmlString = builder.build(data);
       updateParentData(xmlString);
-      console.log(xmlString);
+      //console.log(xmlString);
     }
   }, [data]);
 
@@ -56,44 +62,39 @@ function DefinirajBodovanje({ xmlData, updateParentData }) {
     const resultSpecs = {
       skala_odgovora: likertRange,
       obrnuto_kodirana: checked,
-      skupine_pitanja: [
-        {
-          ime: "planiranje",
-          pitanja: ["Q1", "Q4", "Q7"],
-          op: "sum",
-        },
-        { ime: "realizacija", pitanja: ["Q2", "Q3", "Q8"], op: "mean" },
-      ],
-      formula: "0.6*planiranje + 0.4*realizacija",
+      skupine_pitanja: skupinePitanja,
     };
+
+    setParentVrednovanje(vrednovanje);
+    setParentFormula(resultSpecs);
+
+    console.log(resultSpecs);
+    editResponse();
   };
 
   const editResponse = () => {
-    console.log("pozvan sam");
     let count = min;
 
     const newData = structuredClone(data); // kopiramo data u novi objekt da možemo koristiti setData
-    const sections = arr(newData.questionnaire.section);
+    const sekcija = newData.questionnaire.section;
+    const question = sekcija.question;
 
-    sections.forEach((sec) => {
-      const question = sec.question;
-      const cats = arr(question.response.fixed.category);
-      cats.forEach((cat) => {
-        cat.value = count;
-        count++;
-        console.log(cat.value);
-      });
+    const cats = arr(question.response.fixed.category);
+    cats.forEach((cat) => {
+      cat.value = count;
+      count++;
+      //console.log(cat.value);
     });
 
     setData(newData); // updateamo data tako da svaki response ima brojevne vrijednosti
   };
 
-  function IzlistajPitanja({ q }) {
+  function OznaciObrnutoKodirane({ q }) {
     const subs = arr(q.subQuestion); // idemo po svim pitanjima unutar sekcije
 
     return (
       <div key={q.varName || q.text}>
-        {subs.map((sq, sqInd) => (
+        {subs.map((sq, ind) => (
           <div key={sq.varName}>
             <label>
               <input
@@ -102,7 +103,6 @@ function DefinirajBodovanje({ xmlData, updateParentData }) {
                 name={sq.varName}
                 checked={checked.has(sq.varName)}
                 onChange={(e) => {
-                  console.log(`clicked ${e.target.name}`);
                   if (e.target.checked) {
                     setChecked((checkedBefore) => {
                       let checkedNow = new Set(checkedBefore);
@@ -118,7 +118,7 @@ function DefinirajBodovanje({ xmlData, updateParentData }) {
                   }
                 }}
               />
-              {sqInd + 1}
+              {` ${ind + 1}`}
             </label>
           </div>
         ))}
@@ -126,17 +126,13 @@ function DefinirajBodovanje({ xmlData, updateParentData }) {
     );
   }
 
-  function DefinirajPodskupine({ q, onAdd }) {
-    const subs = arr(q.subQuestion);
+  function DefinirajPodskupine({ q }) {
+    const subQs = arr(q.subQuestion);
     const [ime, setIme] = useState("");
     const [odabranaPitanja, setOdabranaPitanja] = useState([]);
     const [op, setOp] = useState("sum");
-
-    const togglePitanje = (id) => {
-      setOdabranaPitanja((prev) =>
-        prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
-      );
-    };
+    const [faktor, setFaktor] = useState(1); // faktor s kojime se množe odgovori (opcionalan)
+    //const [clicked, setClicked] = useState(false);
 
     return (
       <div className="border rounded p-2 mb-3">
@@ -149,35 +145,79 @@ function DefinirajBodovanje({ xmlData, updateParentData }) {
         />
 
         <div className="mb-2">
-          {subs.map((sq) => (
+          {subQs.map((sq, ind) => (
             <label key={sq.varName} className="d-block">
               <input
                 type="checkbox"
                 checked={odabranaPitanja.includes(sq.varName)}
-                onChange={() => togglePitanje(sq.varName)}
-              />{" "}
-              {sq.varName}
+                name={sq.varName}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setOdabranaPitanja((prev) => [...prev, e.target.name]);
+                  } else if (
+                    !e.target.checked &&
+                    odabranaPitanja.has(e.target.name)
+                  ) {
+                    setOdabranaPitanja((prev) =>
+                      prev.filter((x) => x !== e.target.name)
+                    );
+                  }
+                }}
+              />
+              {` ${ind + 1}`}
             </label>
           ))}
         </div>
 
-        <select
-          value={op}
-          onChange={(e) => setOp(e.target.value)}
-          className="form-select mb-2"
-        >
-          <option value="sum">suma</option>
-          <option value="mean">srednja vrijednost</option>
-        </select>
+        <label className="fw-semibold">
+          Što se računa s odgovorima unutar skupine?
+          <select
+            value={op}
+            onChange={(e) => setOp(e.target.value)}
+            className="form-select mb-2"
+          >
+            <option value="sum">suma</option>
+            <option value="mean">srednja vrijednost</option>
+          </select>
+        </label>
+
+        <div className="mb-3">
+          <label className="fw-semibold">
+            Faktor s kojime se množi rezultat skupine (opcionalno)
+          </label>
+          <div className="input-group">
+            <input
+              type="number"
+              className="form-control"
+              value={faktor}
+              onChange={(e) => setFaktor(e.target.value)}
+              min="0"
+            />
+          </div>
+        </div>
 
         <button
           type="button"
           className="btn btn-sm btn-success"
           onClick={() => {
             if (!ime || odabranaPitanja.length === 0) return;
-            onAdd({ ime, pitanja: odabranaPitanja, op });
+            //onAdd({ ime, pitanja: odabranaPitanja, op });
+
+            // ovako je definirana jedna skupina
+            const skupina = {
+              ime: ime,
+              pitanja: odabranaPitanja,
+              op: op,
+              faktor_mnozenja: faktor,
+            };
+
             setIme("");
             setOdabranaPitanja([]);
+            setSkupinePitanja((prev) => {
+              let copy = new Set(prev);
+              copy = copy.add(skupina);
+              return copy;
+            });
           }}
         >
           Dodaj skupinu
@@ -186,62 +226,53 @@ function DefinirajBodovanje({ xmlData, updateParentData }) {
     );
   }
 
-  function ListaSekcija() {
-    const sections = arr(data.questionnaire.section); // section = sekcija pitanja u queXML
+  function DefinirajBodovanje() {
+    const question = data.questionnaire.section.question;
 
-    return sections.map((sec, ind) => {
-      const infos = arr(sec.sectionInfo);
-      const titleInfo = infos.find((i) => i.position === "title");
-      const title = "Sekcija: " + titleInfo?.text || `Sekcija ${ind}`;
+    return (
+      <section className="p-4 mb-4 rounded-3 border shadow-sm bg-white">
+        <div className="mb-4">
+          <h3 className="p-2 rounded-2 bg-success-subtle text-success fw-semibold">
+            Označi koje se čestice obrnuto kodiraju, ostale se kodiraju normalno
+          </h3>
+          <OznaciObrnutoKodirane q={question} />
+        </div>
 
-      const question = sec.question; // pretpostavljam da je samo jedno pitanje po sekciji
-
-      return (
-        <section
-          key={sec.id}
-          className="p-4 mb-4 rounded-3 border shadow-sm bg-white"
-        >
-          <h2 className="mb-3 text-primary fw-bold">{title}</h2>
-
-          <div className="mb-4">
-            <IzlistajPitanja q={question} />
+        <h3 className="p-2 rounded-2 bg-success-subtle text-success fw-semibold">
+          U kojem se rasponu kreću bodovi Likertove ljestvice?
+        </h3>
+        <div className="d-flex align-items-center gap-4 my-3">
+          <div className="input-group w-auto">
+            <span className="input-group-text">Od</span>
+            <input
+              type="number"
+              className="form-control"
+              min={0}
+              max={10}
+              value={min}
+              onChange={(e) => setMin(parseInt(e.target.value))}
+            />
           </div>
 
-          <h3 className="p-2 rounded-2 bg-success-subtle text-success fw-semibold">
-            U kojem se rasponu kreću bodovi Likertove ljestvice?
-          </h3>
-          <div className="d-flex align-items-center gap-4 my-3">
-            <div className="input-group w-auto">
-              <span className="input-group-text">Od</span>
-              <input
-                type="number"
-                className="form-control"
-                min={0}
-                max={10}
-                value={min}
-                onChange={(e) => setMin(parseInt(e.target.value))}
-              />
-            </div>
-
-            <div className="input-group w-auto">
-              <span className="input-group-text">Do</span>
-              <input
-                type="number"
-                className="form-control"
-                min={0}
-                max={10}
-                value={max}
-                onChange={(e) => setMax(parseInt(e.target.value))}
-              />
-            </div>
+          <div className="input-group w-auto">
+            <span className="input-group-text">Do</span>
+            <input
+              type="number"
+              className="form-control"
+              min={0}
+              max={10}
+              value={max}
+              onChange={(e) => setMax(parseInt(e.target.value))}
+            />
           </div>
+        </div>
 
-          <h3 className="p-2 rounded-2 bg-success-subtle text-success fw-semibold">
-            Koje su podskupine pitanja u upitniku?
-          </h3>
-        </section>
-      );
-    });
+        <h3 className="p-2 rounded-2 bg-success-subtle text-success fw-semibold">
+          Koje su subskale u upitniku?
+        </h3>
+        <DefinirajPodskupine q={question} />
+      </section>
+    );
   }
 
   return (
@@ -260,12 +291,9 @@ function DefinirajBodovanje({ xmlData, updateParentData }) {
         )}
       </div>
 
-      {/* definiranje bodovanja upitnika po sekcijama */}
+      {/* definiranje bodovanja upitnika */}
       <div className="col-6 bg-light border rounded-3">
-        <h3 className="p-2 mt-3 bg-danger-subtle rounded-2">
-          Označi koje se čestice obrnuto kodiraju, ostale se kodiraju normalno
-        </h3>
-        {data && <ListaSekcija className="m-3" />}
+        {data && <DefinirajBodovanje className="m-3" />}
 
         <div className="mt-3 mb-3">
           <label className="form-label fw-semibold">
@@ -292,7 +320,7 @@ Score Categories:
           className="btn btn-primary d-block mx-auto"
           onClick={() => {
             console.log("clicked, ", checked);
-            editResponse();
+            handleSave();
           }}
         >
           Spremi

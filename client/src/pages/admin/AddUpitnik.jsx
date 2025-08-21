@@ -15,6 +15,9 @@ function AddUpitnik() {
   const [uuid, setUuid] = useState(uuidv4());
   const [clicked, setClicked] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [vrednovanja, setVrednovanje] = useState("");
+  const [formula, setFormula] = useState(null);
+
   const fileInput = useRef(null);
 
   const resetView = () => {
@@ -196,7 +199,12 @@ function AddUpitnik() {
           <div className="card mb-4">
             <div className="card-header">Definiraj bodovanje upitnika</div>
             <div className="card-body">
-              <DefinirajBodovanje xmlData={sadrzaj} updateParentData={setSadrzaj}/>
+              <DefinirajBodovanje
+                xmlData={sadrzaj}
+                updateParentData={setSadrzaj}
+                setParentVrednovanje={setVrednovanje}
+                setParentFormula={setFormula}
+              />
             </div>
           </div>
         )}
