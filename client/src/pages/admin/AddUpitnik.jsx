@@ -10,7 +10,7 @@ function AddUpitnik() {
   const [naslov, setNaslov] = useState(""); // naslov upitnika
   const [opis, setOpis] = useState(""); // kratki opis upitnika
   const [status, setStatus] = useState(""); // status upitnika - 'javni' ili 'privatni'
-  const [sadrzaj, setSadrzaj] = useState(""); // xml forma upitnika
+  const [sadrzaj, setSadrzaj] = useState(""); // xml upitnika
   const [showShare, setShowShare] = useState(false);
   const [uuid, setUuid] = useState(uuidv4());
   const [clicked, setClicked] = useState(false);
@@ -196,7 +196,7 @@ function AddUpitnik() {
           <div className="card mb-4">
             <div className="card-header">Definiraj bodovanje upitnika</div>
             <div className="card-body">
-              <DefinirajBodovanje xmlData={sadrzaj} />
+              <DefinirajBodovanje xmlData={sadrzaj} updateParentData={setSadrzaj}/>
             </div>
           </div>
         )}
