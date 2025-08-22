@@ -7,6 +7,8 @@ import api from "../../api";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [clickedPrijava, setClickedPrijava] = useState(false);
+  const [error, setError] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -16,7 +18,7 @@ const Login = () => {
   const handleLogin = async () => {
     try {
       const { data } = await api.post("/auth/login", { email, password });
-
+      
       if (data.auth) {
         localStorage.setItem("token", data.auth);
         navigate("/");
@@ -24,6 +26,7 @@ const Login = () => {
         alert("Please provide token");
       }
     } catch (err) {
+      setError(true);
       console.error(err);
     }
   };
@@ -52,16 +55,23 @@ const Login = () => {
             onChange={(e) => setPassword(e.target.value)} // e.target.value je curr value input elementa
             value={password}
           />
+          
         </div>
 
         <Link to="/signup">Nemate još korisnički račun? Registrirajte se.</Link>
 
         <button
           className="btn btn-primary d-block mx-auto"
-          onClick={handleLogin}
+          onClick={() => {
+            setClickedPrijava(true);
+            handleLogin();
+          }}
         >
           Log in
         </button>
+
+        {clickedPrijava && error &&
+          <p className="text-danger">Netočan email ili lozinka.</p>}
       </div>
     </div>
   );
