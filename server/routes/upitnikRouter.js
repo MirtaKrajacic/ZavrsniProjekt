@@ -7,8 +7,8 @@ import { verifyToken } from "../middleware/jwtMiddleware.js";
 import {
   listJavniUpitnici,         
   searchJavniUpitnici,       
-  getXml,                 
-  getPrivatniXml,        
+  getUpitnikRjesavanje,                 
+  getUpitnikRjesavanjePriv,        
   addUpitnik,                
   addPrivatniUpitnik,        
   listMojiUpitnici,            
@@ -24,10 +24,10 @@ router.get("/get-upitnici", listJavniUpitnici);
 router.get("/search/:key", searchJavniUpitnici);
 
 // dohvacanje xml zapisa upitnika sa zadanim id-em
-router.get("/get-xml/:id", getXml);
+router.get("/get-upitnik/:id", getUpitnikRjesavanje);
 
 // dohvacanje xml zapisa privatnog upitnika sa zadanim uuid-em
-router.get("/get-xml/private/:uuid", getPrivatniXml);
+router.get("/get-upitnik/private/:uuid", getUpitnikRjesavanjePriv);
 
 // ruta za dodavanje upitnika u bazu - jos se treba editat
 router.post("/add-upitnik", verifyToken, addUpitnik);

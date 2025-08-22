@@ -9,7 +9,7 @@ function DefinirajBodovanje({
   xmlData,
   updateParentData,
   setParentVrednovanje,
-  setParentFormula,
+  setParentFormula
 }) {
   const [data, setData] = useState(null); // parsirani xml u obliku js objekta
   const [checked, setChecked] = useState(new Set()); // set id-eva podpitanja koja su obrnuto kodirana
@@ -41,7 +41,7 @@ function DefinirajBodovanje({
       updateParentData(xmlString);
       //console.log(xmlString);
     }
-  }, [data]);
+  }, [data, updateParentData]);
 
   const arr = (x) => {
     if (Array.isArray(x)) {
@@ -61,14 +61,16 @@ function DefinirajBodovanje({
 
     const resultSpecs = {
       skala_odgovora: likertRange,
-      obrnuto_kodirana: checked,
+      obrnuto_kodirana: [...checked],
       skupine_pitanja: skupinePitanja,
     };
 
-    setParentVrednovanje(vrednovanje);
-    setParentFormula(resultSpecs);
-
     console.log(resultSpecs);
+    console.log(vrednovanje);
+
+    setParentVrednovanje(vrednovanje);
+    setParentFormula(JSON.stringify(resultSpecs))
+
     editResponse();
   };
 
@@ -249,6 +251,7 @@ function DefinirajBodovanje({
               op: op,
               faktor_mnozenja: faktor,
             };
+            
             setIme("");
             //setOdabranaPitanja([]);
             setSkupinePitanja((prev) => [...prev, skupina]);

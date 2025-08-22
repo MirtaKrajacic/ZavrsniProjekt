@@ -15,7 +15,7 @@ function AddUpitnik() {
   const [uuid, setUuid] = useState(uuidv4());
   const [clicked, setClicked] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [vrednovanja, setVrednovanje] = useState("");
+  const [vrednovanje, setVrednovanje] = useState("");
   const [formula, setFormula] = useState(null);
 
   const fileInput = useRef(null);
@@ -48,6 +48,9 @@ function AddUpitnik() {
   const spremiUpitnik = async () => {
     try {
       console.log("pozvali su me, spremiUpitnik!");
+      console.log('moja formula ', formula);
+      console.log('moje vrednovanje ', vrednovanje);
+
       if (status === "privatni") {
         setShowShare(true);
       } else {
@@ -56,6 +59,8 @@ function AddUpitnik() {
           sadrzaj,
           status,
           kratki_opis: opis,
+          vrednovanje: vrednovanje,
+          formula: formula
         });
         console.log(result.data);
         resetView();
@@ -64,6 +69,7 @@ function AddUpitnik() {
       console.error(err);
     }
   };
+
   const privatniUpitnikHandle = async () => {
     try {
       const result = await api.post(`/upitnik/add-privatni-upitnik/${uuid}`, {
@@ -72,6 +78,8 @@ function AddUpitnik() {
         status,
         kratki_opis: opis,
         link_token: uuid,
+        vrednovanje: vrednovanje,
+        formula: formula
       });
       console.log(result.data);
       setShowShare(false);

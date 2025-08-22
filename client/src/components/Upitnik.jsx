@@ -1,8 +1,6 @@
-// import validateXML from "./validateQueXML.js";
-
 // element upitnika dobiven parsiranjem uploadanog XML-a
 
-function Upitnik({ xmlData }) {
+function Upitnik({ xmlData, rezultatSpecs }) {
 
   // definiranje skale odgovora pitanja q
   function Response({ q }) {

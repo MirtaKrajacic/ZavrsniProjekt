@@ -11,14 +11,17 @@ function RjesiUpitnik({ mod }) {
   const [email, setEmail] = useState("");
   const [showShare, setShowShare] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [vrednovanje, setVrednovanje] = useState("");
+  const [rezultatSpecs, setRezultatSpecs] = useState(null);
+
   const params = useParams();
 
   useEffect(() => {
     const fetchData = async () => {
       const { data } = await api.get(
         mod === "javni"
-          ? `/upitnik/get-xml/${params.id}`
-          : `/upitnik/get-xml/private/${params.uuid}`
+          ? `/upitnik/get-upitnik/${params.id}`
+          : `/upitnik/get-upitnik/private/${params.uuid}`
       );
 
       const parser = new XMLParser({
@@ -27,12 +30,15 @@ function RjesiUpitnik({ mod }) {
       });
       const parsedObj = parser.parse(data.xml);
 
-      console.log(parsedObj);
+      setVrednovanje(data.vrednovanje);
+      setRezultatSpecs(data.formula);
+
+      console.log(data);
       setXmlData(parsedObj);
     };
 
     fetchData();
-  }, []); // [params.id]
+  }, []); 
 
   const handleSubmit = async () => {
     console.log(email);
