@@ -8,11 +8,11 @@ function UpitnikIzrada({ xmlData, obrnutoKodirani, min, max }) {
         console.log('data promijenjena:', xmlData);
     }, [xmlData]);
 
-    useEffect(() => {
+    /*useEffect(() => {
         if (obrnutoKodirani) {
             console.log('Obrnuto kodirani:', obrnutoKodirani);
         }
-    }, [obrnutoKodirani]);
+    }, [obrnutoKodirani]);*/
 
   function Response({ q }) {
     if (q.response.fixed) {
