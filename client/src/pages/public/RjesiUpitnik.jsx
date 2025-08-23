@@ -13,6 +13,10 @@ function RjesiUpitnik({ mod }) {
   const [success, setSuccess] = useState(false);
   const [vrednovanje, setVrednovanje] = useState("");
   const [rezultatSpecs, setRezultatSpecs] = useState(null);
+  const [rezultat, setRezultat] = useState({}); // entry oblika: {ime_subskale:rezultat}; samo je jedna ako upitnik nema subskala
+  const [bodoviPitanja, setBodoviPitanja] = useState({}); // entry oblika: {varName:bodovi}
+  const [subskale, setSubskale] = useState([]);
+  const [resetFunkcija, setResetFunkcija] = useState(true);
 
   const params = useParams();
 
@@ -32,27 +36,77 @@ function RjesiUpitnik({ mod }) {
 
       setVrednovanje(data.vrednovanje);
       setRezultatSpecs(data.formula);
-
-      console.log(data);
+      setSubskale(data.formula.skupine_pitanja);
       setXmlData(parsedObj);
     };
 
     fetchData();
-  }, []); 
+  }, []);
+
+  const izracunajRezultat = () => {
+    if (subskale.length > 0) {
+      subskale.forEach((s) => {
+        const pitanja = s.pitanja; // lista varName-ova svih pitanja
+
+        let suma = 0;
+        for (let i = 0; i < pitanja.length; i++) {
+          const varName = pitanja[i];
+          if (bodoviPitanja[varName] !== undefined) {
+            /////////////************ */
+            suma += bodoviPitanja[varName];
+          }
+        }
+
+        suma *= parseInt(s.faktor_mnozenja);
+        console.log(`${s.ime}, ${s.pitanja}`);
+
+        setRezultat((prije) => {
+          let temp = { ...prije };
+          temp[s.ime] = suma;
+          console.log(temp);
+          return temp;
+        });
+      });
+    } else {
+      let suma = 0;
+      for (const pitanje in bodoviPitanja) {
+        const bodovi = bodoviPitanja[pitanje];
+        suma += bodovi;
+      }
+      setRezultat((prije) => {
+        let temp = { ...prije };
+        temp["skupina"] = suma;
+        console.log(temp);
+        return temp;
+      });
+    }
+  };
 
   const handleSubmit = async () => {
-    console.log(email);
+    let resultString = "<h1>Vaš rezultat</h1>";
+    for (const s in rezultat) {
+      if (s === "skupina") {
+        resultString += `
+        <p>Ukupno bodova: ${rezultat[s]}</p>`;
+      } else {
+        resultString += `
+        <p>Ostvareni bodovi na skali ${s}: ${rezultat[s]}</p>`;
+      }
+    }
+    resultString += `<h2>Interpretacija rezultata:</h2><p>${vrednovanje}<p>`;
+
     try {
       const { data } = await api.post("/email/send-result", {
         email: email,
-        result: "Ovdje će biti rezultati upitnika",
+        result: resultString,
       });
       setShowShare(false);
       setEmail("");
       if (data.success) {
         setSuccess(true);
+        setResetFunkcija((prev) => !prev)
+        setTimeout(() => setSuccess(false), 2000);
       }
-      console.log(data.success);
     } catch (err) {
       console.log(err);
     }
@@ -62,22 +116,37 @@ function RjesiUpitnik({ mod }) {
     <>
       {xmlData && (
         <div className="container mb-5 p-4 bg-primary-subtle border border-primary-subtle rounded-3 d-flex flex-column align-items-center">
-          <Upitnik xmlData={xmlData} />
+          <Upitnik
+            xmlData={xmlData}
+            rezultatSpecs={rezultatSpecs}
+            setBodoviRoditelj={setBodoviPitanja}
+            key={resetFunkcija}
+          />
           <button
             className="btn btn-primary mt-3"
-            onClick={() => setShowShare(true)}
+            onClick={() => {
+              izracunajRezultat();
+              setShowShare(true);
+            }}
           >
             Submit
           </button>
           {success && (
-          <Alert variant="success" className="mt-3 text-center">
-            Provjerite mail za rezultate upitnika!
-          </Alert>
-      )}
+            <Alert variant="success" className="mt-3 text-center">
+              Provjerite mail za rezultate upitnika!
+            </Alert>
+          )}
         </div>
       )}
-      
-      <Modal show={showShare} onHide={() => {setShowShare(false); setEmail("");}} centered>
+
+      <Modal
+        show={showShare}
+        onHide={() => {
+          setShowShare(false);
+          setEmail("");
+        }}
+        centered
+      >
         <Modal.Header closeButton>
           <Modal.Title>Dobij rezultate putem e-pošte</Modal.Title>
         </Modal.Header>
@@ -87,18 +156,27 @@ function RjesiUpitnik({ mod }) {
               <Form.Label>
                 Unesi adresu e-pošte na koju ćemo ti poslati rezultate upitnika
               </Form.Label>
-              <Form.Control type="text" value={email} onChange={(e) => setEmail(e.target.value)}/>
+              <Form.Control
+                type="text"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
             </Form.Group>
           </Form>
         </Modal.Body>
         <Modal.Footer>
           <Button
             variant="outline-secondary"
-            onClick={() => {setShowShare(false); setEmail("");}}
+            onClick={() => {
+              setShowShare(false);
+              setEmail("");
+            }}
           >
             Odustani
           </Button>
-          <Button variant="primary" onClick={handleSubmit}>Pošalji</Button>
+          <Button variant="primary" onClick={handleSubmit}>
+            Pošalji
+          </Button>
         </Modal.Footer>
       </Modal>
     </>

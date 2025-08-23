@@ -152,6 +152,8 @@ function DefinirajBodovanje({
 
     return (
       <div className="border rounded p-2 mb-3">
+        <label className="fw-semibold">
+          Unesi naziv skupine i označi pitanja koja joj pripadaju
         <input
           type="text"
           placeholder="Naziv skupine"
@@ -159,6 +161,7 @@ function DefinirajBodovanje({
           onChange={(e) => setIme(e.target.value)}
           className="form-control mb-2"
         />
+        </label>
 
         <div className="mb-2">
           {subQs.map((sq, ind) => (
@@ -305,7 +308,7 @@ function DefinirajBodovanje({
         </div>
 
         <h3 className="p-2 rounded-2 bg-success-subtle text-success fw-semibold">
-          Koje su subskale u upitniku?
+          Koje su subskale (skupine pitanja) u upitniku?
         </h3>
         <DefinirajPodskupine q={question} />
       </section>
@@ -333,9 +336,7 @@ function DefinirajBodovanje({
         {data && <DefinirajBodovanje className="m-3" />}
 
         <div className="mt-3 mb-3">
-          <label className="form-label fw-semibold">
-            Opis vrednovanja rezultata
-          </label>
+          <h3 className="p-2 rounded-2 bg-success-subtle text-success fw-semibold">Opis vrednovanja rezultata</h3>
           <textarea
             className="form-control shadow-sm"
             name="message"
