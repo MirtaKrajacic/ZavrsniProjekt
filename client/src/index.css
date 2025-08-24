@@ -1,7 +1,7 @@
 :root {
   --bs-primary: #ac8ffc;
   --bs-primary-rgb: 172, 143, 252;
-  --bs-primary-bg-subtle: #e6e0f8;
+  
 }
 
 /*
@@ -85,4 +85,30 @@ main {
   box-shadow: 0 8px 20px rgba(0,0,0,0.2);
 }
 
+.form-check-input[type="radio"] {
+  position: absolute;
+  width: 1.15rem;
+  height: 1.15rem;
+  border-color: lightgray;   
+  background-color: #fff;         
+  border-radius: 50%;  
+  box-shadow: none;
+}
 
+.form-check-input[type="radio"]:checked {
+  background-color: #fff;         
+  border-color: lightgray;      
+  box-shadow: none;
+}
+
+.form-check-input[type="radio"]:checked::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0.8rem;                 
+  height: 0.8rem;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background-color: var(--bs-primary);
+}

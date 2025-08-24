@@ -1,94 +1,86 @@
-// import validateXML from "./validateQueXML.js";
+// UpitnikIzrada.jsx — pregledna lista: pitanja + oblik odgovora
 import { useEffect } from "react";
 
-// element upitnika dobiven parsiranjem uploadanog XML-a
-
 function UpitnikIzrada({ xmlData, obrnutoKodirani, min, max }) {
-    useEffect(() => {
-        console.log('data promijenjena:', xmlData);
-    }, [xmlData]);
-
-    /*useEffect(() => {
-        if (obrnutoKodirani) {
-            console.log('Obrnuto kodirani:', obrnutoKodirani);
-        }
-    }, [obrnutoKodirani]);*/
-
-  function Response({ q }) {
-    if (q.response.fixed) {
-      const cats = [].concat(q.response.fixed.category); // idemo po svim ponudenim odgovorima
-      return (
-        <div className="row" style={{ padding: "10px" }}>
-          {cats.map((c) => (
-            <div key={c.value} className="col">
-              <div className="form-check">
-                <input
-                  className="form-check-input"
-                  type="radio"
-                  name={q.response.varName}
-                  value={ (obrnutoKodirani && obrnutoKodirani.has(q.varName)) ? min+max-c.value : c.value} //
-                  id={`${q.varName}-${c.value}`}
-                />
-                <label
-                  className="form-check-label"
-                  htmlFor={`${q.varName}-${c.value}`}
-                >
-                  {c.label}
-                </label>
-              </div>
-            </div>
-          ))}
-        </div>
-      );
-    }
-    return <em>Unsupported response type</em>;
-  }
+  useEffect(() => {
+    console.log("data promijenjena:", xmlData);
+  }, [xmlData]);
 
   const arr = (x) => (Array.isArray(x) ? x : x ? [x] : []);
 
   function ListaPitanja({ data }) {
-    const sections = arr(data.section); // section = sekcija pitanja u queXML
+    const sections = arr(data.section);
 
     return sections.map((sec) => {
       const infos = arr(sec.sectionInfo);
       const titleInfo = infos.find((i) => i.position === "title");
       const title = titleInfo?.text || "Sekcija";
 
-      const q = sec.question; // pretpostavljam da je samo jedno pitanje po sekciji
-      const subQuestions = arr(q.subQuestion); // te ono ima više podpitanja
+      const q = sec.question;
+      const subQuestions = arr(q.subQuestion);
+
+      const cats = q.response?.fixed ? arr(q.response.fixed.category) : [];
 
       return (
-        <section key={sec.id}>
-          <h2>
+        <section key={sec.id} className="mb-4">
+          <h5 className="mb-3">
             <b>{title}</b>
-          </h2>
-
-          <div key={q.varName || q.text}>
-            <h4 dangerouslySetInnerHTML={{ __html: q.text }} />
-
-            {subQuestions.map((sq, ind) => (
-              <div key={sq.varName}>
-                {ind + 1 + ". " + sq.text}
-
-                <Response
-                  q={{
-                    ...sq,
-                    response: {
-                      ...q.response,
-                      varName: sq.varName,
-                    },
-                  }}
-                />
+          </h5>
+          {q?.text && (
+            <p
+              className="h5 mt-2"
+              dangerouslySetInnerHTML={{ __html: q.text }}
+            />
+          )}
+          <h5 className="mt-4 text-primary">Format odgovora:</h5>
+          <div className="d-flex mb-3">
+            {cats.map((c) => (
+              <div key={c.value} className="col">
+                <div className="form-check">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name={q.response.varName}
+                    id={`${q.varName}-${c.value}`}
+                  />
+                  <label
+                    className="form-check-label"
+                    htmlFor={`${q.varName}-${c.value}`}
+                  >
+                    {c.label}
+                  </label>
+                </div>
               </div>
             ))}
           </div>
+
+          <h5 className="text-primary">Pitanja:</h5>
+          <ul className="list-group list-group-flush">
+            {subQuestions.map((sq, i) => (
+              <li
+                key={sq.varName}
+                className="list-group-item d-flex justify-content-between align-items-center mb-2 border rounded-3"
+              >
+                <span>
+                  <span className="me-2">{i + 1}.</span>
+                  {sq.text}
+                </span>
+
+                {obrnutoKodirani?.has?.(sq.varName) && (
+                  <span className="badge bg-success-subtle border border-success-subtle text-success">
+                    obrnuto
+                  </span>
+                )}
+              </li>
+            ))}
+          </ul>
         </section>
       );
     });
   }
 
   return (
-    <div className="container my-5">
+    <div className="container my-3">
       <ListaPitanja data={xmlData.questionnaire} />
     </div>
   );

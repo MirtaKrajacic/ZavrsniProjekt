@@ -243,7 +243,7 @@ function DefinirajBodovanje({
 
         <button
           type="button"
-          className="btn btn-sm btn-success"
+          className="btn btn-sm btn-light border shadow-sm"
           onClick={() => {
             if (!ime || odabranaPitanja.length === 0) return;
 
@@ -427,12 +427,9 @@ function DefinirajBodovanje({
 
   return (
     <div className="row">
-      <div className="col-6 bg-primary-subtle border  rounded-3 d-flex flex-column">
-        <h3
-          className="p-2 mt-3 rounded-2"
-          style={{ backgroundColor: "#d9cef7ff" }}
-        >
-          Pregled upitnika
+      <div className="col-6 bg-primary-subtle border rounded-3 d-flex flex-column">
+        <h3 className="p-2 mt-3 rounded-2 bg-white text-primary">
+          Pregled sadržaja upitnika
         </h3>
         {data && (
           <UpitnikIzrada

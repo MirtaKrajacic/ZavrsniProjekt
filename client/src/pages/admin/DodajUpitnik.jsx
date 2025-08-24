@@ -109,17 +109,15 @@ function AddUpitnik() {
             Naslov upitnika
             <input
               type="text"
-              className={`form-control ${
-                clicked && naslov === "" ? "is-invalid" : ""
-              }`}
+              className="form-control"
               placeholder="Naslov u nekoliko riječi"
               onChange={(e) => setNaslov(e.target.value)}
               value={naslov}
             />
-            {naslov === "" && (
-              <div className="invalid-feedback">
+            {naslov === "" && clicked &&(
+              <small className="text-danger">
                 Molimo unesite naslov upitnika.
-              </div>
+              </small>
             )}
           </label>
         </div>
@@ -131,17 +129,15 @@ function AddUpitnik() {
               name="message"
               rows="4"
               cols="100"
-              className={`form-control ${
-                clicked && opis === "" ? "is-invalid" : ""
-              }`}
+              className="form-control"
               placeholder="Kratki opis toga za što upitnik služi"
               onChange={(e) => setOpis(e.target.value)}
               value={opis}
             />
-            {opis === "" && (
-              <div className="invalid-feedback">
+            {opis === "" && clicked &&(
+              <small className="text-danger">
                 Molimo unesite opis upitnika.
-              </div>
+              </small>
             )}
           </label>
         </div>
@@ -171,16 +167,16 @@ function AddUpitnik() {
                 value="privatni"
                 checked={status === "privatni"}
                 onChange={(e) => setStatus(e.target.value)}
-                className={`form-check-input`}
+                className="form-check-input"
               />
               privatni
             </label>
           </div>
 
           {clicked && status === "" && (
-            <div className="invalid-feedback d-block">
+            <small className="text-danger d-block">
               Molimo označite status upitnika.
-            </div>
+            </small>
           )}
         </div>
 
@@ -191,15 +187,13 @@ function AddUpitnik() {
           <input
             id="xmlFile"
             type="file"
-            className={`form-control ${
-              clicked && sadrzaj === "" ? "is-invalid" : ""
-            }`}
+            className="form-control"
             ref={fileInput}
             accept=".xml"
             onChange={handleFileChange}
           />
           {clicked && sadrzaj === "" && (
-            <div className="invalid-feedback">Molimo učitajte datoteku.</div>
+            <small className="text-danger">Molimo učitajte datoteku.</small>
           )}
         </div>
 
