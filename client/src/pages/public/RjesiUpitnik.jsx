@@ -11,7 +11,7 @@ function RjesiUpitnik({ mod }) {
   const [email, setEmail] = useState("");
   const [showShare, setShowShare] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [vrednovanje, setVrednovanje] = useState("");
+  const [vrednovanje, setVrednovanje] = useState([]);
   const [rezultatSpecs, setRezultatSpecs] = useState(null);
   const [rezultat, setRezultat] = useState({}); // entry oblika: {ime_subskale:rezultat}; samo je jedna ako upitnik nema subskala
   const [bodoviPitanja, setBodoviPitanja] = useState({}); // entry oblika: {varName:bodovi}
@@ -34,6 +34,7 @@ function RjesiUpitnik({ mod }) {
       });
       const parsedObj = parser.parse(data.xml);
 
+      //console.log("dobio sam vrednovanje", data.vrednovanje);
       setVrednovanje(data.vrednovanje);
       setRezultatSpecs(data.formula);
       setSubskale(data.formula.skupine_pitanja);
@@ -52,18 +53,18 @@ function RjesiUpitnik({ mod }) {
         for (let i = 0; i < pitanja.length; i++) {
           const varName = pitanja[i];
           if (bodoviPitanja[varName] !== undefined) {
-            /////////////************ */
             suma += bodoviPitanja[varName];
           }
         }
 
+        if (s.op === "srednjaVr") {
+          suma /= pitanja.length;
+        }
         suma *= parseInt(s.faktor_mnozenja);
-        console.log(`${s.ime}, ${s.pitanja}`);
 
         setRezultat((prije) => {
           let temp = { ...prije };
           temp[s.ime] = suma;
-          console.log(temp);
           return temp;
         });
       });
@@ -75,36 +76,79 @@ function RjesiUpitnik({ mod }) {
       }
       setRezultat((prije) => {
         let temp = { ...prije };
-        temp["skupina"] = suma;
-        console.log(temp);
+        temp["skupina"] = suma; // ako nema subskala, napravit cemo jednu skupinu pod imenom "skupina"
         return temp;
       });
     }
   };
 
-  const handleSubmit = async () => {
-    let resultString = "<h1>Vaš rezultat</h1>";
-    for (const s in rezultat) {
-      if (s === "skupina") {
-        resultString += `
-        <p>Ukupno bodova: ${rezultat[s]}</p>`;
-      } else {
-        resultString += `
-        <p>Ostvareni bodovi na skali ${s}: ${rezultat[s]}</p>`;
-      }
-    }
-    resultString += `<h2>Interpretacija rezultata:</h2><p>${vrednovanje}<p>`;
+  const formirajStringInterpretacije = (vrednovanje) => {
+    return `
+    <div style="margin:20px auto;
+              padding:20px;border:1px solid #ddd;
+              border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,0.1);
+              font-family:Arial,sans-serif;">
+    <h1 style="color:#2ac6de;text-align:center;">Vaš rezultat</h1>
+    ${Object.entries(rezultat)
+      .map(([skupina, rez]) =>
+        skupina === "skupina"
+          ? `<p style="margin:8px 0;">Ostvareni bodovi: <b>${rez}</b></p>`
+          : `<p style="margin:8px 0;">Ostvareni bodovi na skali <b>${skupina}</b>: ${rez}</p>`
+      )
+      .join("")}
+    <div >
 
+    <h2 style="text-align:center;">
+      <b>Interpretacija rezultata</b>
+    </h2>
+
+    ${vrednovanje
+      .map(
+        (subskala) => `
+      <div style="margin-bottom:20px;border:1px solid #e3e3e3;
+                  border-radius:6px;overflow:hidden;">
+        <h3 style="margin-bottom:20px;">
+          <b>${subskala.skupina}</b>
+        </h3>
+        <table style="width:100%;border-collapse:collapse;">
+          <thead>
+            <tr style="background:#f8f9fa;text-align:left;">
+              <th style="padding:8px;border-bottom:1px solid #ddd;">Raspon bodova</th>
+              <th style="padding:8px;border-bottom:1px solid #ddd;">Interpretacija</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${subskala.interpretacije
+              .map(
+                (int) => `
+              <tr>
+                <td style="padding:8px;border-bottom:1px solid #eee;">${int.min}-${int.max}</td>
+                <td style="padding:8px;border-bottom:1px solid #eee;">${int.interpretacija}</td>
+              </tr>
+              `
+              )
+              .join("")}
+          </tbody>
+        </table>
+      </div>
+    `
+      )
+      .join("")}
+    </div>
+  </div>`;
+  };
+
+  const handleSubmit = async () => {
     try {
       const { data } = await api.post("/email/send-result", {
         email: email,
-        result: resultString,
+        result: formirajStringInterpretacije(vrednovanje),
       });
       setShowShare(false);
       setEmail("");
       if (data.success) {
         setSuccess(true);
-        setResetFunkcija((prev) => !prev)
+        setResetFunkcija((prev) => !prev);
         setTimeout(() => setSuccess(false), 2000);
       }
     } catch (err) {

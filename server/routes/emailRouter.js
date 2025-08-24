@@ -21,7 +21,7 @@ router.post("/send-result", async (req, res) => {
       from: '"My Questionnaire App" <mirta.krajacic@gmail.com>',
       to: email,
       subject: "Rezultati rješenog upitnika",
-      html: `<p>${result}</p>`, // HTML body
+      html: `${result}`, // HTML body
     });
 
     console.log("Message sent:", info.response);

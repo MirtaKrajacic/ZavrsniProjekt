@@ -30,7 +30,7 @@ function AddUpitnik() {
   };
 
   const handleFileChange = (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files[0]; // dohvaćamo datoteku iz inputa
 
     if (file) {
       const reader = new FileReader(); // triggera se na učitavanje datoteke

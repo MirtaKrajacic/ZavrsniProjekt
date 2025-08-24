@@ -9,13 +9,13 @@ function DefinirajBodovanje({
   xmlData,
   updateParentData,
   setParentVrednovanje,
-  setParentFormula
+  setParentFormula,
 }) {
   const [data, setData] = useState(null); // parsirani xml u obliku js objekta
   const [checked, setChecked] = useState(new Set()); // set id-eva podpitanja koja su obrnuto kodirana
   const [min, setMin] = useState(0); // min bodovi
   const [max, setMax] = useState(0); // max bodovi
-  const [vrednovanje, setVrednovanje] = useState("");
+  const [vrednovanje, setVrednovanje] = useState(""); // svaki element je objekt s atributima subskala i interpretacije
   const [skupinePitanja, setSkupinePitanja] = useState([]); // subskupine pitanja unutar sekcije
 
   useEffect(() => {
@@ -68,8 +68,8 @@ function DefinirajBodovanje({
     console.log(resultSpecs);
     console.log(vrednovanje);
 
-    setParentVrednovanje(vrednovanje);
-    setParentFormula(JSON.stringify(resultSpecs))
+    setParentVrednovanje(JSON.stringify(vrednovanje));
+    setParentFormula(JSON.stringify(resultSpecs));
 
     editResponse();
   };
@@ -154,13 +154,13 @@ function DefinirajBodovanje({
       <div className="border rounded p-2 mb-3">
         <label className="fw-semibold">
           Unesi naziv skupine i označi pitanja koja joj pripadaju
-        <input
-          type="text"
-          placeholder="Naziv skupine"
-          value={ime}
-          onChange={(e) => setIme(e.target.value)}
-          className="form-control mb-2"
-        />
+          <input
+            type="text"
+            placeholder="Naziv skupine"
+            value={ime}
+            onChange={(e) => setIme(e.target.value)}
+            className="form-control mb-2"
+          />
         </label>
 
         <div className="mb-2">
@@ -221,8 +221,8 @@ function DefinirajBodovanje({
             onChange={(e) => setOp(e.target.value)}
             className="form-select mb-2"
           >
-            <option value="sum">suma</option>
-            <option value="mean">srednja vrijednost</option>
+            <option value="suma">suma</option>
+            <option value="srednjaVr">srednja vrijednost</option>
           </select>
         </label>
 
@@ -254,10 +254,10 @@ function DefinirajBodovanje({
               op: op,
               faktor_mnozenja: faktor,
             };
-            
+
             setIme("");
-            //setOdabranaPitanja([]);
             setSkupinePitanja((prev) => [...prev, skupina]);
+            console.log(op);
           }}
         >
           Dodaj skupinu
@@ -266,11 +266,117 @@ function DefinirajBodovanje({
     );
   }
 
-  function DefinirajBodovanje() {
+  const subskalaPostoji = (imeSubskale) => {
+  for (const s of skupinePitanja) {
+    if (s.ime === imeSubskale) {
+      console.log("našli");
+      return true;
+    }
+  }
+  return false;
+};
+
+  function DefinirajInterpretacije() {
+    const [imeSubskale, setImeSubskale] = useState("");
+    const [rows, setRows] = useState([{ min: "", max: "", interpretacija: "" }]);
+    const [error, setError] = useState(false);
+
+    return (
+      <section className="border rounded-3">
+        <input
+          type="text"
+          placeholder="Ime subskale (opcionalno)"
+          className="form-control mb-3"
+          value={imeSubskale}
+          onChange={(e) => {
+            setImeSubskale(e.target.value);
+            setError(false);
+          }}
+        />
+        { error && 
+        <small className="text-danger">molimo upisite imeee</small>}
+
+        {rows.map((row, i) => (
+          <div key={i} className="d-flex align-items-center gap-2 mb-2">
+            <input
+              type="number"
+              placeholder="Donja granica"
+              className="form-control"
+              min={0}
+              value={row.min}
+              onChange={(e) =>
+                setRows((prev) =>
+                  prev.map((el, ind) =>
+                    ind === i ? { ...el, min: e.target.value } : el
+                  )
+                )
+              }
+            />
+            -
+            <input
+              type="number"
+              placeholder="Gornja granica"
+              className="form-control"
+              min={0}
+              value={row.max}
+              onChange={(e) =>
+                setRows((prev) =>
+                  prev.map((el, ind) =>
+                    ind === i ? { ...el, max: e.target.value } : el
+                  )
+                )
+              }
+            />
+            <input
+              type="text"
+              placeholder="Interpretacija"
+              className="form-control"
+              value={row.interpretacija}
+              onChange={(e) =>
+                setRows((prev) =>
+                  prev.map((el, ind) =>
+                    ind === i ? { ...el, interpretacija: e.target.value } : el
+                  )
+                )
+              }
+            />
+          </div>
+        ))}
+
+        <button
+          type="button"
+          className="btn btn-outline-primary"
+          onClick={() => setRows([...rows, rows.length])}
+        >
+          +
+        </button>
+
+        <button
+          type="button"
+          className="btn btn-outline-success"
+          onClick={() => {
+            if (skupinePitanja.length > 0 && !subskalaPostoji(imeSubskale)) {
+              console.log('tak je', skupinePitanja);
+              setError(true);
+              return;
+            };
+            console.log(rows);
+            setVrednovanje((prev) => [...prev, {skupina:imeSubskale, interpretacije:rows}])
+            setRows([{ min: "", max: "", interpretacija: "" }]);
+            setImeSubskale("");
+          }}
+        >
+          Dodaj interpretacije
+        </button>
+      </section>
+    );
+  }
+
+  function DefinirajFormulu() {
     const question = data.questionnaire.section.question;
 
     return (
-      <section className="p-4 mb-4 rounded-3 border shadow-sm bg-white">
+      <section className="p-4 mb-4 border rounded-3 shadow-sm bg-white">
         <div className="mb-4">
           <h3 className="p-2 rounded-2 bg-success-subtle text-success fw-semibold">
             Označi koje se čestice obrnuto kodiraju, ostale se kodiraju normalno
@@ -333,31 +439,20 @@ function DefinirajBodovanje({
 
       {/* definiranje bodovanja upitnika */}
       <div className="col-6 bg-light border rounded-3">
-        {data && <DefinirajBodovanje className="m-3" />}
+        {data && <DefinirajFormulu className="m-3" />}
 
-        <div className="mt-3 mb-3">
-          <h3 className="p-2 rounded-2 bg-success-subtle text-success fw-semibold">Opis vrednovanja rezultata</h3>
-          <textarea
-            className="form-control shadow-sm"
-            name="message"
-            rows="8"
-            placeholder={`npr.
-Score Categories:
-0 - 20: Normal range 
-21 - 40: Mildly elevated above normal range 
-41 - 60: Moderately elevated above the normal range 
-61 - 80: High and well above the normal range
-81 - 100: Very high and well above the normal range 
-`}
-            onChange={(e) => setVrednovanje(e.target.value)}
-            value={vrednovanje}
-          />
-        </div>
+        <section className="p-4 mb-4 rounded-3 border shadow-sm bg-white">
+          <h3 className="p-2 rounded-2 bg-success-subtle text-success fw-semibold">
+            Opis vrednovanja rezultata
+          </h3>
+          <small>{`Za svaku subskalu, ako ih upitnik ima, navedite njezino ime i definirajte interpretacije. 
+        Inače ih definirajte za upitnik u cjelosti.`}</small>
+          <DefinirajInterpretacije />
+        </section>
 
         <button
           className="btn btn-primary d-block mx-auto"
           onClick={() => {
-            console.log("clicked, ", checked);
             handleSave();
           }}
         >

@@ -40,13 +40,11 @@ function Upitnik({ xmlData, rezultatSpecs, setBodoviRoditelj }) {
                     setBodoviPitanja((prev) => {
                       let temp = { ...prev };
                       temp[q.varName] = parseInt(e.target.value);
-                      console.log(e.target.value);
                       return temp;
                     });
                     setBodoviRoditelj((prev) => {
                       let temp = { ...prev };
                       temp[q.varName] = parseInt(e.target.value);
-                      console.log(e.target.value);
                       return temp;
                     });
                   }}
