@@ -20,7 +20,7 @@ function UpitnikIzrada({ xmlData, obrnutoKodirani, min, max }) {
       return (
         <section key={sec.id} >
           <h5>Format odgovora:</h5>
-          <div className="row mb-3">
+          <div className="d-flex mb-3">
             {cats.map((c) => (
               <div key={c.value} className="col">
                 <div className="form-check ms-1">
