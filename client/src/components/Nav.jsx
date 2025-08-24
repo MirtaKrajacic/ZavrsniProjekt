@@ -12,7 +12,7 @@ function Nav() {
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light mb-4">
       <div className="container-fluid">
-        <div className="d-flex align-items-center  w-100">
+        <div className="d-flex align-items-center w-100">
           <NavLink to="/">
             <img src="/logo.png" alt="logo" width="60" height="60" />
           </NavLink>
@@ -43,7 +43,7 @@ function Nav() {
             <ul className="navbar-nav flex-row">
               {auth ? (
                 <li className="nav-item mx-2">
-                  <NavLink onClick={logout} className="nav-link" to="/">
+                  <NavLink onClick={logout} className="nav-link" to="/login">
                     Odjava
                   </NavLink>
                 </li>
