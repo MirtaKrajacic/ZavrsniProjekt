@@ -360,7 +360,7 @@ function DefinirajBodovanje({
               setError(true);
               return;
             };
-            console.log(rows);
+            console.log("interpretacije: ", rows);
             setVrednovanje((prev) => [...prev, {skupina:imeSubskale, interpretacije:rows}])
             setRows([{ min: "", max: "", interpretacija: "" }]);
             setImeSubskale("");

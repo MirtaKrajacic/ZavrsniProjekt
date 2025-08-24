@@ -92,7 +92,7 @@ function AddUpitnik() {
   const checkInput = () => {
     setClicked(true);
     if (naslov === "" || opis === "" || status === "" || sadrzaj === "") {
-      console.log("not valid input");
+      console.log("nisu ispunjena sva obavezna polja");
     } else {
       spremiUpitnik();
       setClicked(false);

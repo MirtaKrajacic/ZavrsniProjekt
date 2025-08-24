@@ -34,7 +34,7 @@ function RjesiUpitnik({ mod }) {
       });
       const parsedObj = parser.parse(data.xml);
 
-      //console.log("dobio sam vrednovanje", data.vrednovanje);
+      // console.log("dobio sam vrednovanje", data.vrednovanje);
       setVrednovanje(data.vrednovanje);
       setRezultatSpecs(data.formula);
       setSubskale(data.formula.skupine_pitanja);
@@ -92,8 +92,8 @@ function RjesiUpitnik({ mod }) {
     ${Object.entries(rezultat)
       .map(([skupina, rez]) =>
         skupina === "skupina"
-          ? `<p style="margin:8px 0;">Ostvareni bodovi: <b>${rez}</b></p>`
-          : `<p style="margin:8px 0;">Ostvareni bodovi na skali <b>${skupina}</b>: ${rez}</p>`
+          ? `<p style="margin:8px 0;">Ostvareni bodovi: <b>${rez.toFixed(0)}</b></p>`
+          : `<p style="margin:8px 0;">Ostvareni bodovi na skali <b>${skupina}</b>: ${rez.toFixed(0)}</p>`
       )
       .join("")}
     <div >
@@ -107,7 +107,7 @@ function RjesiUpitnik({ mod }) {
         (subskala) => `
       <div style="margin-bottom:20px;border:1px solid #e3e3e3;
                   border-radius:6px;overflow:hidden;">
-        <h3 style="margin-bottom:20px;">
+        <h3 style="color:#2ac6de; margin:10px;">
           <b>${subskala.skupina}</b>
         </h3>
         <table style="width:100%;border-collapse:collapse;">
