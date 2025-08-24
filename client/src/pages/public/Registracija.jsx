@@ -6,23 +6,32 @@ const Registracija = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [clicked, setClicked] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     document.title = "Registracija";
   }, []);
 
-  const collectData = async () => {
-    try {
-      const { data } = await api.post("/auth/register", {
-        name,
-        email,
-        password,
-      });
-      localStorage.setItem("token", data.auth);
-      navigate("/");
-    } catch (err) {
-      console.error(err);
+  const validanEmail = (email) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
+
+  const handleRegistracija = async () => {
+    setClicked(true);
+    if (name.length > 0 && validanEmail(email) && password.length >= 8) {
+      try {
+        const { data } = await api.post("/auth/register", {
+          name,
+          email,
+          password,
+        });
+        localStorage.setItem("token", data.auth);
+        navigate("/");
+      } catch (err) {
+        console.error(err);
+      }
     }
   };
 
@@ -40,6 +49,9 @@ const Registracija = () => {
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
+          {clicked && !name.length > 0 && (
+            <small className="text-danger">Molimo unesite svoje ime.</small>
+          )}
         </div>
 
         <div className="mb-3">
@@ -51,6 +63,11 @@ const Registracija = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
+          {clicked && !validanEmail(email) && (
+            <small className="text-danger">
+              Molimo unesite ispravnu email adresu.
+            </small>
+          )}
         </div>
 
         <div className="mb-5">
@@ -62,12 +79,17 @@ const Registracija = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <div className="form-text">
-            Lozinka mora imati najmanje 8 znakova.
-          </div>
+          {clicked && password.length < 8 && (
+            <small className="text-danger">
+              Lozinka mora imati najmanje 8 znakova.
+            </small>
+          )}
         </div>
 
-        <button className="btn btn-light border w-100" onClick={collectData}>
+        <button
+          className="btn btn-light border w-100"
+          onClick={handleRegistracija}
+        >
           Registriraj se
         </button>
       </div>
