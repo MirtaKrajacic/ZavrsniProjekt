@@ -1,5 +1,5 @@
 // element upitnika dobiven parsiranjem uploadanog XML-a
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 function Upitnik({ xmlData, rezultatSpecs, setBodoviRoditelj }) {
   const [bodoviPitanja, setBodoviPitanja] = useState({}); // entry oblika: {varName:bodovi}

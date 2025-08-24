@@ -1,37 +1,22 @@
-// prikazuje sve upitnike iz data
+// prikazuje grid upitnika
 
 function UpitniciCards({ data, children }) {
   return (
-    <div className="container text-center">
-      <div className="row g-4 mb-5">
+    <div className="container">
+      <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mb-5 justify-content-start">
         {data.map((u) => (
-          
-            <div className="col" key={u.id}>
-            <div
-              className="card h-100 shadow border-0"
-              style={{
-                width: "18rem",
-                transition: "transform 0.2s ease, box-shadow 0.2s ease",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "scale(1.05)";
-                e.currentTarget.style.boxShadow = "0 8px 20px rgba(0,0,0,0.2)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "scale(1)";
-                e.currentTarget.style.boxShadow = "0 4px 10px rgba(0,0,0,0.1)";
-              }}
-            >
-              <div className="card-body">
+          <div className="col" key={u.id}>
+            <div className="card upitnik-card d-flex flex-column h-100 shadow border-0">
+              <div className="card-body flex-grow-1">
                 <h5 className="card-title text-primary fw-bold">{u.naslov}</h5>
-                <p className="card-text text-secondary">{u.kratki_opis}</p>
-                <p>{u.ime}</p>
+                <p className="card-text">{u.kratki_opis}</p>
+              </div>
+              <div className="card-footer bg-transparent border-0 mt-auto">
                 {children(u)}
               </div>
             </div>
           </div>
-          )
-        )}
+        ))}
       </div>
     </div>
   );

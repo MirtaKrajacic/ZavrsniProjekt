@@ -29,7 +29,7 @@ const Naslovnica = () => {
       let key = event.target.value;
       if (key) {
         const { data } = await api.get(`/upitnik/search/${key}`);
-        console.log('search handle je dohvatio: ', data);
+        console.log("search handle je dohvatio: ", data);
         if (data) {
           setUpitnici(data);
         }
@@ -42,43 +42,36 @@ const Naslovnica = () => {
   };
 
   return (
-    <>
+    <main>
       <input
         type="text"
-        className="form-control"
+        className="form-control search-input"
         placeholder="Pretraži upitnike..."
         onChange={searchHandle}
-        style={{
-          borderRadius: "50px",
-          margin: "40px auto",
-          maxWidth: "50rem",
-          transition: "all 0.3s ease",
-        }}
-        onFocus={(e) => {
-          e.target.style.boxShadow = "0 4px 15px rgba(0, 123, 255, 0.3)";
-        }}
-        onBlur={(e) => {
-          e.target.style.boxShadow = "0 4px 10px rgba(0, 123, 255, 0.1)";
-        }}
       />
 
       {upitnici.length > 0 ? (
         <UpitniciCards data={upitnici}>
           {(u) => (
-            <button className="btn btn-primary btn-sm mt-2">
-              <Link
-                to={"/upitnik/" + u.id}
-                style={{ textDecoration: "none", color: "inherit" }}
-              >
-                Rješi
-              </Link>
-            </button>
+            <>
+              <p className="card-text text-secondary mb-0">Autor: {u.ime}</p>
+              <div className="d-flex justify-content-center gap-2 flex-wrap">
+                <button className="btn btn-primary w-50 border mt-3">
+                  <Link
+                    to={"/upitnik/" + u.id}
+                    style={{ textDecoration: "none", color: "inherit" }}
+                  >
+                    Rješi
+                  </Link>
+                </button>
+              </div>
+            </>
           )}
         </UpitniciCards>
       ) : (
-        <p>Nema pronađenih upitnika...</p>
+        <p className="text-center">Nema pronađenih upitnika...</p>
       )}
-    </>
+    </main>
   );
 };
 

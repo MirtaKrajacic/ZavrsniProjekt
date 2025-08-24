@@ -9,7 +9,7 @@ function DefinirajBodovanje({
   xmlData,
   updateParentData,
   setParentVrednovanje,
-  setParentFormula,
+  setParentFormula
 }) {
   const [data, setData] = useState(null); // parsirani xml u obliku js objekta
   const [checked, setChecked] = useState(new Set()); // set id-eva podpitanja koja su obrnuto kodirana
@@ -267,18 +267,20 @@ function DefinirajBodovanje({
   }
 
   const subskalaPostoji = (imeSubskale) => {
-  for (const s of skupinePitanja) {
-    if (s.ime === imeSubskale) {
-      console.log("našli");
-      return true;
+    for (const s of skupinePitanja) {
+      if (s.ime === imeSubskale) {
+        console.log("našli");
+        return true;
+      }
     }
-  }
-  return false;
-};
+    return false;
+  };
 
   function DefinirajInterpretacije() {
     const [imeSubskale, setImeSubskale] = useState("");
-    const [rows, setRows] = useState([{ min: "", max: "", interpretacija: "" }]);
+    const [rows, setRows] = useState([
+      { min: "", max: "", interpretacija: "" },
+    ]);
     const [error, setError] = useState(false);
 
     return (
@@ -293,8 +295,7 @@ function DefinirajBodovanje({
             setError(false);
           }}
         />
-        { error && 
-        <small className="text-danger">molimo upisite imeee</small>}
+        {error && <small className="text-danger">molimo upisite imeee</small>}
 
         {rows.map((row, i) => (
           <div key={i} className="d-flex align-items-center gap-2 mb-2">
@@ -356,12 +357,15 @@ function DefinirajBodovanje({
           className="btn btn-outline-success"
           onClick={() => {
             if (skupinePitanja.length > 0 && !subskalaPostoji(imeSubskale)) {
-              console.log('tak je', skupinePitanja);
+              console.log("tak je", skupinePitanja);
               setError(true);
               return;
-            };
+            }
             console.log("interpretacije: ", rows);
-            setVrednovanje((prev) => [...prev, {skupina:imeSubskale, interpretacije:rows}])
+            setVrednovanje((prev) => [
+              ...prev,
+              { skupina: imeSubskale, interpretacije: rows },
+            ]);
             setRows([{ min: "", max: "", interpretacija: "" }]);
             setImeSubskale("");
           }}
@@ -376,10 +380,10 @@ function DefinirajBodovanje({
     const question = data.questionnaire.section.question;
 
     return (
-      <section className="p-4 mb-4 border rounded-3 shadow-sm bg-white">
+      <>
         <div className="mb-4">
           <h3 className="p-2 rounded-2 bg-success-subtle text-success fw-semibold">
-            Označi koje se čestice obrnuto kodiraju, ostale se kodiraju normalno
+            Označi koje se čestice obrnuto kodiraju
           </h3>
           <OznaciObrnutoKodirane q={question} />
         </div>
@@ -417,15 +421,18 @@ function DefinirajBodovanje({
           Koje su subskale (skupine pitanja) u upitniku?
         </h3>
         <DefinirajPodskupine q={question} />
-      </section>
+      </>
     );
   }
 
   return (
     <div className="row">
-      <div className="col-6 bg-primary-subtle border border-primary-subtle rounded-3 d-flex flex-column">
-        <h3 className="p-2 mt-3 bg-danger-subtle rounded-2">
-          Preview upitnika
+      <div className="col-6 bg-primary-subtle border  rounded-3 d-flex flex-column">
+        <h3
+          className="p-2 mt-3 rounded-2"
+          style={{ backgroundColor: "#d9cef7ff" }}
+        >
+          Pregled upitnika
         </h3>
         {data && (
           <UpitnikIzrada
@@ -438,13 +445,13 @@ function DefinirajBodovanje({
       </div>
 
       {/* definiranje bodovanja upitnika */}
-      <div className="col-6 bg-light border rounded-3">
+      <div className="col-6 p-0 p-3 border rounded-3 shadow-sm bg-white">
         {data && <DefinirajFormulu className="m-3" />}
 
-        <section className="p-4 mb-4 rounded-3 border shadow-sm bg-white">
-          <h3 className="p-2 rounded-2 bg-success-subtle text-success fw-semibold">
-            Opis vrednovanja rezultata
-          </h3>
+        <h3 className="p-2 rounded-2 bg-success-subtle text-success fw-semibold">
+          Opis vrednovanja rezultata
+        </h3>
+        <section className="border rounded-3">
           <small>{`Za svaku subskalu, ako ih upitnik ima, navedite njezino ime i definirajte interpretacije. 
         Inače ih definirajte za upitnik u cjelosti.`}</small>
           <DefinirajInterpretacije />

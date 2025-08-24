@@ -18,7 +18,7 @@ const Login = () => {
   const handleLogin = async () => {
     try {
       const { data } = await api.post("/auth/login", { email, password });
-      
+
       if (data.auth) {
         localStorage.setItem("token", data.auth);
         navigate("/");
@@ -32,48 +32,53 @@ const Login = () => {
   };
 
   return (
-    <div>
-      <h1>Login</h1>
-      <div className="container w-25">
-        <div className="mb-3">
+    <main className="d-flex justify-content-center align-items-center">
+      <div className="card p-4 w-100" style={{ maxWidth: "420px" }}>
+        <h1 className="text-center text-primary mb-4">Prijava</h1>
+
+        <div className="mb-3 mt-4">
           <label className="form-label">Email address</label>
           <input
             type="email"
             className="form-control"
-            placeholder="name@example.com"
+            placeholder="ime@primjer.com"
             onChange={(e) => setEmail(e.target.value)}
             value={email}
           />
         </div>
 
-        <div className="mb-3">
+        <div className="mb-5">
           <label className="form-label">Password</label>
           <input
             type="password"
             className="form-control"
-            placeholder="Enter password"
+            placeholder="Unesite lozinku"
             onChange={(e) => setPassword(e.target.value)} // e.target.value je curr value input elementa
             value={password}
           />
-          
         </div>
 
-        <Link to="/signup">Nemate još korisnički račun? Registrirajte se.</Link>
+        <Link className="text-center" to="/signup">
+          Nemate još korisnički račun? Registrirajte se.
+        </Link>
 
         <button
-          className="btn btn-primary d-block mx-auto"
+          className="btn btn-light border w-100 d-block mx-auto mt-3 mb-3"
           onClick={() => {
             setClickedPrijava(true);
             handleLogin();
           }}
         >
-          Log in
+          Prijava
         </button>
 
-        {clickedPrijava && error &&
-          <p className="text-danger">Netočan email ili lozinka.</p>}
+        {clickedPrijava && error && (
+          <small className="text-center text-danger">
+            Netočan email ili lozinka.
+          </small>
+        )}
       </div>
-    </div>
+    </main>
   );
 };
 

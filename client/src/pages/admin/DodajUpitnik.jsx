@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import DefinirajBodovanje from "../../components/DefinirajBodovanje.jsx";
 // import validateXML from "./validateQueXML.js";
 
-import api from "../../api";
+import api from "../../api.js";
 
 function AddUpitnik() {
   const [naslov, setNaslov] = useState(""); // naslov upitnika
@@ -48,8 +48,8 @@ function AddUpitnik() {
   const spremiUpitnik = async () => {
     try {
       console.log("pozvali su me, spremiUpitnik!");
-      console.log('moja formula ', formula);
-      console.log('moje vrednovanje ', vrednovanje);
+      console.log("moja formula ", formula);
+      console.log("moje vrednovanje ", vrednovanje);
 
       if (status === "privatni") {
         setShowShare(true);
@@ -60,7 +60,7 @@ function AddUpitnik() {
           status,
           kratki_opis: opis,
           vrednovanje: vrednovanje,
-          formula: formula
+          formula: formula,
         });
         console.log(result.data);
         resetView();
@@ -79,7 +79,7 @@ function AddUpitnik() {
         kratki_opis: opis,
         link_token: uuid,
         vrednovanje: vrednovanje,
-        formula: formula
+        formula: formula,
       });
       console.log(result.data);
       setShowShare(false);
@@ -100,10 +100,10 @@ function AddUpitnik() {
   };
 
   return (
-    <div className="container">
-      <h1>Dodaj upitnik</h1>
+    <main>
+      <div className="m-3">
+        <h1 className="text-center">Dodaj upitnik</h1>
 
-      <div className="container-lg">
         <div className="mb-5">
           <label className="form-label">
             Naslov upitnika
@@ -204,9 +204,9 @@ function AddUpitnik() {
         </div>
 
         {sadrzaj && (
-          <div className="card mb-4">
+          <div className="card">
             <div className="card-header">Definiraj bodovanje upitnika</div>
-            <div className="card-body">
+            <div className="card-body pt-1 pb-1">
               <DefinirajBodovanje
                 xmlData={sadrzaj}
                 updateParentData={setSadrzaj}
@@ -221,69 +221,69 @@ function AddUpitnik() {
           className="btn btn-primary d-block mx-auto"
           onClick={checkInput}
         >
-          Dodaj
+          Dodaj upitnik
         </button>
-      </div>
 
-      <Modal
-        show={showShare}
-        onHide={() => {
-          setShowShare(false);
-          setCopied(false);
-        }}
-        centered
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Podijeli upitnik</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <Form.Group>
-              <Form.Label>URL upitnika</Form.Label>
-              <Form.Control
-                type="text"
-                value={`http://localhost:3000/upitnik/p/${uuid}`}
-                readOnly
-                id="share-url"
-              />
-            </Form.Group>
-          </Form>
-          <Button
-            variant="outline-success"
-            onClick={async () => {
-              const url = `http://localhost:3000/upitnik/p/${uuid}`;
-              try {
-                await navigator.clipboard.writeText(url);
-                setCopied(true);
-              } catch (err) {
-                console.error("Greška kod kopiranja:", err);
-              }
-            }}
-          >
-            Share
-          </Button>
-          {copied && (
-            <Alert variant="success" className="mt-3 mb-0">
-              <strong>Link kopiran.</strong>
-            </Alert>
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button
-            variant="outline-secondary"
-            onClick={() => {
-              setShowShare(false);
-              setCopied(false);
-            }}
-          >
-            Odustani
-          </Button>
-          <Button variant="primary" onClick={() => privatniUpitnikHandle()}>
-            Pošalji i uploadaj
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </div>
+        <Modal
+          show={showShare}
+          onHide={() => {
+            setShowShare(false);
+            setCopied(false);
+          }}
+          centered
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Podijeli upitnik</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form>
+              <Form.Group>
+                <Form.Label>URL upitnika</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={`http://localhost:3000/upitnik/p/${uuid}`}
+                  readOnly
+                  id="share-url"
+                />
+              </Form.Group>
+            </Form>
+            <Button
+              variant="outline-success"
+              onClick={async () => {
+                const url = `http://localhost:3000/upitnik/p/${uuid}`;
+                try {
+                  await navigator.clipboard.writeText(url);
+                  setCopied(true);
+                } catch (err) {
+                  console.error("Greška kod kopiranja:", err);
+                }
+              }}
+            >
+              Podijeli
+            </Button>
+            {copied && (
+              <Alert variant="success" className="mt-3 mb-0">
+                <strong>Link kopiran.</strong>
+              </Alert>
+            )}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              variant="outline-secondary"
+              onClick={() => {
+                setShowShare(false);
+                setCopied(false);
+              }}
+            >
+              Odustani
+            </Button>
+            <Button variant="primary" onClick={() => privatniUpitnikHandle()}>
+              Dodaj
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      </div>
+    </main>
   );
 }
 

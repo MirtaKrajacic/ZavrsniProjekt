@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Modal, Button, Form } from "react-bootstrap";
+import { Modal, Button } from "react-bootstrap";
 
 import api from "../../api";
 import UpitniciCards from "../UpitniciCards";
@@ -41,12 +41,6 @@ const MojiUpitnici = () => {
 
   const deleteUpitnik = async (id) => {
     try {
-      // doraditi - confirmation da zelimo izbrisati
-      /*const confirmDelete = window.confirm(
-        "Jeste li sigurni da želite trajno izbrisati ovaj upitnik?"
-      );
-      if (!confirmDelete) return;*/
-
       await api.delete(`/upitnik/del-upitnik/${id}`);
       setShowShare(false);
       getUpitnici();
@@ -56,9 +50,9 @@ const MojiUpitnici = () => {
   };
 
   return (
-    <>
+    <main>
       <div className="d-flex justify-content-begin p-3 border-bottom mb-5">
-        <Link to={"/add"} className="btn btn-light btn-lg shadow">
+        <Link to="/add" className="btn btn-primary shadow">
           Dodaj novi upitnik
         </Link>
       </div>
@@ -66,15 +60,15 @@ const MojiUpitnici = () => {
         <>
           <UpitniciCards data={upitnici}>
             {(u) => (
-              <div className="gap-2">
+              <div className="d-flex justify-content-center gap-2 flex-wrap">
                 <Link
-                  className="btn btn-primary btn-sm m-2"
+                  className="btn btn-light border btn-sm"
                   to={"/upitnik/edit/" + u.id}
                 >
                   Uredi
                 </Link>
                 <button
-                  className="btn btn-danger btn-sm m-2"
+                  className="btn btn-danger btn-sm"
                   onClick={() => setForDeletion(u.id)}
                 >
                   Izbriši
@@ -84,7 +78,7 @@ const MojiUpitnici = () => {
           </UpitniciCards>
         </>
       ) : (
-        <p>Još nemate ni jedan upitnik</p>
+        <p className="text-center">Još nemate ni jedan upitnik.</p>
       )}
 
       <Modal show={showShare} onHide={() => setShowShare(false)} centered>
@@ -106,7 +100,7 @@ const MojiUpitnici = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-    </>
+    </main>
   );
 };
 
