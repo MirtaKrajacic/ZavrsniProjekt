@@ -12,31 +12,18 @@ function UpitnikIzrada({ xmlData, obrnutoKodirani, min, max }) {
     const sections = arr(data.section);
 
     return sections.map((sec) => {
-      const infos = arr(sec.sectionInfo);
-      const titleInfo = infos.find((i) => i.position === "title");
-      const title = titleInfo?.text || "Sekcija";
-
       const q = sec.question;
       const subQuestions = arr(q.subQuestion);
 
       const cats = q.response?.fixed ? arr(q.response.fixed.category) : [];
 
       return (
-        <section key={sec.id} className="mb-4">
-          <h5 className="mb-3">
-            <b>{title}</b>
-          </h5>
-          {q?.text && (
-            <p
-              className="h5 mt-2"
-              dangerouslySetInnerHTML={{ __html: q.text }}
-            />
-          )}
-          <h5 className="mt-4 text-primary">Format odgovora:</h5>
-          <div className="d-flex mb-3">
+        <section key={sec.id} >
+          <h5>Format odgovora:</h5>
+          <div className="row mb-3">
             {cats.map((c) => (
               <div key={c.value} className="col">
-                <div className="form-check">
+                <div className="form-check ms-1">
                   <input
                     className="form-check-input"
                     type="radio"
@@ -54,19 +41,19 @@ function UpitnikIzrada({ xmlData, obrnutoKodirani, min, max }) {
             ))}
           </div>
 
-          <h5 className="text-primary">Pitanja:</h5>
-          <ul className="list-group list-group-flush">
+          <h5>Pitanja:</h5>
+          <ul className="list-group">
             {subQuestions.map((sq, i) => (
               <li
                 key={sq.varName}
-                className="list-group-item d-flex justify-content-between align-items-center mb-2 border rounded-3"
+                className="list-group-item d-flex justify-content-between align-items-center mb-2 border rounded-3 shadow-sm"
               >
                 <span>
                   <span className="me-2">{i + 1}.</span>
                   {sq.text}
                 </span>
 
-                {obrnutoKodirani?.has?.(sq.varName) && (
+                {obrnutoKodirani && obrnutoKodirani.has(sq.varName) && (
                   <span className="badge bg-success-subtle border border-success-subtle text-success">
                     obrnuto
                   </span>

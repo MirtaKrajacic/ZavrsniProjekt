@@ -199,7 +199,7 @@ function AddUpitnik() {
 
         {sadrzaj && (
           <div className="card">
-            <div className="card-header">Definiraj bodovanje upitnika</div>
+              <h3 className="card-header text-center">Definiraj bodovanje upitnika</h3>
             <div className="card-body pt-1 pb-1">
               <DefinirajBodovanje
                 xmlData={sadrzaj}

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { XMLParser, XMLBuilder } from "fast-xml-parser";
 import UpitnikIzrada from "./UpitnikIzrada.jsx";
+import DefinirajSubskale from "./DefinirajSubskale.jsx";
 
 // radim s pretpostavkom da svaki upitnik koji se unese ima jedan section i unutar njega jedan question
 // unutar questiona su subquestions
@@ -9,14 +10,14 @@ function DefinirajBodovanje({
   xmlData,
   updateParentData,
   setParentVrednovanje,
-  setParentFormula
+  setParentFormula,
 }) {
   const [data, setData] = useState(null); // parsirani xml u obliku js objekta
   const [checked, setChecked] = useState(new Set()); // set id-eva podpitanja koja su obrnuto kodirana
   const [min, setMin] = useState(0); // min bodovi
   const [max, setMax] = useState(0); // max bodovi
   const [vrednovanje, setVrednovanje] = useState(""); // svaki element je objekt s atributima subskala i interpretacije
-  const [skupinePitanja, setSkupinePitanja] = useState([]); // subskupine pitanja unutar sekcije
+  const [subskale, setSubskale] = useState([]); 
 
   useEffect(() => {
     // postavljanje js objekta iz dobivenog xml-a
@@ -62,7 +63,7 @@ function DefinirajBodovanje({
     const resultSpecs = {
       skala_odgovora: likertRange,
       obrnuto_kodirana: [...checked],
-      skupine_pitanja: skupinePitanja,
+      skupine_pitanja: subskale,
     };
 
     console.log(resultSpecs);
@@ -85,7 +86,6 @@ function DefinirajBodovanje({
     cats.forEach((cat) => {
       cat.value = count;
       count++;
-      //console.log(cat.value);
     });
 
     setData(newData); // updateamo data tako da svaki response ima brojevne vrijednosti
@@ -128,21 +128,9 @@ function DefinirajBodovanje({
     );
   }
 
-  const ispisiPitanja = (pitanjaIds) => {
-    const subQs = arr(data.questionnaire.section.question.subQuestion);
-    let string = "";
+  
 
-    subQs.forEach((sq, ind) => {
-      if (pitanjaIds.includes(sq.varName)) {
-        string += `${ind + 1},`;
-      }
-    });
-
-    string = string.slice(0, -1); // zadnji minus
-    return string;
-  };
-
-  function DefinirajPodskupine({ q }) {
+  /*function DefinirajSubskale({ q }) {
     const [ime, setIme] = useState("");
     const [odabranaPitanja, setOdabranaPitanja] = useState([]);
     const [op, setOp] = useState("sum");
@@ -189,8 +177,8 @@ function DefinirajBodovanje({
         </div>
 
         <div className="list-group list-group-flush">
-          {skupinePitanja &&
-            skupinePitanja.map((s, i) => (
+          {subskale &&
+            subskale.map((s, i) => (
               <div
                 key={i}
                 className="list-group-item mb-1 border border-primary-subtle rounded-3 d-flex justify-content-between align-items-center py-1 px-2"
@@ -203,9 +191,9 @@ function DefinirajBodovanje({
                   style={{ fontSize: "0.7rem" }}
                   aria-label="Close"
                   onClick={() => {
-                    console.log(skupinePitanja);
+                    console.log(subskale);
                     const currSkupinaIme = s.ime;
-                    setSkupinePitanja((prev) =>
+                    setSubskale((prev) =>
                       prev.filter((sk) => sk.ime !== currSkupinaIme)
                     );
                   }}
@@ -256,7 +244,7 @@ function DefinirajBodovanje({
             };
 
             setIme("");
-            setSkupinePitanja((prev) => [...prev, skupina]);
+            setSubskale((prev) => [...prev, skupina]);
             console.log(op);
           }}
         >
@@ -264,10 +252,10 @@ function DefinirajBodovanje({
         </button>
       </div>
     );
-  }
+  }*/
 
   const subskalaPostoji = (imeSubskale) => {
-    for (const s of skupinePitanja) {
+    for (const s of subskale) {
       if (s.ime === imeSubskale) {
         console.log("našli");
         return true;
@@ -356,8 +344,8 @@ function DefinirajBodovanje({
           type="button"
           className="btn btn-outline-success"
           onClick={() => {
-            if (skupinePitanja.length > 0 && !subskalaPostoji(imeSubskale)) {
-              console.log("tak je", skupinePitanja);
+            if (subskale.length > 0 && !subskalaPostoji(imeSubskale)) {
+              console.log("tak je", subskale);
               setError(true);
               return;
             }
@@ -420,15 +408,15 @@ function DefinirajBodovanje({
         <h3 className="p-2 rounded-2 bg-success-subtle text-success fw-semibold">
           Koje su subskale (skupine pitanja) u upitniku?
         </h3>
-        <DefinirajPodskupine q={question} />
+        <DefinirajSubskale pitanja={arr(question.subQuestion)} setParentSubskale={setSubskale} parentSubskale={subskale} />
       </>
     );
   }
 
   return (
     <div className="row">
-      <div className="col-6 bg-primary-subtle border rounded-3 d-flex flex-column">
-        <h3 className="p-2 mt-3 rounded-2 bg-white text-primary">
+      <div className="col-6 bg-light border rounded-3 d-flex flex-column">
+        <h3 className="p-2 mt-3 text-primary border-bottom">
           Pregled sadržaja upitnika
         </h3>
         {data && (
@@ -441,9 +429,9 @@ function DefinirajBodovanje({
         )}
       </div>
 
-      {/* definiranje bodovanja upitnika */}
+      
       <div className="col-6 p-0 p-3 border rounded-3 shadow-sm bg-white">
-        {data && <DefinirajFormulu className="m-3" />}
+        {data && <DefinirajFormulu className="m-3" />} {/* definiranje bodovanja upitnika */}
 
         <h3 className="p-2 rounded-2 bg-success-subtle text-success fw-semibold">
           Opis vrednovanja rezultata
