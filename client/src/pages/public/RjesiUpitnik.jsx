@@ -18,6 +18,7 @@ function RjesiUpitnik({ mod }) {
   const [subskale, setSubskale] = useState([]);
   const [resetFunkcija, setResetFunkcija] = useState(true);
   const [error, setError] = useState(false);
+  const [naslovUpitnika, setNaslovUpitnika] = useState("");
 
   const params = useParams();
 
@@ -36,6 +37,7 @@ function RjesiUpitnik({ mod }) {
       const parsedObj = parser.parse(data.xml);
 
       // console.log("dobio sam vrednovanje", data.vrednovanje);
+      setNaslovUpitnika(data.naslov);
       setVrednovanje(data.vrednovanje);
       setRezultatSpecs(data.formula);
       setSubskale(data.formula.skupine_pitanja);
@@ -177,11 +179,11 @@ function RjesiUpitnik({ mod }) {
   const checkUpitnikIspunjen = () => {
     let subQs = arr(xmlData.questionnaire.section.question.subQuestion);
     let flag = 0;
-    subQs.forEach(sq => {
-      console.log(sq.varName)
+    subQs.forEach((sq) => {
+      console.log(sq.varName);
       if (!(sq.varName in bodoviPitanja)) {
         setError(true);
-        flag=1;
+        flag = 1;
       }
     });
 
@@ -190,10 +192,10 @@ function RjesiUpitnik({ mod }) {
     setError(false);
     izracunajRezultat();
     setShowShare(true);
-  }
+  };
 
   return (
-    <>
+    <main>
       {xmlData && (
         <div className="container mb-5 p-4 bg-primary-subtle border border-primary-subtle rounded-3 d-flex flex-column align-items-center">
           <Upitnik
@@ -201,13 +203,13 @@ function RjesiUpitnik({ mod }) {
             rezultatSpecs={rezultatSpecs}
             setBodoviRoditelj={setBodoviPitanja}
             key={resetFunkcija}
+            naslov={naslovUpitnika}
           />
           <button
             className="btn btn-light border shadow-sm mt-3"
             onClick={() => {
-              checkUpitnikIspunjen() // provjera jesu li sva pitanja odgovorena
-              if (!error){
-                
+              checkUpitnikIspunjen(); // provjera jesu li sva pitanja odgovorena
+              if (!error) {
               }
             }}
           >
@@ -235,7 +237,9 @@ function RjesiUpitnik({ mod }) {
         centered
       >
         <Modal.Header closeButton>
-          <Modal.Title className="text-primary">Dobij rezultate putem e-pošte</Modal.Title>
+          <Modal.Title className="text-primary">
+            Dobij rezultate putem e-pošte
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
@@ -252,21 +256,15 @@ function RjesiUpitnik({ mod }) {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button
-            variant="outline-danger"
-            onClick={() => {
-              setShowShare(false);
-              setEmail("");
-            }}
+          <button
+            className="btn btn-outline-primary bg-primary-subtle shadow-sm"
+            onClick={handleSubmit}
           >
-            Odustani
-          </Button>
-          <Button variant="primary" onClick={handleSubmit}>
             Pošalji
-          </Button>
+          </button>
         </Modal.Footer>
       </Modal>
-    </>
+    </main>
   );
 }
 

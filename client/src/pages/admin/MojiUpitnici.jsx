@@ -51,8 +51,12 @@ const MojiUpitnici = () => {
 
   return (
     <main>
-      <div className="d-flex justify-content-begin p-3 border-bottom mb-5">
-        <Link to="/add" className="btn btn-primary shadow">
+      <div className="d-flex justify-content-begin p-4 border-bottom mb-5">
+        <Link
+          to="/add"
+          className="btn btn-light border"
+          style={{ boxShadow: "0 4px 15px rgba(var(--bs-primary-rgb), 0.4)" }}
+        >
           Dodaj novi upitnik
         </Link>
       </div>
@@ -83,21 +87,25 @@ const MojiUpitnici = () => {
 
       <Modal show={showShare} onHide={() => setShowShare(false)} centered>
         <Modal.Header closeButton>
-          <Modal.Title>Brisanje upitnika</Modal.Title>
+          <Modal.Title className="text-primary">Brisanje upitnika</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body className="my-4">
           Jeste li sigurni da želite trajno izbrisati ovaj upitnik?
         </Modal.Body>
         <Modal.Footer>
-          <Button
-            variant="outline-secondary"
+          <button
+            className="btn btn-outline-primary bg-primary-subtle shadow-sm"
+            variant="outline-primary"
             onClick={() => setShowShare(false)}
           >
             Odustani
-          </Button>
-          <Button variant="outline-danger" onClick={() => deleteUpitnik(id)}>
+          </button>
+          <button
+            className="btn btn-outline-danger bg-danger-subtle shadow-sm"
+            onClick={() => deleteUpitnik(id)}
+          >
             Izbriši
-          </Button>
+          </button>
         </Modal.Footer>
       </Modal>
     </main>

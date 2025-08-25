@@ -102,11 +102,11 @@ function AddUpitnik() {
   return (
     <main>
       <div className="m-3">
-        <h1 className="text-center">Dodaj upitnik</h1>
+        <div className="container py-4">
+          <h1 className="text-center mb-4">Dodaj upitnik</h1>
 
-        <div className="mb-5">
-          <label className="form-label">
-            Naslov upitnika
+          <div className="mb-4">
+            <label className="form-label fw-semibold">Naslov upitnika</label>
             <input
               type="text"
               className="form-control"
@@ -114,92 +114,90 @@ function AddUpitnik() {
               onChange={(e) => setNaslov(e.target.value)}
               value={naslov}
             />
-            {naslov === "" && clicked &&(
+            {naslov === "" && clicked && (
               <small className="text-danger">
                 Molimo unesite naslov upitnika.
               </small>
             )}
-          </label>
-        </div>
+          </div>
 
-        <div className="mb-5">
-          <label className="form-label">
-            Kratki opis
+          <div className="mb-4">
+            <label className="form-label fw-semibold">Kratki opis</label>
             <textarea
               name="message"
               rows="4"
-              cols="100"
               className="form-control"
               placeholder="Kratki opis toga za što upitnik služi"
               onChange={(e) => setOpis(e.target.value)}
               value={opis}
             />
-            {opis === "" && clicked &&(
+            {opis === "" && clicked && (
               <small className="text-danger">
                 Molimo unesite opis upitnika.
               </small>
             )}
-          </label>
-        </div>
-
-        <div className="mb-5">
-          <legend>Označi dostupnost upitnika</legend>
-
-          <div className="form-check">
-            <label className="form-check-label">
-              <input
-                type="radio"
-                name="visibility"
-                value="javni"
-                checked={status === "javni"}
-                onChange={(e) => setStatus(e.target.value)}
-                className={`form-check-input`}
-              />
-              javni
-            </label>
           </div>
 
-          <div className="form-check">
-            <label className="form-check-label">
-              <input
-                type="radio"
-                name="visibility"
-                value="privatni"
-                checked={status === "privatni"}
-                onChange={(e) => setStatus(e.target.value)}
-                className="form-check-input"
-              />
-              privatni
-            </label>
+          <div className="mb-4">
+            <legend>Označi dostupnost upitnika</legend>
+            <div className="form-check">
+              <label className="form-check-label">
+                <input
+                  type="radio"
+                  name="visibility"
+                  value="javni"
+                  checked={status === "javni"}
+                  onChange={(e) => setStatus(e.target.value)}
+                  className={`form-check-input`}
+                />
+                javni
+              </label>
+            </div>
+
+            <div className="form-check">
+              <label className="form-check-label">
+                <input
+                  type="radio"
+                  name="visibility"
+                  value="privatni"
+                  checked={status === "privatni"}
+                  onChange={(e) => setStatus(e.target.value)}
+                  className="form-check-input"
+                />
+                privatni
+              </label>
+            </div>
+
+            {clicked && status === "" && (
+              <small className="text-danger d-block">
+                Molimo označite status upitnika.
+              </small>
+            )}
           </div>
 
-          {clicked && status === "" && (
-            <small className="text-danger d-block">
-              Molimo označite status upitnika.
-            </small>
-          )}
-        </div>
-
-        <div className="mb-5">
-          <label htmlFor="xmlFile" className="form-label">
-            Učitaj XML datoteku upitnika
-          </label>
-          <input
-            id="xmlFile"
-            type="file"
-            className="form-control"
-            ref={fileInput}
-            accept=".xml"
-            onChange={handleFileChange}
-          />
-          {clicked && sadrzaj === "" && (
-            <small className="text-danger">Molimo učitajte datoteku.</small>
-          )}
+          <div className="mb-5">
+            <label htmlFor="xmlFile" className="form-label fw-semibold">
+              Učitaj XML datoteku upitnika
+            </label>
+            <input
+              id="xmlFile"
+              type="file"
+              className="form-control"
+              ref={fileInput}
+              accept=".xml"
+              onChange={handleFileChange}
+            />
+            {clicked && sadrzaj === "" && (
+              <small className="text-danger">Molimo učitajte datoteku.</small>
+            )}
+          </div>
         </div>
 
         {sadrzaj && (
-          <div className="card">
-              <h3 className="card-header text-center">Definiraj bodovanje upitnika</h3>
+          <div className="card d-flex mx-5 shadow-sm">
+            <h3 className="card-header text-center">
+              Definiraj bodovanje upitnika
+            </h3>
             <div className="card-body pt-1 pb-1">
               <DefinirajBodovanje
                 xmlData={sadrzaj}
@@ -213,7 +211,7 @@ function AddUpitnik() {
 
         <button
           className="btn btn-light d-block mx-auto mt-4 w-25 rounded-pill px-4 py-2 border d-block mx-auto"
-          style={{ boxShadow: "0 0 .5rem rgba(var(--bs-primary-rgb), .5)" }}
+          style={{ boxShadow: "0 4px 15px rgba(var(--bs-primary-rgb), 0.3" }}
           onClick={checkInput}
         >
           Dodaj upitnik
@@ -228,10 +226,10 @@ function AddUpitnik() {
           centered
         >
           <Modal.Header closeButton>
-            <Modal.Title>Podijeli upitnik</Modal.Title>
+            <Modal.Title className="text-primary">Podijeli upitnik</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <Form>
+            <Form className="d-flex align-items-end gap-2">
               <Form.Group>
                 <Form.Label>URL upitnika</Form.Label>
                 <Form.Control
@@ -241,21 +239,21 @@ function AddUpitnik() {
                   id="share-url"
                 />
               </Form.Group>
+              <button
+            className="btn btn-outline-success bg-success-subtle shadow-sm"
+                onClick={async () => {
+                  const url = `http://localhost:3000/upitnik/p/${uuid}`;
+                  try {
+                    await navigator.clipboard.writeText(url);
+                    setCopied(true);
+                  } catch (err) {
+                    console.error("Greška kod kopiranja:", err);
+                  }
+                }}
+              >
+                Podijeli
+              </button>
             </Form>
-            <Button
-              variant="outline-success"
-              onClick={async () => {
-                const url = `http://localhost:3000/upitnik/p/${uuid}`;
-                try {
-                  await navigator.clipboard.writeText(url);
-                  setCopied(true);
-                } catch (err) {
-                  console.error("Greška kod kopiranja:", err);
-                }
-              }}
-            >
-              Podijeli
-            </Button>
             {copied && (
               <Alert variant="success" className="mt-3 mb-0">
                 <strong>Link kopiran.</strong>
@@ -263,15 +261,6 @@ function AddUpitnik() {
             )}
           </Modal.Body>
           <Modal.Footer>
-            <Button
-              variant="outline-secondary"
-              onClick={() => {
-                setShowShare(false);
-                setCopied(false);
-              }}
-            >
-              Odustani
-            </Button>
             <Button variant="primary" onClick={() => privatniUpitnikHandle()}>
               Dodaj
             </Button>

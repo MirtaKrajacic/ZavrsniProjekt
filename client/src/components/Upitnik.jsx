@@ -1,7 +1,7 @@
 // element upitnika dobiven parsiranjem uploadanog XML-a
 import { useState } from "react";
 
-function Upitnik({ xmlData, rezultatSpecs, setBodoviRoditelj }) {
+function Upitnik({ xmlData, rezultatSpecs, setBodoviRoditelj, naslov }) {
   const [bodoviPitanja, setBodoviPitanja] = useState({}); // entry oblika: {varName:bodovi}
 
   const min = parseInt(rezultatSpecs.skala_odgovora[0]);
@@ -10,12 +10,21 @@ function Upitnik({ xmlData, rezultatSpecs, setBodoviRoditelj }) {
   );
   const obrnutoKodirani = rezultatSpecs.obrnuto_kodirana;
 
+  const arr = (x) => {
+    if (Array.isArray(x)) {
+      return x;
+    } else if (x) {
+      return [x];
+    }
+    return [];
+  };
+
   // definiranje skale odgovora pitanja q
   function Response({ q }) {
     if (q.response.fixed) {
       const cats = [].concat(q.response.fixed.category); // idemo po svim ponudenim odgovorima
       return (
-        <div className="row p-2">
+        <div className="row p-3">
           {cats.map((c) => (
             <div key={c.value} className="col">
               <div className="form-check">
@@ -64,22 +73,13 @@ function Upitnik({ xmlData, rezultatSpecs, setBodoviRoditelj }) {
     return <em>Unsupported response</em>;
   }
 
-  const arr = (x) => {
-    if (Array.isArray(x)) {
-      return x;
-    } else if (x) {
-      return [x];
-    }
-    return [];
-  };
-
   function ListaPitanja({ data }) {
     const sections = arr(data.section); // section = sekcija pitanja u queXML
 
     return sections.map((sec) => {
       const infos = arr(sec.sectionInfo);
       const titleInfo = infos.find((i) => i.position === "title");
-      const title = titleInfo?.text || 'sekcija';
+      const title = titleInfo?.text || `naslov`;
 
       const q = sec.question;
       const subQs = arr(q.subQuestion);
@@ -92,7 +92,7 @@ function Upitnik({ xmlData, rezultatSpecs, setBodoviRoditelj }) {
 
           {subQs.map((sq, ind) => (
             <div key={sq.varName}>
-              <span>{ind + 1 + ". " + sq.text}</span>
+              <span className="fw-semibold">{ind + 1 + ". " + sq.text}</span>
 
               <Response
                 q={{

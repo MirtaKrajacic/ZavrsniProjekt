@@ -50,7 +50,7 @@ export const getUpitnikRjesavanje = async (req, res) => {
       upitnikId,
     ]);
     // result.rows - polje JS objekata gdje je svaki row tablice jedan objekt
-    res.json({ xml: result.rows[0].sadrzaj, vrednovanje: result.rows[0].opis_vrednovanja, formula: result.rows[0].rezultat_formula }); // prikazuje sve koji matchaju sa searchom u imenu
+    res.json({ naslov: result.rows[0].naslov, xml: result.rows[0].sadrzaj, vrednovanje: result.rows[0].opis_vrednovanja, formula: result.rows[0].rezultat_formula }); // prikazuje sve koji matchaju sa searchom u imenu
   } catch (err) {
     res.status(500).send("Internal server error: " + err.message);
     console.log(err.message);
@@ -67,7 +67,7 @@ export const getUpitnikRjesavanjePriv = async (req, res) => {
     if (result.rows.length === 0) {
       return res.status(404).send("Nema upitnika s danim tokenom");
     }
-    res.json({ xml: result.rows[0].sadrzaj, vrednovanje: result.rows[0].opis_vrednovanja, formula: result.rows[0].rezultat_formula }); // prikazuje sve koji matchaju sa searchom u imenu
+    res.json({ naslov: result.rows[0].naslov, xml: result.rows[0].sadrzaj, vrednovanje: result.rows[0].opis_vrednovanja, formula: result.rows[0].rezultat_formula }); // prikazuje sve koji matchaju sa searchom u imenu
   } catch (err) {
     res.status(500).send("Internal server error: " + err.message);
     console.log(err.message); 

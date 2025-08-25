@@ -33,7 +33,7 @@ function UrediProfil() {
     try {
       let { data } = await api.put("/korisnik/update-korisnik", { ime, opis });
       setSuccess(true);
-      setTimeout(() => setSuccess(false), 2000); // automatski nestane nakon 2s
+      setTimeout(() => setSuccess(false), 1500); // automatski nestane nakon 1.5s
       console.log(data);
     } catch (err) {
       console.log(err);
@@ -41,14 +41,15 @@ function UrediProfil() {
   };
 
   return (
-    <main>
-      <div className="container">
-        <h1>Moj profil</h1>
+    <main className="d-flex justify-content-center align-items-center">
+      <div className="container py-5 border rounded-3 shadow-sm">
+        <h1 className="text-center mb-5">Moj profil</h1>
 
         <div className="container w-50">
           <div className="mb-5">
-            <label className="form-label">
+            <label className="form-label fw-semibold">
               Ime
+              </label>
               <input
                 type="text"
                 className="form-control"
@@ -56,12 +57,12 @@ function UrediProfil() {
                 onChange={(e) => setIme(e.target.value)}
                 value={ime}
               />
-            </label>
           </div>
 
           <div className="mb-5">
-            <label className="form-label">
+            <label className="form-label fw-semibold">
               E-mail
+              </label>
               <input
                 type="text"
                 className="form-control"
@@ -70,12 +71,13 @@ function UrediProfil() {
                 style={{ cursor: "not-allowed" }}
                 disabled
               />
-            </label>
+            
           </div>
 
           <div className="mb-5">
-            <label className="form-label">
+            <label className="form-label fw-semibold">
               Kratki opis
+              </label>
               <textarea
                 name="message"
                 rows="4"
@@ -87,7 +89,7 @@ function UrediProfil() {
                 onChange={(e) => setOpis(e.target.value)}
                 value={opis}
               />
-            </label>
+            
           </div>
 
           <button
