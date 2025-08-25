@@ -64,20 +64,29 @@ const MojiUpitnici = () => {
         <>
           <UpitniciCards data={upitnici}>
             {(u) => (
-              <div className="d-flex justify-content-center gap-2 flex-wrap">
-                <Link
-                  className="btn btn-light border btn-sm"
-                  to={"/upitnik/" + u.id}
-                >
-                  Isprobaj
-                </Link>
-                <button
-                  className="btn btn-danger btn-sm"
-                  onClick={() => setForDeletion(u.id)}
-                >
-                  Izbriši
-                </button>
-              </div>
+              <>
+                {u.status === "privatni" && (
+                  <small className="text-primary">*privatni</small>
+                )}
+                <div className="d-flex justify-content-center gap-2 flex-wrap">
+                  <Link
+                    className="btn btn-light border btn-sm"
+                    to={
+                      u.status === "javni"
+                        ? `/upitnik/${u.id}`
+                        : `/upitnik/p/${u.link_token}`
+                    }
+                  >
+                    Isprobaj
+                  </Link>
+                  <button
+                    className="btn btn-danger btn-sm"
+                    onClick={() => setForDeletion(u.id)}
+                  >
+                    Izbriši
+                  </button>
+                </div>
+              </>
             )}
           </UpitniciCards>
         </>

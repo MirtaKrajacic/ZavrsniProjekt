@@ -3,14 +3,14 @@ import pool from "../config/db.js";
 // 1 handler = 1 route
 export const listJavniUpitnici = async (req, res) => {
   try {
-    const products = await pool.query(`
+    const upitnici = await pool.query(`
       SELECT u.*, k.ime
       FROM upitnik u
       JOIN korisnik k ON k.id = u.autor_id
       WHERE u.status = 'javni'
       ORDER BY u.naslov ASC`);
-    if (products.rows.length > 0) {
-      res.send(products.rows);
+    if (upitnici.rows.length > 0) {
+      res.send(upitnici.rows);
     } else {
       res.json("nisu produnađeni upitnici");
     }
@@ -104,7 +104,7 @@ export const addPrivatniUpitnik = async (req, res) => {
 
 export const listMojiUpitnici = async (req, res) => {
   try {
-    const products = await pool.query(
+    const upitnici = await pool.query(
       `
       SELECT u.*, k.ime
       FROM upitnik u
@@ -113,8 +113,8 @@ export const listMojiUpitnici = async (req, res) => {
       ORDER BY u.naslov ASC`,
       [req.userid]
     );
-    if (products.rows.length > 0) {
-      res.send(products.rows);
+    if (upitnici.rows.length > 0) {
+      res.send(upitnici.rows);
     } else {
       res.json("nisu pronađeni upitnici");
     }

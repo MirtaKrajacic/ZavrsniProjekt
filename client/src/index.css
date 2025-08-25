@@ -1,21 +1,7 @@
 :root {
   --bs-primary: #ac8ffc;
   --bs-primary-rgb: 172, 143, 252;
-  
 }
-
-/*
-.btn-primary {
-  --bs-btn-color: #fff;
-  --bs-btn-bg: #ac8ffc;
-  --bs-btn-border-color: #ac8ffc;
-  --bs-btn-hover-bg: #9a77fa;
-  --bs-btn-hover-border-color: #9a77fa;
-  --bs-btn-active-bg: #8a5ff7;
-  --bs-btn-active-border-color: #8a5ff7;
-  --bs-btn-disabled-bg: #ac8ffc;
-  --bs-btn-disabled-border-color: #ac8ffc;
-}*/
 
 .navbar .nav-link.active {
   color: var(--bs-primary) !important;
@@ -29,7 +15,6 @@ body {
   font-family: 'Inter';
 }
 
-/* novo: #root je flex-kolona visine ekrana */
 #root {
   display: flex;
   flex-direction: column;

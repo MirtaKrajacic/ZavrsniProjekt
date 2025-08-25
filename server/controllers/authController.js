@@ -1,18 +1,23 @@
 import pool from "../config/db.js";
 import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 
 const secretKey = "secret-key";
 
 const register = async (req, res) => {
   const { name, email, password } = req.body;
+
+  const saltRounds = 10;
+  const hashedPassword = await bcrypt.hash(password, saltRounds);
+
   try {
     await pool.query(
       "INSERT INTO korisnik (ime, email, sifra) VALUES ($1, $2, $3)",
-      [name, email, password]
+      [name, email, hashedPassword]
     );
     const result = await pool.query(
       "SELECT id FROM korisnik WHERE email = $1 AND sifra = $2",
-      [email, password]
+      [email, hashedPassword]
     );
 
     const id = result.rows[0].id;
@@ -24,7 +29,7 @@ const register = async (req, res) => {
     };
 
     const token = jwt.sign({ userid: id }, secretKey, { expiresIn: "1h" });
-    
+
     res.json({
       auth: token,
       user: filteredUser,
@@ -36,15 +41,21 @@ const register = async (req, res) => {
     console.log("failed: " + err);
     res.status(500).send("Database error");
   }
-}
+};
 
 const login = async (req, res) => {
   const { email, password } = req.body;
   try {
     const result = await pool.query(
-      "SELECT id, ime, email FROM korisnik WHERE email = $1 AND sifra = $2",
-      [email, password]
+      "SELECT id, ime, email, sifra FROM korisnik WHERE email = $1",
+      [email]
     );
+    const user = result.rows[0];
+
+    const match = await bcrypt.compare(password, user.sifra);
+    if (!match) {
+      return res.status(401).json("Invalid username or password");
+    }
 
     if (result.rows.length > 0) {
       const user = result.rows[0];
@@ -69,6 +80,6 @@ const login = async (req, res) => {
     console.error("Database error:", err);
     res.status(500).send("Internal server error");
   }
-}
+};
 
-export {register, login};
+export { register, login };
