@@ -63,9 +63,9 @@ const MojiUpitnici = () => {
               <div className="d-flex justify-content-center gap-2 flex-wrap">
                 <Link
                   className="btn btn-light border btn-sm"
-                  to={"/upitnik/edit/" + u.id}
+                  to={"/upitnik/" + u.id}
                 >
-                  Uredi
+                  Isprobaj
                 </Link>
                 <button
                   className="btn btn-danger btn-sm"

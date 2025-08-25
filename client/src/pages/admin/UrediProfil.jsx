@@ -33,7 +33,7 @@ function UrediProfil() {
     try {
       let { data } = await api.put("/korisnik/update-korisnik", { ime, opis });
       setSuccess(true);
-      setTimeout(() => setSuccess(false), 2000); // automatski nestane nakon 3s
+      setTimeout(() => setSuccess(false), 2000); // automatski nestane nakon 2s
       console.log(data);
     } catch (err) {
       console.log(err);

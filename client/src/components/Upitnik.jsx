@@ -64,7 +64,14 @@ function Upitnik({ xmlData, rezultatSpecs, setBodoviRoditelj }) {
     return <em>Unsupported response</em>;
   }
 
-  const arr = (x) => (Array.isArray(x) ? x : x ? [x] : []);
+  const arr = (x) => {
+    if (Array.isArray(x)) {
+      return x;
+    } else if (x) {
+      return [x];
+    }
+    return [];
+  };
 
   function ListaPitanja({ data }) {
     const sections = arr(data.section); // section = sekcija pitanja u queXML
@@ -72,7 +79,7 @@ function Upitnik({ xmlData, rezultatSpecs, setBodoviRoditelj }) {
     return sections.map((sec) => {
       const infos = arr(sec.sectionInfo);
       const titleInfo = infos.find((i) => i.position === "title");
-      const title = titleInfo?.text || "Sekcija";
+      const title = titleInfo?.text || 'sekcija';
 
       const q = sec.question;
       const subQs = arr(q.subQuestion);

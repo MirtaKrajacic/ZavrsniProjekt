@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { XMLParser, XMLBuilder } from "fast-xml-parser";
 import UpitnikIzrada from "./UpitnikIzrada.jsx";
 import DefinirajSubskale from "./DefinirajSubskale.jsx";
+import DefinirajInterpretacije from "./DefinirajInterpretacije.jsx";
+import { Alert } from "react-bootstrap";
 
 // radim s pretpostavkom da svaki upitnik koji se unese ima jedan section i unutar njega jedan question
 // unutar questiona su subquestions
@@ -10,14 +12,16 @@ function DefinirajBodovanje({
   xmlData,
   updateParentData,
   setParentVrednovanje,
-  setParentFormula,
+  setParentFormula
 }) {
   const [data, setData] = useState(null); // parsirani xml u obliku js objekta
   const [checked, setChecked] = useState(new Set()); // set id-eva podpitanja koja su obrnuto kodirana
   const [min, setMin] = useState(0); // min bodovi
   const [max, setMax] = useState(0); // max bodovi
-  const [vrednovanje, setVrednovanje] = useState(""); // svaki element je objekt s atributima subskala i interpretacije
-  const [subskale, setSubskale] = useState([]); 
+  const [vrednovanje, setVrednovanje] = useState(""); // svaki element je objekt s atributima 'subskala' i 'interpretacije'
+  const [subskale, setSubskale] = useState([]);
+  const [error, setError] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   useEffect(() => {
     // postavljanje js objekta iz dobivenog xml-a
@@ -66,11 +70,19 @@ function DefinirajBodovanje({
       skupine_pitanja: subskale,
     };
 
-    console.log(resultSpecs);
-    console.log(vrednovanje);
+    console.log("resultSpecs:", resultSpecs);
+    console.log("vrednovanje: ", vrednovanje);
 
-    setParentVrednovanje(JSON.stringify(vrednovanje));
-    setParentFormula(JSON.stringify(resultSpecs));
+    if (resultSpecs.skala_odgovora.length < 2 || vrednovanje === "") {
+      setError(true);
+    } else {
+      setParentVrednovanje(JSON.stringify(vrednovanje));
+      setParentFormula(JSON.stringify(resultSpecs));
+
+      setError(false);
+      setSuccess(true);
+      setTimeout(() => setSuccess(false), 1000);
+    }
 
     editResponse();
   };
@@ -95,272 +107,47 @@ function DefinirajBodovanje({
     const subs = arr(q.subQuestion); // idemo po svim pitanjima unutar sekcije
 
     return (
-      <div key={q.varName || q.text}>
-        {subs.map((sq, ind) => (
-          <div key={sq.varName}>
-            <label>
-              <input
-                type="checkbox"
-                id={`input-${sq.varName}`}
-                name={sq.varName}
-                checked={checked.has(sq.varName)}
-                onChange={(e) => {
-                  if (e.target.checked) {
-                    setChecked((checkedBefore) => {
-                      let checkedNow = new Set(checkedBefore);
-                      checkedNow.add(e.target.name);
-                      return checkedNow;
-                    });
-                  } else if (!e.target.checked && checked.has(e.target.name)) {
-                    setChecked((checkedBefore) => {
-                      let checkedNow = new Set(checkedBefore);
-                      checkedNow.delete(e.target.name);
-                      return checkedNow;
-                    });
-                  }
-                }}
-              />
-              {` ${ind + 1}`}
-            </label>
-          </div>
-        ))}
-      </div>
-    );
-  }
-
-  
-
-  /*function DefinirajSubskale({ q }) {
-    const [ime, setIme] = useState("");
-    const [odabranaPitanja, setOdabranaPitanja] = useState([]);
-    const [op, setOp] = useState("sum");
-    const [faktor, setFaktor] = useState(1); // faktor s kojime se množe odgovori (opcionalan)
-
-    const subQs = arr(q.subQuestion);
-
-    return (
-      <div className="border rounded p-2 mb-3">
-        <label className="fw-semibold">
-          Unesi naziv skupine i označi pitanja koja joj pripadaju
-          <input
-            type="text"
-            placeholder="Naziv skupine"
-            value={ime}
-            onChange={(e) => setIme(e.target.value)}
-            className="form-control mb-2"
-          />
-        </label>
-
-        <div className="mb-2">
-          {subQs.map((sq, ind) => (
-            <label key={sq.varName} className="d-block">
-              <input
-                type="checkbox"
-                checked={odabranaPitanja.includes(sq.varName)}
-                name={sq.varName}
-                onChange={(e) => {
-                  if (e.target.checked) {
-                    setOdabranaPitanja((prev) => [...prev, e.target.name]);
-                  } else if (
-                    !e.target.checked &&
-                    odabranaPitanja.includes(e.target.name)
-                  ) {
-                    setOdabranaPitanja((prev) =>
-                      prev.filter((x) => x !== e.target.name)
-                    );
-                  }
-                }}
-              />
-              {` ${ind + 1}`}
-            </label>
+      <div key={q.varName || q.text} className="border rounded-3 p-3">
+        <div className="row row-cols-2 row-cols-md-3">
+          {subs.map((sq, ind) => (
+            <div key={sq.varName} className="col">
+              <div className="form-check">
+                <input
+                  type="checkbox"
+                  className="form-check-input g-1"
+                  id={`input-${sq.varName}`}
+                  name={sq.varName}
+                  checked={checked.has(sq.varName)}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setChecked((checkedBefore) => {
+                        let checkedNow = new Set(checkedBefore);
+                        checkedNow.add(e.target.name);
+                        return checkedNow;
+                      });
+                    } else if (
+                      !e.target.checked &&
+                      checked.has(e.target.name)
+                    ) {
+                      setChecked((checkedBefore) => {
+                        let checkedNow = new Set(checkedBefore);
+                        checkedNow.delete(e.target.name);
+                        return checkedNow;
+                      });
+                    }
+                  }}
+                />
+                <label
+                  className="form-check-label small"
+                  htmlFor={`input-${sq.varName}`}
+                >
+                  {ind + 1}
+                </label>
+              </div>
+            </div>
           ))}
         </div>
-
-        <div className="list-group list-group-flush">
-          {subskale &&
-            subskale.map((s, i) => (
-              <div
-                key={i}
-                className="list-group-item mb-1 border border-primary-subtle rounded-3 d-flex justify-content-between align-items-center py-1 px-2"
-              >
-                <small>{s.ime}</small>
-                <small>{ispisiPitanja(s.pitanja)}</small>
-                <button
-                  type="button"
-                  className="btn-close"
-                  style={{ fontSize: "0.7rem" }}
-                  aria-label="Close"
-                  onClick={() => {
-                    console.log(subskale);
-                    const currSkupinaIme = s.ime;
-                    setSubskale((prev) =>
-                      prev.filter((sk) => sk.ime !== currSkupinaIme)
-                    );
-                  }}
-                ></button>
-              </div>
-            ))}
-        </div>
-
-        <label className="fw-semibold">
-          Što se računa s odgovorima unutar skupine?
-          <select
-            value={op}
-            onChange={(e) => setOp(e.target.value)}
-            className="form-select mb-2"
-          >
-            <option value="suma">suma</option>
-            <option value="srednjaVr">srednja vrijednost</option>
-          </select>
-        </label>
-
-        <div className="mb-3">
-          <label className="fw-semibold">
-            Faktor s kojime se množi rezultat skupine (opcionalno)
-          </label>
-          <div className="input-group">
-            <input
-              type="number"
-              className="form-control"
-              value={faktor}
-              onChange={(e) => setFaktor(e.target.value)}
-              min="0"
-            />
-          </div>
-        </div>
-
-        <button
-          type="button"
-          className="btn btn-sm btn-light border shadow-sm"
-          onClick={() => {
-            if (!ime || odabranaPitanja.length === 0) return;
-
-            // ovako je definirana jedna skupina
-            const skupina = {
-              ime: ime,
-              pitanja: odabranaPitanja,
-              op: op,
-              faktor_mnozenja: faktor,
-            };
-
-            setIme("");
-            setSubskale((prev) => [...prev, skupina]);
-            console.log(op);
-          }}
-        >
-          Dodaj skupinu
-        </button>
       </div>
-    );
-  }*/
-
-  const subskalaPostoji = (imeSubskale) => {
-    for (const s of subskale) {
-      if (s.ime === imeSubskale) {
-        console.log("našli");
-        return true;
-      }
-    }
-    return false;
-  };
-
-  function DefinirajInterpretacije() {
-    const [imeSubskale, setImeSubskale] = useState("");
-    const [rows, setRows] = useState([
-      { min: "", max: "", interpretacija: "" },
-    ]);
-    const [error, setError] = useState(false);
-
-    return (
-      <section className="border rounded-3">
-        <input
-          type="text"
-          placeholder="Ime subskale (opcionalno)"
-          className="form-control mb-3"
-          value={imeSubskale}
-          onChange={(e) => {
-            setImeSubskale(e.target.value);
-            setError(false);
-          }}
-        />
-        {error && <small className="text-danger">molimo upisite imeee</small>}
-
-        {rows.map((row, i) => (
-          <div key={i} className="d-flex align-items-center gap-2 mb-2">
-            <input
-              type="number"
-              placeholder="Donja granica"
-              className="form-control"
-              min={0}
-              value={row.min}
-              onChange={(e) =>
-                setRows((prev) =>
-                  prev.map((el, ind) =>
-                    ind === i ? { ...el, min: e.target.value } : el
-                  )
-                )
-              }
-            />
-            -
-            <input
-              type="number"
-              placeholder="Gornja granica"
-              className="form-control"
-              min={0}
-              value={row.max}
-              onChange={(e) =>
-                setRows((prev) =>
-                  prev.map((el, ind) =>
-                    ind === i ? { ...el, max: e.target.value } : el
-                  )
-                )
-              }
-            />
-            <input
-              type="text"
-              placeholder="Interpretacija"
-              className="form-control"
-              value={row.interpretacija}
-              onChange={(e) =>
-                setRows((prev) =>
-                  prev.map((el, ind) =>
-                    ind === i ? { ...el, interpretacija: e.target.value } : el
-                  )
-                )
-              }
-            />
-          </div>
-        ))}
-
-        <button
-          type="button"
-          className="btn btn-outline-primary"
-          onClick={() => setRows([...rows, rows.length])}
-        >
-          +
-        </button>
-
-        <button
-          type="button"
-          className="btn btn-outline-success"
-          onClick={() => {
-            if (subskale.length > 0 && !subskalaPostoji(imeSubskale)) {
-              console.log("tak je", subskale);
-              setError(true);
-              return;
-            }
-            console.log("interpretacije: ", rows);
-            setVrednovanje((prev) => [
-              ...prev,
-              { skupina: imeSubskale, interpretacije: rows },
-            ]);
-            setRows([{ min: "", max: "", interpretacija: "" }]);
-            setImeSubskale("");
-          }}
-        >
-          Dodaj interpretacije
-        </button>
-      </section>
     );
   }
 
@@ -370,14 +157,14 @@ function DefinirajBodovanje({
     return (
       <>
         <div className="mb-4">
-          <h3 className="p-2 rounded-2 bg-success-subtle text-success fw-semibold">
+          <h3 className="p-2 rounded-2 bg-success-subtle text-success">
             Označi koje se čestice obrnuto kodiraju
           </h3>
           <OznaciObrnutoKodirane q={question} />
         </div>
 
-        <h3 className="p-2 rounded-2 bg-success-subtle text-success fw-semibold">
-          U kojem se rasponu kreću bodovi Likertove ljestvice?
+        <h3 className="p-2 rounded-2 bg-success-subtle text-success">
+          U kojem se rasponu kreću bodovi Likertove ljestvice?*
         </h3>
         <div className="d-flex align-items-center gap-4 my-3">
           <div className="input-group w-auto">
@@ -405,10 +192,38 @@ function DefinirajBodovanje({
           </div>
         </div>
 
-        <h3 className="p-2 rounded-2 bg-success-subtle text-success fw-semibold">
+        <h3 className="p-2 rounded-2 bg-success-subtle text-success">
           Koje su subskale (skupine pitanja) u upitniku?
         </h3>
-        <DefinirajSubskale pitanja={arr(question.subQuestion)} setParentSubskale={setSubskale} parentSubskale={subskale} />
+        <DefinirajSubskale
+          pitanja={arr(question.subQuestion)}
+          setParentSubskale={setSubskale}
+          parentSubskale={subskale}
+        />
+
+        <h3 className="p-2 rounded-2 bg-success-subtle text-success mt-3">
+          Opis vrednovanja rezultata*
+        </h3>
+        <DefinirajInterpretacije setParentVrednovanje={setVrednovanje} subskale={subskale} />
+
+        <button
+          className="btn btn-primary d-block mx-auto"
+          onClick={() => {
+            handleSave();
+          }}
+        >
+          Spremi
+        </button>
+
+        {
+          error && <small className="text-danger d-block text-center mt-2">Molimo ispunite obavezna polja</small>
+        }
+
+        {success && (
+            <Alert variant="success" className="d-block mx-auto mt-3 text-center w-50 bg-white border-0 text-primary">
+              Promjene su uspješno spremljene!
+            </Alert>
+          )}
       </>
     );
   }
@@ -429,27 +244,9 @@ function DefinirajBodovanje({
         )}
       </div>
 
-      
       <div className="col-6 p-0 p-3 border rounded-3 shadow-sm bg-white">
-        {data && <DefinirajFormulu className="m-3" />} {/* definiranje bodovanja upitnika */}
-
-        <h3 className="p-2 rounded-2 bg-success-subtle text-success fw-semibold">
-          Opis vrednovanja rezultata
-        </h3>
-        <section className="border rounded-3">
-          <small>{`Za svaku subskalu, ako ih upitnik ima, navedite njezino ime i definirajte interpretacije. 
-        Inače ih definirajte za upitnik u cjelosti.`}</small>
-          <DefinirajInterpretacije />
-        </section>
-
-        <button
-          className="btn btn-primary d-block mx-auto"
-          onClick={() => {
-            handleSave();
-          }}
-        >
-          Spremi
-        </button>
+        {data && <DefinirajFormulu />}{" "}
+        {/* definiranje bodovanja i interpretacija upitnika */}
       </div>
     </div>
   );

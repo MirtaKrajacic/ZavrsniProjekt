@@ -17,6 +17,7 @@ function RjesiUpitnik({ mod }) {
   const [bodoviPitanja, setBodoviPitanja] = useState({}); // entry oblika: {varName:bodovi}
   const [subskale, setSubskale] = useState([]);
   const [resetFunkcija, setResetFunkcija] = useState(true);
+  const [error, setError] = useState(false);
 
   const params = useParams();
 
@@ -88,28 +89,36 @@ function RjesiUpitnik({ mod }) {
               padding:20px;border:1px solid #ddd;
               border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,0.1);
               font-family:Arial,sans-serif;">
+
     <h1 style="color:#2ac6de;text-align:center;">Vaš rezultat</h1>
+
     ${Object.entries(rezultat)
       .map(([skupina, rez]) =>
         skupina === "skupina"
-          ? `<p style="margin:8px 0;">Ostvareni bodovi: <b>${rez.toFixed(0)}</b></p>`
-          : `<p style="margin:8px 0;">Ostvareni bodovi na skali <b>${skupina}</b>: ${rez.toFixed(0)}</p>`
+          ? `<p style="margin:8px 0;">Ostvareni bodovi: <b>${rez.toFixed(
+              0
+            )}</b></p>`
+          : `<p style="margin:8px 0;">Ostvareni bodovi na skali <b>${skupina}</b>: ${rez.toFixed(
+              0
+            )}</p>`
       )
       .join("")}
+
     <div >
 
     <h2 style="text-align:center;">
-      <b>Interpretacija rezultata</b>
+      Interpretacija rezultata
     </h2>
 
     ${vrednovanje
       .map(
         (subskala) => `
+        <h3 style="color:#2ac6de; margin:10px;">
+          ${subskala.skupina}
+        </h3>
       <div style="margin-bottom:20px;border:1px solid #e3e3e3;
                   border-radius:6px;overflow:hidden;">
-        <h3 style="color:#2ac6de; margin:10px;">
-          <b>${subskala.skupina}</b>
-        </h3>
+        
         <table style="width:100%;border-collapse:collapse;">
           <thead>
             <tr style="background:#f8f9fa;text-align:left;">
@@ -156,6 +165,33 @@ function RjesiUpitnik({ mod }) {
     }
   };
 
+  const arr = (x) => {
+    if (Array.isArray(x)) {
+      return x;
+    } else if (x) {
+      return [x];
+    }
+    return [];
+  };
+
+  const checkUpitnikIspunjen = () => {
+    let subQs = arr(xmlData.questionnaire.section.question.subQuestion);
+    let flag = 0;
+    subQs.forEach(sq => {
+      console.log(sq.varName)
+      if (!(sq.varName in bodoviPitanja)) {
+        setError(true);
+        flag=1;
+      }
+    });
+
+    if (flag) return;
+
+    setError(false);
+    izracunajRezultat();
+    setShowShare(true);
+  }
+
   return (
     <>
       {xmlData && (
@@ -167,14 +203,21 @@ function RjesiUpitnik({ mod }) {
             key={resetFunkcija}
           />
           <button
-            className="btn btn-primary mt-3"
+            className="btn btn-light border shadow-sm mt-3"
             onClick={() => {
-              izracunajRezultat();
-              setShowShare(true);
+              checkUpitnikIspunjen() // provjera jesu li sva pitanja odgovorena
+              if (!error){
+                
+              }
             }}
           >
-            Submit
+            Predaj
           </button>
+          {error && (
+            <small className="text-danger d-block text-center">
+              Molimo odgovorite na sva pitanja.
+            </small>
+          )}
           {success && (
             <Alert variant="success" className="mt-3 text-center">
               Provjerite mail za rezultate upitnika!
@@ -192,7 +235,7 @@ function RjesiUpitnik({ mod }) {
         centered
       >
         <Modal.Header closeButton>
-          <Modal.Title>Dobij rezultate putem e-pošte</Modal.Title>
+          <Modal.Title className="text-primary">Dobij rezultate putem e-pošte</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
@@ -210,7 +253,7 @@ function RjesiUpitnik({ mod }) {
         </Modal.Body>
         <Modal.Footer>
           <Button
-            variant="outline-secondary"
+            variant="outline-danger"
             onClick={() => {
               setShowShare(false);
               setEmail("");
