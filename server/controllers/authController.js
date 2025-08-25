@@ -21,20 +21,11 @@ const register = async (req, res) => {
     );
 
     const id = result.rows[0].id;
-    const user = req.body;
-    const filteredUser = {
-      name: user.name,
-      email: user.email,
-      id: id,
-    };
-
     const token = jwt.sign({ userid: id }, secretKey, { expiresIn: "1h" });
 
     res.json({
       auth: token,
-      user: filteredUser,
     });
-
     console.log("user saved!");
   } catch (err) {
     console.error(err);
@@ -59,19 +50,12 @@ const login = async (req, res) => {
 
     if (result.rows.length > 0) {
       const user = result.rows[0];
-      const filteredUser = {
-        name: user.name,
-        email: user.email,
-        id: user.id,
-      };
-
       const token = jwt.sign({ userid: user.id }, secretKey, {
         expiresIn: "1h",
       });
 
       res.json({
         auth: token,
-        user: filteredUser,
       });
     } else {
       res.status(401).json("No user found");
