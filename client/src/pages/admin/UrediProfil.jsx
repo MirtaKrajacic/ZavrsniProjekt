@@ -42,14 +42,13 @@ function UrediProfil() {
 
   return (
     <main className="d-flex justify-content-center align-items-center">
-      <div className="container py-5 border rounded-3 shadow-sm">
+      <div className="container py-5 border rounded-3 shadow-sm bg-light">
         <h1 className="text-center mb-5">Moj profil</h1>
 
-        <div className="container w-50">
-          <div className="mb-5">
-            <label className="form-label fw-semibold">
-              Ime
-              </label>
+        <div className="row justify-content-center">
+          <div className="col-12 col-md-8 col-lg-6">
+            <div className="mb-5">
+              <label className="form-label fw-semibold">Ime</label>
               <input
                 type="text"
                 className="form-control"
@@ -57,12 +56,10 @@ function UrediProfil() {
                 onChange={(e) => setIme(e.target.value)}
                 value={ime}
               />
-          </div>
+            </div>
 
-          <div className="mb-5">
-            <label className="form-label fw-semibold">
-              E-mail
-              </label>
+            <div className="mb-5">
+              <label className="form-label fw-semibold">E-mail</label>
               <input
                 type="text"
                 className="form-control"
@@ -71,13 +68,10 @@ function UrediProfil() {
                 style={{ cursor: "not-allowed" }}
                 disabled
               />
-            
-          </div>
+            </div>
 
-          <div className="mb-5">
-            <label className="form-label fw-semibold">
-              Kratki opis
-              </label>
+            <div className="mb-5">
+              <label className="form-label fw-semibold">Kratki opis</label>
               <textarea
                 name="message"
                 rows="4"
@@ -89,21 +83,21 @@ function UrediProfil() {
                 onChange={(e) => setOpis(e.target.value)}
                 value={opis}
               />
-            
+            </div>
+
+            <button
+              className="btn btn-primary d-block mx-auto"
+              onClick={urediProfil}
+            >
+              Spremi
+            </button>
+
+            {success && (
+              <Alert variant="success" className="mt-3 text-center">
+                Promjene su uspješno spremljene!
+              </Alert>
+            )}
           </div>
-
-          <button
-            className="btn btn-primary d-block mx-auto"
-            onClick={urediProfil}
-          >
-            Spremi
-          </button>
-
-          {success && (
-            <Alert variant="success" className="mt-3 text-center">
-              Promjene su uspješno spremljene!
-            </Alert>
-          )}
         </div>
       </div>
     </main>
