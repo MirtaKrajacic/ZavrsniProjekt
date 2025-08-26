@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { Modal, Button, Form, Alert } from "react-bootstrap";
 import { v4 as uuidv4 } from "uuid";
 import DefinirajBodovanje from "../../components/DefinirajBodovanje.jsx";
-// import validateXML from "./validateQueXML.js";
+import { XMLParser } from "fast-xml-parser";
 
 import api from "../../api.js";
 
@@ -17,6 +17,7 @@ function AddUpitnik() {
   const [copied, setCopied] = useState(false);
   const [vrednovanje, setVrednovanje] = useState("");
   const [formula, setFormula] = useState(null);
+  const [xmlError, setXmlError] = useState(false);
 
   const fileInput = useRef(null);
 
@@ -29,6 +30,28 @@ function AddUpitnik() {
     fileInput.current.value = "";
   };
 
+  const validateXml = (xmlData) => {
+    try {
+      const parser = new XMLParser({
+        ignoreAttributes: false,
+        attributeNamePrefix: "",
+      });
+      const xmlObj = parser.parse(xmlData);
+
+      const section = xmlObj.questionnaire.section;
+      const question = section.question;
+      const subQs = question.subQuestion;
+      subQs.forEach((sq) => sq.varName);
+      [].concat(question.response.fixed.category);
+
+      setXmlError(false);
+      return true;
+    } catch (e) {
+      setXmlError(true);
+      return false;
+    }
+  };
+
   const handleFileChange = (e) => {
     const file = e.target.files[0]; // dohvaćamo datoteku iz inputa
 
@@ -38,7 +61,10 @@ function AddUpitnik() {
       // onload je funkcija koja se poziva kada se datoteka učita (load event)
       reader.onload = (event) => {
         const xmlSadrzaj = event.target.result; // sadrzaj datoteke (string)
-        setSadrzaj(xmlSadrzaj);
+        console.log(xmlSadrzaj);
+        if (validateXml(xmlSadrzaj)) {
+          setSadrzaj(xmlSadrzaj);
+        }
       };
 
       reader.readAsText(file); // čita file i poziva onload kada je gotov
@@ -190,10 +216,15 @@ function AddUpitnik() {
             {clicked && sadrzaj === "" && (
               <small className="text-danger">Molimo učitajte datoteku.</small>
             )}
+            {xmlError && (
+              <small className="text-danger">
+                Molimo učitajte ispravnu XML datoteku.
+              </small>
+            )}
           </div>
         </div>
 
-        {sadrzaj && (
+        {!xmlError && sadrzaj && (
           <div className="card d-flex mx-5 shadow-sm">
             <h3 className="card-header text-center">
               Definiraj bodovanje upitnika
@@ -240,7 +271,7 @@ function AddUpitnik() {
                 />
               </Form.Group>
               <button
-            className="btn btn-outline-success bg-success-subtle shadow-sm"
+                className="btn btn-outline-success bg-success-subtle shadow-sm"
                 onClick={async () => {
                   const url = `http://localhost:3000/upitnik/p/${uuid}`;
                   try {
