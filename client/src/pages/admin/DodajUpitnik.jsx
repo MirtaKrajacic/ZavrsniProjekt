@@ -27,6 +27,8 @@ function AddUpitnik() {
     setSadrzaj("");
     setStatus("");
     setUuid(uuidv4());
+    setFormula(null);
+    setVrednovanje("");
     fileInput.current.value = "";
   };
 
@@ -86,7 +88,7 @@ function AddUpitnik() {
           status,
           kratki_opis: opis,
           vrednovanje: vrednovanje,
-          formula: formula,
+          formula: formula
         });
         console.log(result.data);
         resetView();
@@ -105,7 +107,7 @@ function AddUpitnik() {
         kratki_opis: opis,
         link_token: uuid,
         vrednovanje: vrednovanje,
-        formula: formula,
+        formula: formula
       });
       console.log(result.data);
       setShowShare(false);
@@ -119,7 +121,10 @@ function AddUpitnik() {
     setClicked(true);
     if (naslov === "" || opis === "" || status === "" || sadrzaj === "") {
       console.log("nisu ispunjena sva obavezna polja");
-    } else {
+    } else if (vrednovanje==="" || formula === null) {
+      console.log("nisu ispunjena sva obavezna polja");
+    }
+     else {
       spremiUpitnik();
       setClicked(false);
     }
@@ -270,20 +275,20 @@ function AddUpitnik() {
                   id="share-url"
                 />
               </Form.Group>
-              <button
-                className="btn btn-outline-success bg-success-subtle shadow-sm"
-                onClick={async () => {
-                  const url = `http://localhost:3000/upitnik/p/${uuid}`;
-                  try {
-                    await navigator.clipboard.writeText(url);
-                    setCopied(true);
-                  } catch (err) {
-                    console.error("Greška kod kopiranja:", err);
-                  }
-                }}
-              >
-                Podijeli
-              </button>
+              <Button
+            className="btn btn-outline-success bg-success-subtle shadow-sm"
+            onClick={async () => {
+              const url = `http://localhost:3000/upitnik/p/${uuid}`;
+              try {
+                await navigator.clipboard.writeText(url);
+                setCopied(true);
+              } catch (err) {
+                console.error("Greška kod kopiranja:", err);
+              }
+            }}
+          >
+            Podijeli
+          </Button>
             </Form>
             {copied && (
               <Alert variant="success" className="mt-3 mb-0">
