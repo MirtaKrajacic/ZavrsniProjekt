@@ -45,7 +45,7 @@ const Naslovnica = () => {
     <main>
       <input
         type="text"
-        className="form-control search-input"
+        className="form-control search-input mx-auto w-50"
         placeholder="Pretraži upitnike..."
         onChange={searchHandle}
       />
