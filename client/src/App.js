@@ -7,6 +7,7 @@ import Naslovnica from "./pages/public/Naslovnica";
 import UrediProfil from "./pages/admin/UrediProfil";
 import RjesiUpitnik from "./pages/public/RjesiUpitnik";
 import DodajUpitnik from "./pages/admin/DodajUpitnik";
+import About from "./pages/public/About";
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import MojiUpitnici from "./pages/admin/MojiUpitnici";
@@ -18,6 +19,7 @@ function App() {
       <Routes>
         {/* Javne rute */}
         <Route path="/" element={<Naslovnica />} />
+        <Route path="/about" element={<About />} />
         <Route path="/signup" element={<Registracija />} />
         <Route path="/login" element={<Prijava />} />
         <Route path="/upitnik/:id" element={<RjesiUpitnik mod={"javni"} />} />

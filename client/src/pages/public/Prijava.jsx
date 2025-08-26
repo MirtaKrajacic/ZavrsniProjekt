@@ -37,7 +37,7 @@ const Login = () => {
         <h1 className="text-center text-primary mb-4">Prijava</h1>
 
         <div className="mb-3 mt-4">
-          <label className="form-label">Email address</label>
+          <label className="form-label">Email adresa</label>
           <input
             type="email"
             className="form-control"
@@ -48,7 +48,7 @@ const Login = () => {
         </div>
 
         <div className="mb-5">
-          <label className="form-label">Password</label>
+          <label className="form-label">Lozinka</label>
           <input
             type="password"
             className="form-control"
