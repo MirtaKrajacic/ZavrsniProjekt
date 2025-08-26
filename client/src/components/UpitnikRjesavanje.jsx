@@ -10,24 +10,14 @@ function Upitnik({ xmlData, rezultatSpecs, setBodoviRoditelj, naslov }) {
   );
   const obrnutoKodirani = rezultatSpecs.obrnuto_kodirana;
 
-  const arr = (x) => {
-    if (Array.isArray(x)) {
-      return x;
-    } else if (x) {
-      return [x];
-    }
-    return [];
-  };
-
   // definiranje skale odgovora pitanja q
   function Response({ q }) {
     if (q.response.fixed) {
       const cats = [].concat(q.response.fixed.category); // idemo po svim ponudenim odgovorima
       return (
-        <div className="row p-3">
+        <div className="p-3 d-flex flex-wrap flex-column flex-md-row justify-content-md-evenly">
           {cats.map((c) => (
-            <div key={c.value} className="col">
-              <div className="form-check">
+            <div key={c.value}  className="form-check me-md-3">
                 <input
                   className="form-check-input"
                   type="radio"
@@ -65,8 +55,7 @@ function Upitnik({ xmlData, rezultatSpecs, setBodoviRoditelj, naslov }) {
                   {c.label}
                 </label>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
       );
     }
@@ -74,15 +63,15 @@ function Upitnik({ xmlData, rezultatSpecs, setBodoviRoditelj, naslov }) {
   }
 
   function ListaPitanja({ data }) {
-    const sections = arr(data.section); // section = sekcija pitanja u queXML
+    const sections = [].concat(data.section); // section = sekcija pitanja u queXML
 
     return sections.map((sec) => {
-      const infos = arr(sec.sectionInfo);
+      const infos = [].concat(sec.sectionInfo);
       const titleInfo = infos.find((i) => i.position === "title");
-      const title = titleInfo?.text || `naslov`;
+      const title = titleInfo?.text || `${naslov}`;
 
       const q = sec.question;
-      const subQs = arr(q.subQuestion);
+      const subQs = [].concat(q.subQuestion);
 
       return (
         <section key={sec.id}>

@@ -4,7 +4,7 @@ import { XMLParser } from "fast-xml-parser";
 import { Modal, Button, Form, Alert } from "react-bootstrap";
 
 import api from "../../api";
-import Upitnik from "../../components/Upitnik";
+import UpitnikRjesavanje from "../../components/UpitnikRjesavanje";
 
 function RjesiUpitnik({ mod }) {
   const [xmlData, setXmlData] = useState(null);
@@ -198,7 +198,7 @@ function RjesiUpitnik({ mod }) {
     <main>
       {xmlData && (
         <div className="container mb-5 p-4 bg-primary-subtle border border-primary-subtle rounded-3 d-flex flex-column align-items-center">
-          <Upitnik
+          <UpitnikRjesavanje
             xmlData={xmlData}
             rezultatSpecs={rezultatSpecs}
             setBodoviRoditelj={setBodoviPitanja}
@@ -213,7 +213,7 @@ function RjesiUpitnik({ mod }) {
               }
             }}
           >
-            Predaj
+            Predaj za procjenu
           </button>
           {error && (
             <small className="text-danger d-block text-center">

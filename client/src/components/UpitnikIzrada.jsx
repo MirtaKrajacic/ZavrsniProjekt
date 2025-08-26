@@ -6,16 +6,14 @@ function UpitnikIzrada({ xmlData, obrnutoKodirani, min, max }) {
     console.log("data promijenjena:", xmlData);
   }, [xmlData]);
 
-  const arr = (x) => (Array.isArray(x) ? x : x ? [x] : []);
-
   function ListaPitanja({ data }) {
-    const sections = arr(data.section);
+    const sections = [].concat(data.section);
 
     return sections.map((sec) => {
       const q = sec.question;
-      const subQuestions = arr(q.subQuestion);
+      const subQuestions = [].concat(q.subQuestion);
 
-      const cats = q.response?.fixed ? arr(q.response.fixed.category) : [];
+      const cats = q.response?.fixed ? [].concat(q.response.fixed.category) : [];
 
       return (
         <section key={sec.id} >

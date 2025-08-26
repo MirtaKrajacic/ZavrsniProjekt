@@ -1,7 +1,7 @@
 import Nav from "./components/Nav";
 import Footer from "./components/Footer";
 import Registracija from "./pages/public/Registracija";
-import PrivateComponent from "./pages/public/PrivateComponent";
+import Privatno from "./pages/public/Privatno";
 import Prijava from "./pages/public/Prijava";
 import Naslovnica from "./pages/public/Naslovnica";
 import UrediProfil from "./pages/admin/UrediProfil";
@@ -27,7 +27,7 @@ function App() {
         />
 
         {/* Privatne rute */}
-        <Route element={<PrivateComponent />}>
+        <Route element={<Privatno />}>
           <Route path="/view" element={<MojiUpitnici />} />
           <Route path="/add" element={<DodajUpitnik />} />
           <Route path="/profile" element={<UrediProfil />} />

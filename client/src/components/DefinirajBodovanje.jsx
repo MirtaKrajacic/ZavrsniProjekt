@@ -48,15 +48,6 @@ function DefinirajBodovanje({
     }
   }, [data, updateParentData]);
 
-  const arr = (x) => {
-    if (Array.isArray(x)) {
-      return x;
-    } else if (x) {
-      return [x];
-    }
-    return [];
-  };
-
   // aktivira se kilikom na "Spremi" button
   const handleSave = () => {
     let likertRange = [];
@@ -94,7 +85,7 @@ function DefinirajBodovanje({
     const sekcija = newData.questionnaire.section;
     const question = sekcija.question;
 
-    const cats = arr(question.response.fixed.category);
+    const cats = [].concat(question.response.fixed.category);
     cats.forEach((cat) => {
       cat.value = count;
       count++;
@@ -104,7 +95,7 @@ function DefinirajBodovanje({
   };
 
   function OznaciObrnutoKodirane({ q }) {
-    const subs = arr(q.subQuestion); // idemo po svim pitanjima unutar sekcije
+    const subs = [].concat(q.subQuestion); // idemo po svim pitanjima unutar sekcije
 
     return (
       <div key={q.varName || q.text} className="border rounded-3 p-3">
@@ -196,7 +187,7 @@ function DefinirajBodovanje({
           Koje su subskale (skupine pitanja) u upitniku?
         </h3>
         <DefinirajSubskale
-          pitanja={arr(question.subQuestion)}
+          pitanja={[].concat(question.subQuestion)}
           setParentSubskale={setSubskale}
           parentSubskale={subskale}
         />
