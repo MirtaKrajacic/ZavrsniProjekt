@@ -246,8 +246,7 @@ function AddUpitnik() {
         )}
 
         <button
-          className="btn btn-light d-block mx-auto mt-4 w-25 rounded-pill px-4 py-2 border d-block mx-auto"
-          style={{ boxShadow: "0 4px 15px rgba(var(--bs-primary-rgb), 0.3" }}
+          className="btn btn-light dodaj-button d-block mx-auto mt-4 w-25 rounded-pill px-4 py-2 border d-block mx-auto"
           onClick={checkInput}
         >
           Dodaj upitnik

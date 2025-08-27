@@ -66,8 +66,24 @@ main {
 }
 
 .upitnik-card:hover {
-  transform: scale(1.03);
+  transform: scale(1.02);
   box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+.dodaj-button{
+  box-shadow: 0 4px 10px rgba(var(--bs-primary-rgb), 0.3);
+  transition: transform 180ms ease, box-shadow 180ms ease;
+  will-change: transform;
+}
+.dodaj-button:hover{
+  transform: scale(1.02);
+  background: #f8f9fa;
+  box-shadow: 0 8px 20px rgba(var(--bs-primary-rgb), 0.3);
+}
+
+.dodaj-button:active {
+  background: #f8f9fa !important;
+  box-shadow: 0 8px 20px rgba(var(--bs-primary-rgb), 0.3);
 }
 
 .form-check-input[type="radio"] {

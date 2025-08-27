@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Modal, Button } from "react-bootstrap";
+import { Modal } from "react-bootstrap";
 
 import api from "../../api";
 import UpitniciCards from "../UpitniciCards";
@@ -54,8 +54,8 @@ const MojiUpitnici = () => {
       <div className="d-flex justify-content-begin p-4 border-bottom mb-5">
         <Link
           to="/add"
-          className="btn btn-light border"
-          style={{ boxShadow: "0 4px 15px rgba(var(--bs-primary-rgb), 0.4)" }}
+          className="btn btn-light border dodaj-button"
+          
         >
           Dodaj novi upitnik
         </Link>
