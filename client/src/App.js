@@ -1,3 +1,5 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
 import Nav from "./components/Nav";
 import Footer from "./components/Footer";
 import Registracija from "./pages/public/Registracija";
@@ -8,9 +10,8 @@ import UrediProfil from "./pages/admin/UrediProfil";
 import RjesiUpitnik from "./pages/public/RjesiUpitnik";
 import DodajUpitnik from "./pages/admin/DodajUpitnik";
 import About from "./pages/public/About";
-
-import { BrowserRouter, Routes, Route } from "react-router-dom";
 import MojiUpitnici from "./pages/admin/MojiUpitnici";
+import ProfilKorisnika from "./pages/public/ProfilKorisnika";
 
 function App() {
   return (
@@ -23,10 +24,8 @@ function App() {
         <Route path="/signup" element={<Registracija />} />
         <Route path="/login" element={<Prijava />} />
         <Route path="/upitnik/:id" element={<RjesiUpitnik mod={"javni"} />} />
-        <Route
-          path="/upitnik/p/:uuid"
-          element={<RjesiUpitnik mod={"privatni"} />}
-        />
+        <Route path="/upitnik/p/:uuid" element={<RjesiUpitnik mod={"privatni"} />}/>
+        <Route path="/profile/:ime" element={<ProfilKorisnika />}/>
 
         {/* Privatne rute */}
         <Route element={<Privatno />}>

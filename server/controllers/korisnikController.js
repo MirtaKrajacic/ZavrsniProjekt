@@ -1,6 +1,6 @@
 import pool from "../config/db.js";
 
-// dohvat podataka korisnika iz baze
+// dohvat podataka aktivnog korisnika iz baze
 const dohvatiKorisnika = async (req, res) => {
   try {
     let result = await pool.query(

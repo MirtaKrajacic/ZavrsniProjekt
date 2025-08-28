@@ -12,7 +12,8 @@ import {
   addUpitnik,                
   addPrivatniUpitnik,        
   listMojiUpitnici,            
-  deleteUpitnik,             
+  deleteUpitnik,   
+  dohvatiProfilKorisnika
 } from "../controllers/upitnikController.js";
 
 const router = express.Router();
@@ -40,5 +41,7 @@ router.get("/get-moji-upitnici", verifyToken, listMojiUpitnici);
 
 // brisanje upitnika zadanog id-a iz baze
 router.delete("/del-upitnik/:id", verifyToken, deleteUpitnik);
+
+router.get("/get-korisnik/:id", dohvatiProfilKorisnika); 
 
 export default router;

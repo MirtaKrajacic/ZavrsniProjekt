@@ -54,7 +54,14 @@ const Naslovnica = () => {
         <UpitniciCards data={upitnici}>
           {(u) => (
             <>
-              <p className="card-text text-secondary mb-0">Autor: {u.ime}</p>
+              <p className="card-text text-secondary mb-0">
+                <Link
+                to={"/profile/" + u.ime.split(' ').join('-')}
+                state={{ id: u.autor_id }}
+                style={{ textDecoration: "none", color: "inherit" }}>
+                Autor: {u.ime}
+                </Link>
+              </p>
               <div className="d-flex justify-content-center gap-2 flex-wrap">
                 <button className="btn btn-primary w-50 border mt-3">
                   <Link
