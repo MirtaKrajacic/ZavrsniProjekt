@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { XMLParser } from "fast-xml-parser";
-import { Modal, Button, Form, Alert } from "react-bootstrap";
+import { Modal, Form, Alert } from "react-bootstrap";
 
 import api from "../../api";
 import UpitnikRjesavanje from "../../components/UpitnikRjesavanje";
@@ -45,7 +45,7 @@ function RjesiUpitnik({ mod }) {
     };
 
     fetchData();
-  }, []);
+  }, [params.id, params.uuid, mod]);
 
   const izracunajRezultat = () => {
     if (subskale.length > 0) {
@@ -79,7 +79,7 @@ function RjesiUpitnik({ mod }) {
       }
       setRezultat((prije) => {
         let temp = { ...prije };
-        temp["skupina"] = suma; // ako nema subskala, napravit cemo jednu skupinu pod imenom "skupina"
+        temp["upitnik"] = suma; // ako nema subskala, napravit cemo jednu skupinu pod imenom "upitnik"
         return temp;
       });
     }
@@ -96,7 +96,7 @@ function RjesiUpitnik({ mod }) {
 
     ${Object.entries(rezultat)
       .map(([skupina, rez]) =>
-        skupina === "skupina"
+        skupina === "upitnik"
           ? `<p style="margin:8px 0;">Ostvareni bodovi: <b>${rez.toFixed(
               0
             )}</b></p>`
@@ -112,11 +112,10 @@ function RjesiUpitnik({ mod }) {
       Interpretacija rezultata
     </h2>
 
-    ${vrednovanje
-      .map(
-        (subskala) => `
+    ${Object.entries(vrednovanje).map(([skupina, interpretacije]) => (
+       `
         <h3 style="color:#2ac6de; margin:10px;">
-          ${subskala.skupina}
+          ${skupina !== "upitnik" ? skupina : ""}
         </h3>
       <div style="margin-bottom:20px;border:1px solid #e3e3e3;
                   border-radius:6px;overflow:hidden;">
@@ -129,12 +128,12 @@ function RjesiUpitnik({ mod }) {
             </tr>
           </thead>
           <tbody>
-            ${subskala.interpretacije
+            ${interpretacije
               .map(
                 (int) => `
               <tr>
-                <td style="padding:8px;border-bottom:1px solid #eee;">${int.min}-${int.max}</td>
-                <td style="padding:8px;border-bottom:1px solid #eee;">${int.interpretacija}</td>
+                <td style="padding:8px;border-bottom:1px solid #eee;">${int.raspon}</td>
+                <td style="padding:8px;border-bottom:1px solid #eee;">${int.tekst}</td>
               </tr>
               `
               )
@@ -143,7 +142,7 @@ function RjesiUpitnik({ mod }) {
         </table>
       </div>
     `
-      )
+      ))
       .join("")}
     </div>
   </div>`;
@@ -160,6 +159,7 @@ function RjesiUpitnik({ mod }) {
       if (data.success) {
         setSuccess(true);
         setResetFunkcija((prev) => !prev);
+        setBodoviPitanja({});
         setTimeout(() => setSuccess(false), 2000);
       }
     } catch (err) {
@@ -180,7 +180,6 @@ function RjesiUpitnik({ mod }) {
     let subQs = arr(xmlData.questionnaire.section.question.subQuestion);
     let flag = 0;
     subQs.forEach((sq) => {
-      console.log(sq.varName);
       if (!(sq.varName in bodoviPitanja)) {
         setError(true);
         flag = 1;
@@ -206,7 +205,7 @@ function RjesiUpitnik({ mod }) {
             naslov={naslovUpitnika}
           />
           <button
-            className="btn btn-light border shadow-sm mt-3"
+            className="btn btn-light border shadow-sm mt-3 dodaj-button"
             onClick={() => {
               checkUpitnikIspunjen(); // provjera jesu li sva pitanja odgovorena
               if (!error) {

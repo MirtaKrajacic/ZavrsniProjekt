@@ -33,6 +33,8 @@ function DefinirajBodovanje({
     setData(parser.parse(xmlData)); // xml u obliku js objekta
   }, [xmlData]);
 
+  
+
   // kada se u data unesu brojčane vrijednosti za ljestvicu odgovora,
   // mijenjamo i xml string jer je on taj koji se sprema u bazu
   useEffect(() => {

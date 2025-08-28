@@ -63,7 +63,7 @@ function AddUpitnik() {
       // onload je funkcija koja se poziva kada se datoteka učita (load event)
       reader.onload = (event) => {
         const xmlSadrzaj = event.target.result; // sadrzaj datoteke (string)
-        console.log(xmlSadrzaj);
+        //console.log(xmlSadrzaj);
         if (validateXml(xmlSadrzaj)) {
           setSadrzaj(xmlSadrzaj);
         }

@@ -2,21 +2,21 @@
 import { useEffect } from "react";
 
 function UpitnikIzrada({ xmlData, obrnutoKodirani, min, max }) {
-  useEffect(() => {
+  /*useEffect(() => {
     console.log("data promijenjena:", xmlData);
-  }, [xmlData]);
+  }, [xmlData]);*/
 
   function ListaPitanja({ data }) {
     const sections = [].concat(data.section);
 
-    return sections.map((sec) => {
+    return sections.map((sec, i) => {
       const q = sec.question;
       const subQuestions = [].concat(q.subQuestion);
 
       const cats = q.response?.fixed ? [].concat(q.response.fixed.category) : [];
 
       return (
-        <section key={sec.id} >
+        <section key={sec?.id ?? sec?.question?.varName ?? `sec-${i}`}>
           <h5>Format odgovora:</h5>
 
           <div className="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-2 mb-3">
