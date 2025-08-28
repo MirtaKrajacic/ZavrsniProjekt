@@ -67,7 +67,7 @@ function Upitnik({ xmlData, rezultatSpecs, setBodoviRoditelj, naslov }) {
   function ListaPitanja({ data }) {
     const sections = arr(data.section); // section = sekcija pitanja u queXML
 
-    return sections.map((sec) => {
+    return sections.map((sec, i) => {
       const infos = arr(sec.sectionInfo);
       const titleInfo = infos.find((i) => i.position === "title");
       const title = titleInfo?.text || `${naslov}`;
@@ -76,7 +76,7 @@ function Upitnik({ xmlData, rezultatSpecs, setBodoviRoditelj, naslov }) {
       const subQs = arr(q.subQuestion);
 
       return (
-        <section key={sec.id}>
+        <section key={sec.id || i}>
           <h2 className="mb-4">
             <b>{title}</b>
           </h2>
