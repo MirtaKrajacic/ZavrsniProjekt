@@ -10,6 +10,8 @@ function Upitnik({ xmlData, rezultatSpecs, setBodoviRoditelj, naslov }) {
   );
   const obrnutoKodirani = rezultatSpecs.obrnuto_kodirana;
 
+  console.log(rezultatSpecs);
+
   const arr = (x) => (Array.isArray(x) ? x : x ? [x] : []);
 
   // definiranje skale odgovora pitanja q

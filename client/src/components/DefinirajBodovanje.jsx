@@ -12,7 +12,7 @@ function DefinirajBodovanje({
   xmlData,
   updateParentData,
   setParentVrednovanje,
-  setParentFormula
+  setParentFormula,
 }) {
   const [data, setData] = useState(null); // parsirani xml u obliku js objekta
   const [checked, setChecked] = useState(new Set()); // set id-eva podpitanja koja su obrnuto kodirana
@@ -48,6 +48,31 @@ function DefinirajBodovanje({
     }
   }, [data, updateParentData]);
 
+  useEffect(() => {
+    const subskaleImena = subskale.map((s) => s.ime);
+    setVrednovanje((prev) => {
+      const copy = {};
+      for (const [k, v] of Object.entries(prev)) {
+        if (subskaleImena.includes(k)) {
+          copy[k] = v;
+        }
+      }
+      return copy;
+    });
+  }, [subskale]);
+
+  const vrednovanjeValid = () => {
+    if (Object.keys(vrednovanje).length === 0) {
+      return false;
+    }
+    for (const [key, value] of Object.entries(vrednovanje)) {
+      if (key === "" || value.length === 0) {
+        return false;
+      }
+    }
+    return true;
+  };
+
   // aktivira se kilikom na "Spremi" button
   const handleSave = () => {
     let likertRange = [];
@@ -64,7 +89,7 @@ function DefinirajBodovanje({
     console.log("resultSpecs:", resultSpecs);
     console.log("vrednovanje: ", vrednovanje);
 
-    if (resultSpecs.skala_odgovora.length < 2 || vrednovanje === "") {
+    if (resultSpecs.skala_odgovora.length < 2 || !vrednovanjeValid()) {
       setError(true);
     } else {
       setParentVrednovanje(JSON.stringify(vrednovanje));
@@ -195,26 +220,33 @@ function DefinirajBodovanje({
         <h3 className="p-2 rounded-2 bg-success-subtle text-success mt-3">
           Opis vrednovanja rezultata*
         </h3>
-        <DefinirajInterpretacije setParentVrednovanje={setVrednovanje} subskale={subskale} />
+        <DefinirajInterpretacije
+          setParentVrednovanje={setVrednovanje}
+          vrednovanje={vrednovanje}
+          subskale={subskale}
+        />
 
         <button
           className="btn btn-primary d-block mx-auto"
-          onClick={() => {
-            handleSave();
-          }}
+          onClick={() => handleSave()}
         >
           Spremi
         </button>
 
-        {
-          error && <small className="text-danger d-block text-center mt-2">Molimo ispunite obavezna polja</small>
-        }
+        {error && (
+          <small className="text-danger d-block text-center mt-2">
+            Molimo ispunite obavezna polja
+          </small>
+        )}
 
         {success && (
-            <Alert variant="success" className="d-block mx-auto mt-3 text-center w-50 bg-white border-0 text-primary">
-              Promjene su uspješno spremljene!
-            </Alert>
-          )}
+          <Alert
+            variant="success"
+            className="d-block mx-auto mt-3 text-center w-50 bg-white border-0 text-primary"
+          >
+            Promjene su uspješno spremljene!
+          </Alert>
+        )}
       </>
     );
   }

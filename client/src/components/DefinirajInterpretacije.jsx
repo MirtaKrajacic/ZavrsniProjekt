@@ -1,17 +1,23 @@
 import { useState } from "react";
 
-function DefinirajInterpretacije({ setParentVrednovanje, subskale }) {
+function DefinirajInterpretacije({
+  setParentVrednovanje,
+  vrednovanje,
+  subskale,
+}) {
   function PoSubskalama({ s }) {
     const [rows, setRows] = useState([{ raspon: "", tekst: "" }]); // u svakoj subskali imam jednu skupinu interpretacija
 
     return (
       <div>
-        <input
-          type="text"
-          className={`form-control form-control-sm mb-2`}
-          value={s}
-          disabled
-        />
+        {s !== "upitnik" && (
+          <input
+            type="text"
+            className={`form-control form-control-sm mb-2`}
+            value={s}
+            disabled
+          />
+        )}
 
         <div className="gap-2 mt-2">
           {rows.map((row, i) => (
@@ -47,13 +53,23 @@ function DefinirajInterpretacije({ setParentVrednovanje, subskale }) {
                     );
                   }}
                 />
-                <button
-                  type="button"
-                  className="btn-close"
-                  style={{ fontSize: "0.8rem" }}
-                  onClick={() => console.log("izbrisi row")}
-                />
               </div>
+
+              <button
+                type="button"
+                className="btn-close"
+                style={{ fontSize: "0.7rem" }}
+                onClick={() =>
+                  setParentVrednovanje((prev) => {
+                    let copy = { ...prev };
+                    copy[s] = copy[s].filter(
+                      (el) =>
+                        !(el.raspon === row.raspon && el.tekst === row.tekst)
+                    );
+                    return copy;
+                  })
+                }
+              />
             </div>
           ))}
         </div>
@@ -71,12 +87,18 @@ function DefinirajInterpretacije({ setParentVrednovanje, subskale }) {
             type="button"
             className="btn btn-light border btn-sm"
             onClick={() => {
-              console.log("rows ove skupine: ", rows.filter((r) => r.raspon !== "" && r.tekst !==""));
+              console.log(
+                "rows ove skupine: ",
+                rows.filter((r) => r.raspon !== "" && r.tekst !== "")
+              );
               setParentVrednovanje((prev) => {
-                let copy = {...prev};
-                copy[s] = rows.filter((r) => r.raspon !== "" && r.tekst !=="");
+                let copy = { ...prev };
+                const novo = rows.filter(
+                  (r) => r.raspon !== "" && r.tekst !== ""
+                );
+                copy[s] = (copy[s] || []).concat(novo);
                 return copy;
-              })
+              });
             }}
           >
             Spremi interpretacije
@@ -95,12 +117,56 @@ function DefinirajInterpretacije({ setParentVrednovanje, subskale }) {
       </small>
 
       {subskale.length > 0 ? (
-        subskale.map((s, i) => (
-          <PoSubskalama key={s?.ime ?? i} s={s.ime} />
-        ))
+        subskale.map((s, i) => <PoSubskalama key={s.ime || i} s={s.ime} />)
       ) : (
         <PoSubskalama s={"upitnik"} />
       )}
+
+      {Object.keys(vrednovanje).length === 0 && (
+        <small className="text-muted">Još nema sačuvanih interpretacija.</small>
+      )}
+
+      {Object.entries(vrednovanje).map(([s, lista]) => (
+        <div key={s} className="mb-3">
+          <div className="d-flex align-items-center justify-content-between">
+            <span className="me-2 fw-semibold">
+              {s !== "upitnik" ? `Skala ${s}` : null}
+            </span>
+          </div>
+
+          <ul className="list-group list-group-flush mb-3">
+            {lista.map((r, i) => (
+              <li
+                key={i}
+                className="list-group-item d-flex justify-content-between align-items-center mb-1 py-1 border bg-light rounded-3"
+              >
+                <span className="badge text-dark border">{r.raspon}</span>
+                <div className="d-flex align-items-center gap-2">
+                  <small>
+                    <b>{r.tekst}</b>
+                  </small>
+                </div>
+
+                <button
+                  type="button"
+                  className="btn-close"
+                  style={{ fontSize: "0.7rem" }}
+                  onClick={() =>
+                    setParentVrednovanje((prev) => {
+                      let copy = { ...prev };
+                      copy[s] = copy[s].filter(
+                        (el) =>
+                          !(el.raspon === r.raspon && el.tekst === r.tekst)
+                      );
+                      return copy;
+                    })
+                  }
+                />
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
     </section>
   );
 }
