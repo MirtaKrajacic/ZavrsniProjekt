@@ -94,6 +94,9 @@ function RjesiUpitnik({ mod }) {
 
     <h1 style="color:#2ac6de;text-align:center;">Vaš rezultat</h1>
 
+    <p>Rješili ste upitnik <b>${naslovUpitnika}</b> te ste na njemu ostvarili bodove navedene niže.
+    Taj se rezultat vrednuje kako je opisano u sekciji "Interpretacija rezultata".</p>
+
     ${Object.entries(rezultat)
       .map(([skupina, rez]) =>
         skupina === "upitnik"

@@ -16,7 +16,7 @@ function UpitnikIzrada({ xmlData, obrnutoKodirani, min, max }) {
       const cats = q.response?.fixed ? [].concat(q.response.fixed.category) : [];
 
       return (
-        <section key={sec?.id ?? sec?.question?.varName ?? `sec-${i}`}>
+        <section key={sec.id || i}>
           <h5>Format odgovora:</h5>
 
           <div className="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-2 mb-3">

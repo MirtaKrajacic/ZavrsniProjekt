@@ -18,7 +18,7 @@ router.post("/send-result", async (req, res) => {
     });
 
     const info = await transporter.sendMail({
-      from: '"My Questionnaire App" <mirta.krajacic@gmail.com>',
+      from: '"MindCheck" <mirta.krajacic@gmail.com>',
       to: email,
       subject: "Rezultati rješenog upitnika",
       html: `${result}`, // HTML body

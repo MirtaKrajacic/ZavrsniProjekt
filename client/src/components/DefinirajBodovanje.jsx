@@ -18,7 +18,7 @@ function DefinirajBodovanje({
   const [checked, setChecked] = useState(new Set()); // set id-eva podpitanja koja su obrnuto kodirana
   const [min, setMin] = useState(0); // min bodovi
   const [max, setMax] = useState(0); // max bodovi
-  const [vrednovanje, setVrednovanje] = useState(""); // svaki element je objekt s atributima 'subskala' i 'interpretacije'
+  const [vrednovanje, setVrednovanje] = useState(""); // key-value parovi gdje je key=imeSubskale, a value lista interpretacija za tu subskalu
   const [subskale, setSubskale] = useState([]);
   const [error, setError] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -32,8 +32,6 @@ function DefinirajBodovanje({
 
     setData(parser.parse(xmlData)); // xml u obliku js objekta
   }, [xmlData]);
-
-  
 
   // kada se u data unesu brojčane vrijednosti za ljestvicu odgovora,
   // mijenjamo i xml string jer je on taj koji se sprema u bazu
