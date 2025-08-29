@@ -88,7 +88,7 @@ function AddUpitnik() {
           status,
           kratki_opis: opis,
           vrednovanje: vrednovanje,
-          formula: formula
+          formula: formula,
         });
         console.log(result.data);
         resetView();
@@ -107,7 +107,7 @@ function AddUpitnik() {
         kratki_opis: opis,
         link_token: uuid,
         vrednovanje: vrednovanje,
-        formula: formula
+        formula: formula,
       });
       console.log(result.data);
       setShowShare(false);
@@ -121,10 +121,9 @@ function AddUpitnik() {
     setClicked(true);
     if (naslov === "" || opis === "" || status === "" || sadrzaj === "") {
       console.log("nisu ispunjena sva obavezna polja");
-    } else if (vrednovanje==="" || formula === null) {
+    } else if (vrednovanje === "" || formula === null) {
       console.log("nisu ispunjena sva obavezna polja");
-    }
-     else {
+    } else {
       spremiUpitnik();
       setClicked(false);
     }
@@ -223,7 +222,12 @@ function AddUpitnik() {
             )}
             {xmlError && (
               <small className="text-danger">
-                Molimo učitajte ispravnu XML datoteku.
+                Molimo učitajte ispravnu XML datoteku upitnika. Ona mora
+                sadržavati samo jednu sekciju (section) te u njoj jedno pitanje
+                (question) unutar kojega su definirana podpitanja (subQuestion)
+                i odgovor (response). Ako upitnik ima više sekcija, podijelite
+                ga u više odvojenih upitnika, a pitanja grupirajte kao
+                podpitanja.
               </small>
             )}
           </div>
@@ -275,19 +279,19 @@ function AddUpitnik() {
                 />
               </Form.Group>
               <Button
-            className="btn btn-outline-success bg-success-subtle shadow-sm"
-            onClick={async () => {
-              const url = `http://localhost:3000/upitnik/p/${uuid}`;
-              try {
-                await navigator.clipboard.writeText(url);
-                setCopied(true);
-              } catch (err) {
-                console.error("Greška kod kopiranja:", err);
-              }
-            }}
-          >
-            Podijeli
-          </Button>
+                className="btn btn-outline-success bg-success-subtle shadow-sm"
+                onClick={async () => {
+                  const url = `http://localhost:3000/upitnik/p/${uuid}`;
+                  try {
+                    await navigator.clipboard.writeText(url);
+                    setCopied(true);
+                  } catch (err) {
+                    console.error("Greška kod kopiranja:", err);
+                  }
+                }}
+              >
+                Podijeli
+              </Button>
             </Form>
             {copied && (
               <Alert variant="success" className="mt-3 mb-0">

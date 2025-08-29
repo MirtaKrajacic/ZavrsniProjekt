@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import Nav from "./components/Nav";
+import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
 import Registracija from "./pages/public/Registracija";
 import Privatno from "./pages/public/Privatno";
@@ -16,7 +16,7 @@ import ProfilKorisnika from "./pages/public/ProfilKorisnika";
 function App() {
   return (
     <BrowserRouter>
-      <Nav />
+      <NavBar />
       <Routes>
         {/* Javne rute */}
         <Route path="/" element={<Naslovnica />} />
