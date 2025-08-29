@@ -130,7 +130,7 @@ function DefinirajInterpretacije({
         <div key={s} className="mb-3">
           <div className="d-flex align-items-center justify-content-between">
             <span className="me-2 fw-semibold">
-              {s !== "upitnik" ? `Skala ${s}` : null}
+              {s !== "upitnik" ? `Skala '${s}'` : null}
             </span>
           </div>
 
