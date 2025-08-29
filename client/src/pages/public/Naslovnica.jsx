@@ -56,7 +56,7 @@ const Naslovnica = () => {
             <>
               <p className="card-text text-secondary mb-0">
                 <Link
-                to={"/profile/" + u.ime.split(' ').join('-')}
+                to={"/profiles/" + u.ime.split(' ').join('-')}
                 state={{ id: u.autor_id }}
                 style={{ textDecoration: "none", color: "inherit" }}>
                 Autor: {u.ime}

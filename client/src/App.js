@@ -25,7 +25,7 @@ function App() {
         <Route path="/login" element={<Prijava />} />
         <Route path="/upitnik/:id" element={<RjesiUpitnik mod={"javni"} />} />
         <Route path="/upitnik/p/:uuid" element={<RjesiUpitnik mod={"privatni"} />}/>
-        <Route path="/profile/:ime" element={<ProfilKorisnika />}/>
+        <Route path="/profiles/:ime" element={<ProfilKorisnika />}/>
 
         {/* Privatne rute */}
         <Route element={<Privatno />}>

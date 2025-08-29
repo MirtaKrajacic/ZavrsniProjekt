@@ -1,9 +1,9 @@
 import { useLocation } from "react-router-dom";
-import api from "../../api";
 import { useEffect, useState } from "react";
 
+import api from "../../api";
+
 function ProfilKorisnika() {
-  //const { ime } = useParams();
   const [ime, setIme] = useState("");
   const [email, setEmail] = useState("");
   const [opis, setOpis] = useState("");
@@ -12,13 +12,14 @@ function ProfilKorisnika() {
   const { id } = location.state;
 
   useEffect(() => {
+    document.title = "Profil";
     dohvatiKorisnika();
   }, []);
 
   const dohvatiKorisnika = async () => {
     try {
       const { data } = await api.get(`/upitnik/get-korisnik/${id}`);
-      console.log(id);
+
       setIme(data.ime);
       setEmail(data.email);
       setOpis(data.opis);
@@ -29,12 +30,17 @@ function ProfilKorisnika() {
 
   return (
     <main className="container my-5">
-      <div className="card shadow-sm mx-auto" style={{ maxWidth: "400px" }}>
+      <div className="card shadow-sm mx-auto">
         <div className="card-body text-center">
           <img src="/profile.jpg" alt="logo" width="80" height="80" />
-          <h5 className="card-title mb-3 mt-3">{ime}</h5>
-          <p className="card-text text-muted mb-1 mb-3">{email}</p>
-          <p className="card-text">{opis}</p>
+          <h5 className="card-title mb-4 mt-4">{ime}</h5>
+          <p className="card-text text-muted mb-1 mb-4">{email}</p>
+          {opis && (
+            <div className="card-text border rounded-3 text-start p-2">
+              <h5 className="card-text text-start">O autoru</h5>
+              <p className="card-text text-muted">{opis}</p>
+            </div>
+          )}
         </div>
       </div>
     </main>
