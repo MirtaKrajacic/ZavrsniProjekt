@@ -36,7 +36,7 @@ function ProfilKorisnika() {
           <h5 className="card-title mb-4 mt-4">{ime}</h5>
           <p className="card-text text-muted mb-1 mb-4">{email}</p>
           {opis && (
-            <div className="card-text border rounded-3 text-start p-2">
+            <div className="card-text border rounded-3 text-start p-3">
               <h5 className="card-text text-start">O autoru</h5>
               <p className="card-text text-muted">{opis}</p>
             </div>
