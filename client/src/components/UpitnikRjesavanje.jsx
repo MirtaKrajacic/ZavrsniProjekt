@@ -12,7 +12,14 @@ function Upitnik({ xmlData, rezultatSpecs, setBodoviRoditelj, naslov }) {
 
   console.log(rezultatSpecs);
 
-  const arr = (x) => (Array.isArray(x) ? x : x ? [x] : []);
+  const arr = (x) => {
+    if (Array.isArray(x)) {
+      return x;
+    } else if (x) {
+      return [x];
+    }
+    return [];
+  };
 
   // definiranje skale odgovora pitanja q
   function Response({ q }) {
@@ -53,7 +60,7 @@ function Upitnik({ xmlData, rezultatSpecs, setBodoviRoditelj, naslov }) {
                   }}
                 />
                 <label
-                  className="form-check-label"
+                  className="form-check-label text-muted"
                   htmlFor={`${q.varName}-${c.value}`}
                 >
                   {c.label}
@@ -70,21 +77,13 @@ function Upitnik({ xmlData, rezultatSpecs, setBodoviRoditelj, naslov }) {
     const sections = arr(data.section); // section = sekcija pitanja u queXML
 
     return sections.map((sec, i) => {
-      const infos = arr(sec.sectionInfo);
-      const titleInfo = infos.find((i) => i.position === "title");
-      const title = titleInfo?.text || `${naslov}`;
-
       const q = sec.question;
       const subQs = arr(q.subQuestion);
 
       return (
-        <section key={sec.id || i}>
-          <h2 className="mb-4">
-            <b>{title}</b>
-          </h2>
-
+        <section key={i}>
           {subQs.map((sq, ind) => (
-            <div key={sq.varName}>
+            <div key={sq.varName} className="mt-4">
               <span className="fw-semibold">{ind + 1 + ". " + sq.text}</span>
 
               <Response
@@ -104,7 +103,7 @@ function Upitnik({ xmlData, rezultatSpecs, setBodoviRoditelj, naslov }) {
   }
 
   return (
-    <div className="container my-5">
+    <div className="container">
       <ListaPitanja data={xmlData.questionnaire} />
     </div>
   );

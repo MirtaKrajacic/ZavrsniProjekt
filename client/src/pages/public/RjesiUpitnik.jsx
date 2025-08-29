@@ -198,6 +198,9 @@ function RjesiUpitnik({ mod }) {
 
   return (
     <main>
+      <h2 className="text-center my-4">
+            <b>{naslovUpitnika}</b>
+          </h2>
       {xmlData && (
         <div className="container mb-5 p-4 bg-primary-subtle border border-primary-subtle rounded-3 d-flex flex-column align-items-center">
           <UpitnikRjesavanje
@@ -208,7 +211,7 @@ function RjesiUpitnik({ mod }) {
             naslov={naslovUpitnika}
           />
           <button
-            className="btn btn-light border shadow-sm mt-3 dodaj-button"
+            className="btn btn-light border shadow-sm dodaj-button mt-5"
             onClick={() => {
               checkUpitnikIspunjen(); // provjera jesu li sva pitanja odgovorena
               if (!error) {
