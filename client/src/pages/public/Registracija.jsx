@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+
 import api from "../../api";
 
 const Registracija = () => {
@@ -86,11 +88,15 @@ const Registracija = () => {
           )}
         </div>
 
+        <Link className="text-center" to="/login">
+          Imate korisnički račun? Prijavite se.
+        </Link>
+
         <button
-          className="btn btn-light border w-100"
+          className="btn btn-light border w-100 d-block mx-auto mt-3 mb-3"
           onClick={handleRegistracija}
         >
-          Registriraj se
+          Registracija
         </button>
       </div>
     </main>
