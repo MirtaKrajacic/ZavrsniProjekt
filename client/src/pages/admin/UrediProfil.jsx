@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Alert } from "react-bootstrap";
+import { Alert, Fade } from "react-bootstrap";
 // import validateXML from "./validateQueXML.js";
 
 import api from "../../api";
@@ -51,7 +51,7 @@ function UrediProfil() {
               <label className="form-label fw-semibold">Ime</label>
               <input
                 type="text"
-                className="form-control"
+                className="form-control border-primary"
                 placeholder={ime}
                 onChange={(e) => setIme(e.target.value)}
                 value={ime}
@@ -62,7 +62,7 @@ function UrediProfil() {
               <label className="form-label fw-semibold">E-mail</label>
               <input
                 type="text"
-                className="form-control"
+                className="form-control border-primary"
                 placeholder={email}
                 value={email}
                 style={{ cursor: "not-allowed" }}
@@ -76,7 +76,7 @@ function UrediProfil() {
                 name="message"
                 rows="4"
                 cols="100"
-                className="form-control"
+                className="form-control border-primary"
                 placeholder={
                   opis || "Kratki opis toga tko ste, čime se bavite,..."
                 }
@@ -86,17 +86,19 @@ function UrediProfil() {
             </div>
 
             <button
-              className="btn btn-primary d-block mx-auto"
+              className="btn dodaj-button border d-block mx-auto"
               onClick={urediProfil}
             >
               Spremi
             </button>
 
-            {success && (
-              <Alert variant="success" className="mt-3 text-center">
-                Promjene su uspješno spremljene!
-              </Alert>
-            )}
+            <Fade in={success} mountOnEnter unmountOnExit appear>
+              <div>
+                <Alert variant="success" className="mt-3 text-center mb-0">
+                  Promjene su uspješno spremljene!
+                </Alert>
+              </div>
+            </Fade>
           </div>
         </div>
       </div>

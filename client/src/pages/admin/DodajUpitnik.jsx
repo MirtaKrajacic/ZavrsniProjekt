@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { Modal, Button, Form, Alert } from "react-bootstrap";
+import { Modal, Button, Form, Alert, Fade } from "react-bootstrap";
 import { v4 as uuidv4 } from "uuid";
 import DefinirajBodovanje from "../../components/DefinirajBodovanje.jsx";
 import { XMLParser } from "fast-xml-parser";
@@ -269,7 +269,7 @@ function AddUpitnik() {
           </Modal.Header>
           <Modal.Body>
             <Form className="d-flex align-items-end gap-2">
-              <Form.Group>
+              <Form.Group className="w-100">
                 <Form.Label>URL upitnika</Form.Label>
                 <Form.Control
                   type="text"
@@ -293,11 +293,14 @@ function AddUpitnik() {
                 Podijeli
               </Button>
             </Form>
-            {copied && (
-              <Alert variant="success" className="mt-3 mb-0">
-                <strong>Link kopiran.</strong>
-              </Alert>
-            )}
+
+            <Fade in={copied} mountOnEnter unmountOnExit appear>
+              <div>
+                <Alert variant="success" className="mt-3 mb-0 p-2">
+                  <strong>Link kopiran.</strong>
+                </Alert>
+              </div>
+            </Fade>
           </Modal.Body>
           <Modal.Footer>
             <Button variant="primary" onClick={() => privatniUpitnikHandle()}>

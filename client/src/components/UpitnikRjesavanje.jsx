@@ -130,7 +130,7 @@ function Upitnik({ xmlData, rezultatSpecs, setBodoviRoditelj, naslov }) {
           </button>
 
           <span className="fw-semibold text-primary">
-            Stranica {page + 1} / {ukupnoPages}
+            {page + 1} / {ukupnoPages}
           </span>
 
           <button

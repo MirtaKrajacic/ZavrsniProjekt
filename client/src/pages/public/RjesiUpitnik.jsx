@@ -115,8 +115,10 @@ function RjesiUpitnik({ mod }) {
       Interpretacija rezultata
     </h2>
 
-    ${Object.entries(vrednovanje).map(([skupina, interpretacije]) => (
-       `
+    ${Object.entries(vrednovanje)
+      .map(
+        ([skupina, interpretacije]) =>
+          `
         <h3 style="color:#2ac6de; margin:10px;">
           ${skupina !== "upitnik" ? skupina : ""}
         </h3>
@@ -145,7 +147,7 @@ function RjesiUpitnik({ mod }) {
         </table>
       </div>
     `
-      ))
+      )
       .join("")}
     </div>
   </div>`;
@@ -199,8 +201,8 @@ function RjesiUpitnik({ mod }) {
   return (
     <main>
       <h2 className="text-center my-4">
-            <b>{naslovUpitnika}</b>
-          </h2>
+        <b>{naslovUpitnika}</b>
+      </h2>
       {xmlData && (
         <div className="container mb-5 p-4 bg-primary-subtle border border-primary-subtle rounded-3 d-flex flex-column align-items-center">
           <UpitnikRjesavanje

@@ -52,11 +52,7 @@ const MojiUpitnici = () => {
   return (
     <main>
       <div className="d-flex justify-content-begin p-4 border-bottom mb-5">
-        <Link
-          to="/add"
-          className="btn btn-light border dodaj-button"
-          
-        >
+        <Link to="/add" className="btn btn-light border dodaj-button">
           Dodaj novi upitnik
         </Link>
       </div>
@@ -98,7 +94,7 @@ const MojiUpitnici = () => {
         <Modal.Header closeButton>
           <Modal.Title className="text-primary">Brisanje upitnika</Modal.Title>
         </Modal.Header>
-        <Modal.Body className="my-4">
+        <Modal.Body className="my-4 text-center fw-semibold">
           Jeste li sigurni da želite trajno izbrisati ovaj upitnik?
         </Modal.Body>
         <Modal.Footer>
