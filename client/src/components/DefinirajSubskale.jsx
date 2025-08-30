@@ -100,6 +100,27 @@ function DefinirajSubskale({ pitanja, setParentSubskale, parentSubskale }) {
           </div>
         </div>
       </div>
+      <div className="d-flex justify-content-end mb-3">
+        <button
+          type="button"
+          className="btn btn-light border btn-sm"
+          disabled={!ime.trim() || odabranaPitanja.length === 0}
+          onClick={() => {
+            if (!ime.trim() || odabranaPitanja.length === 0) return;
+            const skupina = {
+              ime: ime.trim(),
+              pitanja: odabranaPitanja,
+              op,
+              faktor_mnozenja: faktor,
+            };
+            setIme("");
+            setOdabranaPitanja([]);
+            setParentSubskale((prev) => [...prev, skupina]);
+          }}
+        >
+          Dodaj skupinu
+        </button>
+      </div>
 
       {parentSubskale && parentSubskale.length > 0 && (
         <ul className="list-group list-group-flush mb-3">
@@ -131,27 +152,7 @@ function DefinirajSubskale({ pitanja, setParentSubskale, parentSubskale }) {
         </ul>
       )}
 
-      <div className="d-flex justify-content-end">
-        <button
-          type="button"
-          className="btn btn-light border btn-sm"
-          disabled={!ime.trim() || odabranaPitanja.length === 0}
-          onClick={() => {
-            if (!ime.trim() || odabranaPitanja.length === 0) return;
-            const skupina = {
-              ime: ime.trim(),
-              pitanja: odabranaPitanja,
-              op,
-              faktor_mnozenja: faktor,
-            };
-            setIme("");
-            setOdabranaPitanja([]);
-            setParentSubskale((prev) => [...prev, skupina]);
-          }}
-        >
-          Dodaj skupinu
-        </button>
-      </div>
+      
     </div>
   );
 }

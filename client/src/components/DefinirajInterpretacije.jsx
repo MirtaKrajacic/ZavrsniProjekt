@@ -1,7 +1,22 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-function PoSubskalama({ s, setParentVrednovanje }) {
+function PoSubskalama({ s, setParentVrednovanje, save, setSave }) {
   const [rows, setRows] = useState([{ raspon: "", tekst: "" }]); // u svakoj subskali imam jednu skupinu interpretacija
+
+  useEffect(() => {
+if (save) {
+  setParentVrednovanje((prev) => {
+              let copy = { ...prev };
+              const novo = rows.filter(
+                (r) => r.raspon !== "" && r.tekst !== ""
+              );
+              copy[s] = (copy[s] || []).concat(novo);
+              return copy;
+            });
+            setRows([{ raspon: "", tekst: "" }]);
+            setSave(false);
+}
+  }, [save])
 
   return (
     <div>
@@ -76,23 +91,7 @@ function PoSubskalama({ s, setParentVrednovanje }) {
           + Dodaj red
         </button>
 
-        <button
-          type="button"
-          className="btn btn-light border btn-sm"
-          onClick={() => {
-            setParentVrednovanje((prev) => {
-              let copy = { ...prev };
-              const novo = rows.filter(
-                (r) => r.raspon !== "" && r.tekst !== ""
-              );
-              copy[s] = (copy[s] || []).concat(novo);
-              return copy;
-            });
-            setRows([{ raspon: "", tekst: "" }]);
-          }}
-        >
-          Spremi interpretacije
-        </button>
+        
       </div>
     </div>
   );
@@ -103,6 +102,8 @@ function DefinirajInterpretacije({
   vrednovanje,
   subskale,
 }) {
+  const [saveClicked, setSaveClicked] = useState(false);
+
   return (
     <section className="border rounded-3 p-3 bg-white shadow-sm mb-3">
       <small className="text-muted d-block mb-3">
@@ -117,14 +118,27 @@ function DefinirajInterpretacije({
             key={s.ime || i}
             s={s.ime}
             setParentVrednovanje={setParentVrednovanje}
+            save={saveClicked}
+            setSave={setSaveClicked}
           />
         ))
       ) : (
         <PoSubskalama
+          key={"upitnik"}
           s={"upitnik"}
           setParentVrednovanje={setParentVrednovanje}
+          save={saveClicked}
+          setSave={setSaveClicked}
         />
       )}
+
+      <button
+          type="button"
+          className="btn btn-light border btn-sm"
+          onClick={() => setSaveClicked(true)}
+        >
+          Spremi interpretacije
+        </button>
 
       {Object.keys(vrednovanje).length === 0 && (
         <small className="text-muted">Još nema sačuvanih interpretacija.</small>
@@ -133,7 +147,7 @@ function DefinirajInterpretacije({
       {Object.entries(vrednovanje).map(([s, lista]) => (
         <div key={s} className="mb-3">
           <div className="d-flex align-items-center justify-content-between">
-            <span className="me-2 fw-semibold">
+            <span className="me-2 fw-semibold text-success">
               {s !== "upitnik" ? `Skala '${s}'` : null}
             </span>
           </div>
