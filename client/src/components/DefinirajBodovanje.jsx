@@ -167,90 +167,6 @@ function DefinirajBodovanje({
     );
   }
 
-  function DefinirajFormulu() {
-    const question = data.questionnaire.section.question;
-
-    return (
-      <>
-        <div className="mb-4">
-          <h3 className="p-2 rounded-2 bg-success-subtle text-success">
-            Označi koje se čestice obrnuto kodiraju
-          </h3>
-          <OznaciObrnutoKodirane q={question} />
-        </div>
-
-        <h3 className="p-2 rounded-2 bg-success-subtle text-success">
-          U kojem se rasponu kreću bodovi Likertove ljestvice?*
-        </h3>
-        <div className="d-flex align-items-center gap-4 my-3">
-          <div className="input-group w-auto">
-            <span className="input-group-text">Od</span>
-            <input
-              type="number"
-              className="form-control"
-              min={0}
-              max={10}
-              value={min}
-              onChange={(e) => setMin(parseInt(e.target.value))}
-            />
-          </div>
-
-          <div className="input-group w-auto">
-            <span className="input-group-text">Do</span>
-            <input
-              type="number"
-              className="form-control"
-              min={0}
-              max={10}
-              value={max}
-              onChange={(e) => setMax(parseInt(e.target.value))}
-            />
-          </div>
-        </div>
-
-        <h3 className="p-2 rounded-2 bg-success-subtle text-success">
-          Koje su subskale (skupine pitanja) u upitniku?
-        </h3>
-        <DefinirajSubskale
-          pitanja={[].concat(question.subQuestion)}
-          setParentSubskale={setSubskale}
-          parentSubskale={subskale}
-        />
-
-        <h3 className="p-2 rounded-2 bg-success-subtle text-success mt-3">
-          Opis vrednovanja rezultata*
-        </h3>
-        <DefinirajInterpretacije
-          setParentVrednovanje={setVrednovanje}
-          vrednovanje={vrednovanje}
-          subskale={subskale}
-        />
-
-        <button
-          className="btn btn-primary d-block mx-auto"
-          onClick={() => handleSave()}
-        >
-          Spremi
-        </button>
-
-        {error && (
-          <small className="text-danger d-block text-center mt-2">
-            Molimo ispunite obavezna polja
-          </small>
-        )}
-
-        {success && (
-          <Alert
-            variant="success"
-            className="d-block mx-auto mt-3 text-center w-50 bg-white border-0 text-primary"
-          >
-            Promjene su uspješno spremljene!
-          </Alert>
-        )}
-      </>
-    );
-  }
-
   return (
     <div className="row">
       <div className="col-6 bg-light border rounded-3 d-flex flex-column">
@@ -268,8 +184,87 @@ function DefinirajBodovanje({
       </div>
 
       <div className="col-6 p-0 p-3 border rounded-3 shadow-sm bg-white">
-        {data && <DefinirajFormulu />}{" "}
-        {/* definiranje bodovanja i interpretacija upitnika */}
+        {data && (
+          <>
+            <div className="mb-4">
+              <h3 className="p-2 rounded-2 bg-success-subtle text-success">
+                Označi koje se čestice obrnuto kodiraju
+              </h3>
+              <OznaciObrnutoKodirane q={data.questionnaire.section.question} />
+            </div>
+
+            <h3 className="p-2 rounded-2 bg-success-subtle text-success">
+              U kojem se rasponu kreću bodovi Likertove ljestvice?*
+            </h3>
+            <div className="d-flex align-items-center gap-4 my-3">
+              <div className="input-group w-auto">
+                <span className="input-group-text">Od</span>
+                <input
+                  type="number"
+                  className="form-control"
+                  min={0}
+                  max={10}
+                  value={min}
+                  onChange={(e) => setMin(parseInt(e.target.value))}
+                />
+              </div>
+
+              <div className="input-group w-auto">
+                <span className="input-group-text">Do</span>
+                <input
+                  type="number"
+                  className="form-control"
+                  min={0}
+                  max={10}
+                  value={max}
+                  onChange={(e) => setMax(parseInt(e.target.value))}
+                />
+              </div>
+            </div>
+
+            <h3 className="p-2 rounded-2 bg-success-subtle text-success">
+              Koje su subskale (skupine pitanja) u upitniku?
+            </h3>
+            <DefinirajSubskale
+              pitanja={[].concat(
+                data.questionnaire.section.question.subQuestion
+              )}
+              setParentSubskale={setSubskale}
+              parentSubskale={subskale}
+            />
+
+            <h3 className="p-2 rounded-2 bg-success-subtle text-success mt-3">
+              Opis vrednovanja rezultata*
+            </h3>
+            <DefinirajInterpretacije
+              setParentVrednovanje={setVrednovanje}
+              vrednovanje={vrednovanje}
+              subskale={subskale}
+            />
+
+            <button
+              className="btn btn-primary d-block mx-auto"
+              onClick={() => handleSave()}
+            >
+              Spremi
+            </button>
+
+            {error && (
+              <small className="text-danger d-block text-center mt-2">
+                Molimo ispunite obavezna polja
+              </small>
+            )}
+
+            {success && (
+              <Alert
+                variant="success"
+                className="d-block mx-auto mt-3 text-center w-50 bg-white border-0 text-primary"
+              >
+                Promjene su uspješno spremljene!
+              </Alert>
+            )}
+          </>
+        )}{" "}
       </div>
     </div>
   );

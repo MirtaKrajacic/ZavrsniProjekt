@@ -1,113 +1,108 @@
 import { useState } from "react";
 
+function PoSubskalama({ s, setParentVrednovanje }) {
+  const [rows, setRows] = useState([{ raspon: "", tekst: "" }]); // u svakoj subskali imam jednu skupinu interpretacija
+
+  return (
+    <div>
+      {s !== "upitnik" && (
+        <input
+          type="text"
+          className={`form-control form-control-sm mb-2`}
+          value={s}
+          disabled
+        />
+      )}
+
+      <div className="gap-2 mt-2">
+        {rows.map((row, i) => (
+          <div key={i} className="row g-2 align-items-center mb-1">
+            <div className="col-12 col-md">
+              <input
+                type="text"
+                placeholder="npr. 0 - 7"
+                className="form-control form-control-sm"
+                min={0}
+                value={row.raspon}
+                onChange={(e) =>
+                  setRows((prev) =>
+                    prev.map((el, ind) =>
+                      ind === i ? { ...el, raspon: e.target.value } : el
+                    )
+                  )
+                }
+              />
+            </div>
+
+            <div className="col-12 col-md d-flex align-items-center">
+              <input
+                type="text"
+                placeholder="Interpretacija"
+                className="form-control form-control-sm"
+                value={row.tekst}
+                onChange={(e) => {
+                  setRows((prev) =>
+                    prev.map((el, ind) =>
+                      ind === i ? { ...el, tekst: e.target.value } : el
+                    )
+                  );
+                }}
+              />
+            </div>
+
+            <button
+              type="button"
+              className="btn-close"
+              style={{ fontSize: "0.7rem" }}
+              onClick={() =>{
+                if (rows.length === 1) {
+                  setRows([{ raspon: "", tekst: "" }]);
+                } else {
+                  setRows(prev => prev.filter((row, ind) => ind !== i))
+                }
+              }
+              }
+            />
+          </div>
+        ))}
+      </div>
+
+      <div className="d-flex justify-content-between align-items-center my-3">
+        <button
+          type="button"
+          className="btn btn-outline-primary btn-sm"
+          onClick={() => setRows([...rows, { raspon: "", tekst: "" }])}
+        >
+          + Dodaj red
+        </button>
+
+        <button
+          type="button"
+          className="btn btn-light border btn-sm"
+          onClick={() => {
+            setParentVrednovanje((prev) => {
+              let copy = { ...prev };
+              const novo = rows.filter(
+                (r) => r.raspon !== "" && r.tekst !== ""
+              );
+              copy[s] = (copy[s] || []).concat(novo);
+              return copy;
+            });
+            setRows([{ raspon: "", tekst: "" }]);
+          }}
+        >
+          Spremi interpretacije
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function DefinirajInterpretacije({
   setParentVrednovanje,
   vrednovanje,
   subskale,
 }) {
-  function PoSubskalama({ s }) {
-    const [rows, setRows] = useState([{ raspon: "", tekst: "" }]); // u svakoj subskali imam jednu skupinu interpretacija
-
-    return (
-      <div>
-        {s !== "upitnik" && (
-          <input
-            type="text"
-            className={`form-control form-control-sm mb-2`}
-            value={s}
-            disabled
-          />
-        )}
-
-        <div className="gap-2 mt-2">
-          {rows.map((row, i) => (
-            <div key={i} className="row g-2 align-items-center mb-1">
-              <div className="col-12 col-md">
-                <input
-                  type="text"
-                  placeholder="npr. 0 - 7"
-                  className="form-control form-control-sm"
-                  min={0}
-                  value={row.raspon}
-                  onChange={(e) =>
-                    setRows((prev) =>
-                      prev.map((el, ind) =>
-                        ind === i ? { ...el, raspon: e.target.value } : el
-                      )
-                    )
-                  }
-                />
-              </div>
-
-              <div className="col-12 col-md d-flex align-items-center">
-                <input
-                  type="text"
-                  placeholder="Interpretacija"
-                  className="form-control form-control-sm"
-                  value={row.tekst}
-                  onChange={(e) => {
-                    setRows((prev) =>
-                      prev.map((el, ind) =>
-                        ind === i ? { ...el, tekst: e.target.value } : el
-                      )
-                    );
-                  }}
-                />
-              </div>
-
-              <button
-                type="button"
-                className="btn-close"
-                style={{ fontSize: "0.7rem" }}
-                onClick={() =>
-                  setParentVrednovanje((prev) => {
-                    let copy = { ...prev };
-                    copy[s] = copy[s].filter(
-                      (el) =>
-                        !(el.raspon === row.raspon && el.tekst === row.tekst)
-                    );
-                    return copy;
-                  })
-                }
-              />
-            </div>
-          ))}
-        </div>
-
-        <div className="d-flex justify-content-between align-items-center my-3">
-          <button
-            type="button"
-            className="btn btn-outline-primary btn-sm"
-            onClick={() => setRows([...rows, { raspon: "", tekst: "" }])}
-          >
-            + Dodaj red
-          </button>
-
-          <button
-            type="button"
-            className="btn btn-light border btn-sm"
-            onClick={() => {
-              console.log(
-                "rows ove skupine: ",
-                rows.filter((r) => r.raspon !== "" && r.tekst !== "")
-              );
-              setParentVrednovanje((prev) => {
-                let copy = { ...prev };
-                const novo = rows.filter(
-                  (r) => r.raspon !== "" && r.tekst !== ""
-                );
-                copy[s] = (copy[s] || []).concat(novo);
-                return copy;
-              });
-            }}
-          >
-            Spremi interpretacije
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <section className="border rounded-3 p-3 bg-white shadow-sm mb-3">
       <small className="text-muted d-block mb-3">
@@ -117,9 +112,18 @@ function DefinirajInterpretacije({
       </small>
 
       {subskale.length > 0 ? (
-        subskale.map((s, i) => <PoSubskalama key={s.ime || i} s={s.ime} />)
+        subskale.map((s, i) => (
+          <PoSubskalama
+            key={s.ime || i}
+            s={s.ime}
+            setParentVrednovanje={setParentVrednovanje}
+          />
+        ))
       ) : (
-        <PoSubskalama s={"upitnik"} />
+        <PoSubskalama
+          s={"upitnik"}
+          setParentVrednovanje={setParentVrednovanje}
+        />
       )}
 
       {Object.keys(vrednovanje).length === 0 && (
