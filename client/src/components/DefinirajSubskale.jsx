@@ -100,6 +100,7 @@ function DefinirajSubskale({ pitanja, setParentSubskale, parentSubskale }) {
           </div>
         </div>
       </div>
+      
       <div className="d-flex justify-content-end mb-3">
         <button
           type="button"

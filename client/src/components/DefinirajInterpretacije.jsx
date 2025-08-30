@@ -4,19 +4,17 @@ function PoSubskalama({ s, setParentVrednovanje, save, setSave }) {
   const [rows, setRows] = useState([{ raspon: "", tekst: "" }]); // u svakoj subskali imam jednu skupinu interpretacija
 
   useEffect(() => {
-if (save) {
-  setParentVrednovanje((prev) => {
-              let copy = { ...prev };
-              const novo = rows.filter(
-                (r) => r.raspon !== "" && r.tekst !== ""
-              );
-              copy[s] = (copy[s] || []).concat(novo);
-              return copy;
-            });
-            setRows([{ raspon: "", tekst: "" }]);
-            setSave(false);
-}
-  }, [save])
+    if (save) {
+      setParentVrednovanje((prev) => {
+        let copy = { ...prev };
+        const novo = rows.filter((r) => r.raspon !== "" && r.tekst !== "");
+        copy[s] = (copy[s] || []).concat(novo);
+        return copy;
+      });
+      setRows([{ raspon: "", tekst: "" }]);
+      setSave(false);
+    }
+  }, [save]);
 
   return (
     <div>
@@ -69,14 +67,13 @@ if (save) {
               type="button"
               className="btn-close"
               style={{ fontSize: "0.7rem" }}
-              onClick={() =>{
+              onClick={() => {
                 if (rows.length === 1) {
                   setRows([{ raspon: "", tekst: "" }]);
                 } else {
-                  setRows(prev => prev.filter((row, ind) => ind !== i))
+                  setRows((prev) => prev.filter((row, ind) => ind !== i));
                 }
-              }
-              }
+              }}
             />
           </div>
         ))}
@@ -90,8 +87,6 @@ if (save) {
         >
           + Dodaj red
         </button>
-
-        
       </div>
     </div>
   );
@@ -132,20 +127,18 @@ function DefinirajInterpretacije({
         />
       )}
 
-      <button
+      <div className="d-flex justify-content-center">
+        <button
           type="button"
           className="btn btn-light border btn-sm"
           onClick={() => setSaveClicked(true)}
         >
           Spremi interpretacije
         </button>
-
-      {Object.keys(vrednovanje).length === 0 && (
-        <small className="text-muted">Još nema sačuvanih interpretacija.</small>
-      )}
+      </div>
 
       {Object.entries(vrednovanje).map(([s, lista]) => (
-        <div key={s} className="mb-3">
+        <div key={s} className="mb-3 mt-3">
           <div className="d-flex align-items-center justify-content-between">
             <span className="me-2 fw-semibold text-success">
               {s !== "upitnik" ? `Skala '${s}'` : null}
