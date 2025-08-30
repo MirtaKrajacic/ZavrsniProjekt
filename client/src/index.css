@@ -70,6 +70,16 @@ main {
   box-shadow: 0 8px 20px rgba(0,0,0,0.2);
 }
 
+.dodaj-button:disabled {
+  opacity: 0.5;               /* posivi cijeli gumb */
+  cursor: not-allowed;        /* pokaži da nije klikabilan */
+  background-color: #e9ecef;  /* svijetlosiva pozadina */
+  color: #6c757d;             /* tamno sivi tekst */
+  border-color: #dee2e6;      /* svijetlosivi rub */
+  box-shadow: none;           /* ukloni sjenu */
+  outline: none;              /* ukloni border kod klika */
+}
+
 .dodaj-button{
   box-shadow: 0 4px 10px rgba(var(--bs-primary-rgb), 0.3);
   transition: transform 180ms ease, box-shadow 180ms ease;
@@ -120,4 +130,20 @@ main {
 
 .dropdown-item:active  {
   background: lightgray !important;
+}
+
+.btn-arrow {
+  border: none;
+}
+
+.btn-arrow:disabled {
+  opacity: 0.8;
+  cursor: not-allowed;
+  color: #aaa;
+  border: none;
+}
+
+.btn-arrow:focus,
+.btn-arrow:active {
+  border: none;
 }
