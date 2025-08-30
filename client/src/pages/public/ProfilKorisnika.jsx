@@ -31,12 +31,17 @@ function ProfilKorisnika() {
   return (
     <main className="container my-5">
       <div className="card shadow-sm mx-auto">
-        <div className="card-body text-center">
-          <img src="/profile.jpg" alt="logo" width="80" height="80" />
+        <div className="card-body text-center mt-4 mb-3">
+          <img
+            src="/profile.jpg"
+            alt="logo"
+            width="80"
+            height="80"
+          />
           <h5 className="card-title mb-4 mt-4">{ime}</h5>
-          <p className="card-text text-muted mb-1 mb-4">{email}</p>
+          <p className="card-text text-muted mb-1 mb-5">{email}</p>
           {opis && (
-            <div className="card-text border rounded-3 text-start p-3">
+            <div className="card-text rounded-3 text-start p-3">
               <h5 className="card-text text-start">O autoru</h5>
               <p className="card-text text-muted">{opis}</p>
             </div>

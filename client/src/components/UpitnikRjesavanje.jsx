@@ -1,7 +1,25 @@
 // element upitnika dobiven parsiranjem uploadanog XML-a
 import { useEffect, useState } from "react";
 
-function Upitnik({ xmlData, rezultatSpecs, setBodoviRoditelj, naslov }) {
+const arr = (x) => {
+  if (Array.isArray(x)) {
+    return x;
+  } else if (x) {
+    return [x];
+  }
+  return [];
+};
+
+function Upitnik({ xmlData, rezultatSpecs, setBodoviRoditelj }) {
+  const data = xmlData.questionnaire;
+  const sec = data.section; // section = sekcija pitanja u queXML
+  const q = sec.question;
+  const subQs = arr(q.subQuestion);
+  const pageSize = 5;
+  const ukupnoPages = Math.ceil(subQs.length / pageSize);
+
+  const [page, setPage] = useState(0);
+  const [currPitanja, setCurrPitanja] = useState(subQs.slice(0, 5));
   const [bodoviPitanja, setBodoviPitanja] = useState({}); // entry oblika: {varName:bodovi}
 
   const min = parseInt(rezultatSpecs.skala_odgovora[0]);
@@ -10,23 +28,18 @@ function Upitnik({ xmlData, rezultatSpecs, setBodoviRoditelj, naslov }) {
   );
   const obrnutoKodirani = rezultatSpecs.obrnuto_kodirana;
 
-  console.log(rezultatSpecs);
+  //console.log(rezultatSpecs);
 
-  const arr = (x) => {
-    if (Array.isArray(x)) {
-      return x;
-    } else if (x) {
-      return [x];
-    }
-    return [];
-  };
+  useEffect(() => {
+    setCurrPitanja(subQs.slice(pageSize * page, pageSize * page + 5));
+  }, [page]);
 
   // definiranje skale odgovora pitanja q
   function Response({ q }) {
     if (q.response.fixed) {
       const cats = arr(q.response.fixed.category); // idemo po svim ponudenim odgovorima
       return (
-        <div className="p-3 d-flex flex-column flex-md-row justify-content-md-evenly">
+        <div className="p-3 d-flex flex-column flex-lg-row justify-content-lg-evenly">
           {cats.map((c) => (
             <div key={`${q.varName}-${c.value}`} className="form-check me-md-3">
               <input
@@ -96,20 +109,6 @@ function Upitnik({ xmlData, rezultatSpecs, setBodoviRoditelj, naslov }) {
       </section>
     );
   }
-
-  const data = xmlData.questionnaire;
-  const sec = data.section; // section = sekcija pitanja u queXML
-  const q = sec.question;
-  const subQs = arr(q.subQuestion);
-
-  const pageSize = 5;
-  const ukupnoPages = Math.ceil(subQs.length / pageSize);
-  const [page, setPage] = useState(0);
-  const [currPitanja, setCurrPitanja] = useState(subQs.slice(0, 5));
-
-  useEffect(() => {
-    setCurrPitanja(subQs.slice(pageSize * page, pageSize * page + 5));
-  }, [page]);
 
   return (
     <div className="container">
