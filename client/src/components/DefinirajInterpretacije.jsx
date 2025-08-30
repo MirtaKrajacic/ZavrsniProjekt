@@ -8,7 +8,7 @@ function PoSubskalama({ s, setParentVrednovanje, save, setSave }) {
       setParentVrednovanje((prev) => {
         let copy = { ...prev };
         const novo = rows.filter((r) => r.raspon !== "" && r.tekst !== "");
-        copy[s] = (copy[s] || []).concat(novo);
+        if (novo.length > 0) copy[s] = (copy[s] || []).concat(novo);
         return copy;
       });
       setRows([{ raspon: "", tekst: "" }]);
