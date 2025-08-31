@@ -19,6 +19,7 @@ function RjesiUpitnik({ mod }) {
   const [resetFunkcija, setResetFunkcija] = useState(true);
   const [error, setError] = useState(false);
   const [naslovUpitnika, setNaslovUpitnika] = useState("");
+  const [lastPage, setLastPage] = useState(false);
 
   const params = useParams();
 
@@ -204,29 +205,35 @@ function RjesiUpitnik({ mod }) {
         <b>{naslovUpitnika}</b>
       </h2>
       {xmlData && (
-        <div className="container mb-5 p-4 bg-primary-subtle border border-primary-subtle rounded-3 d-flex flex-column align-items-center">
+        <div className="container mb-5 p-4 bg-primary-subtle rounded-3 d-flex flex-column align-items-center">
           <UpitnikRjesavanje
             xmlData={xmlData}
             rezultatSpecs={rezultatSpecs}
             setBodoviRoditelj={setBodoviPitanja}
             key={resetFunkcija}
             naslov={naslovUpitnika}
+            flagRoditelju={setLastPage}
           />
-          <button
-            className="btn btn-light border shadow-sm dodaj-button mt-5"
-            onClick={() => {
-              checkUpitnikIspunjen(); // provjera jesu li sva pitanja odgovorena
-              if (!error) {
-              }
-            }}
-          >
-            Predaj za procjenu
-          </button>
+
+          {lastPage && (
+            <button
+              className="btn btn-light border shadow-sm dodaj-button mt-5"
+              onClick={() => {
+                checkUpitnikIspunjen(); // provjera jesu li sva pitanja odgovorena
+                if (!error) {
+                }
+              }}
+            >
+              Predaj za procjenu
+            </button>
+          )}
+
           {error && (
             <small className="text-danger d-block text-center">
               Molimo odgovorite na sva pitanja.
             </small>
           )}
+
           {success && (
             <Alert variant="success" className="mt-3 text-center">
               Provjerite mail za rezultate upitnika!

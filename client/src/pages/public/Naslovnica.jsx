@@ -56,21 +56,21 @@ const Naslovnica = () => {
             <>
               <p className="card-text text-secondary mb-0">
                 <Link
-                to={"/profiles/" + u.ime.split(' ').join('-')}
-                state={{ id: u.autor_id }}
-                style={{ textDecoration: "none", color: "inherit" }}>
-                Autor: {u.ime}
+                  to={"/profiles/" + u.ime.split(" ").join("-")}
+                  state={{ id: u.autor_id }}
+                  style={{ textDecoration: "none", color: "inherit" }}
+                >
+                  Autor: {u.ime}
                 </Link>
               </p>
               <div className="d-flex justify-content-center gap-2 flex-wrap">
-                <button className="btn btn-primary w-50 border mt-3">
-                  <Link
-                    to={"/upitnik/" + u.id}
-                    style={{ textDecoration: "none", color: "inherit" }}
-                  >
-                    Rješi
-                  </Link>
-                </button>
+                <Link
+                  to={"/upitnik/" + u.id}
+                  style={{ textDecoration: "none", color: "inherit" }}
+                  className="border-0 mt-3"
+                >
+                  <button className="btn btn-primary">Rješi</button>
+                </Link>
               </div>
             </>
           )}

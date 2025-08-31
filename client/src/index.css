@@ -71,13 +71,13 @@ main {
 }
 
 .dodaj-button:disabled {
-  opacity: 0.5;               /* posivi cijeli gumb */
-  cursor: not-allowed;        /* pokaži da nije klikabilan */
-  background-color: #e9ecef;  /* svijetlosiva pozadina */
-  color: #6c757d;             /* tamno sivi tekst */
-  border-color: #dee2e6;      /* svijetlosivi rub */
-  box-shadow: none;           /* ukloni sjenu */
-  outline: none;              /* ukloni border kod klika */
+  opacity: 0.5;              
+  cursor: not-allowed;        
+  background-color: #e9ecef; 
+  color: #6c757d;            
+  border-color: #dee2e6;    
+  box-shadow: none;           
+  outline: none;             
 }
 
 .dodaj-button{
@@ -146,4 +146,9 @@ main {
 .btn-arrow:focus,
 .btn-arrow:active {
   border: none;
+}
+
+.form-check-input,
+.form-check-label {
+  cursor: pointer;
 }

@@ -10,7 +10,7 @@ const arr = (x) => {
   return [];
 };
 
-function Upitnik({ xmlData, rezultatSpecs, setBodoviRoditelj }) {
+function Upitnik({ xmlData, rezultatSpecs, setBodoviRoditelj, flagRoditelju }) {
   const data = xmlData.questionnaire;
   const sec = data.section; // section = sekcija pitanja u queXML
   const q = sec.question;
@@ -32,6 +32,11 @@ function Upitnik({ xmlData, rezultatSpecs, setBodoviRoditelj }) {
 
   useEffect(() => {
     setCurrPitanja(subQs.slice(pageSize * page, pageSize * page + 3));
+    if (page + 1 === ukupnoPages) {
+      flagRoditelju(true);
+    } else {
+      flagRoditelju(false);
+    }
   }, [page]);
   
   useEffect(() => {
@@ -116,7 +121,7 @@ function Upitnik({ xmlData, rezultatSpecs, setBodoviRoditelj }) {
 
   return (
     <div className="container">
-      <div style={{ minHeight: "330px" }}>
+      <div >
         <ListaPitanja
           question={q}
           subQs={currPitanja}
