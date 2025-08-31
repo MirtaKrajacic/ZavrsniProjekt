@@ -3,7 +3,7 @@ import { XMLParser, XMLBuilder } from "fast-xml-parser";
 import UpitnikIzrada from "./UpitnikIzrada.jsx";
 import DefinirajSubskale from "./DefinirajSubskale.jsx";
 import DefinirajInterpretacije from "./DefinirajInterpretacije.jsx";
-import { Alert } from "react-bootstrap";
+import { Alert, Fade } from "react-bootstrap";
 
 // radim s pretpostavkom da svaki upitnik koji se unese ima jedan section i unutar njega jedan question
 // unutar questiona su subquestions
@@ -255,14 +255,14 @@ function DefinirajBodovanje({
               </small>
             )}
 
-            {success && (
+              <Fade in={success} mountOnEnter unmountOnExit appear>
               <Alert
                 variant="success"
-                className="d-block mx-auto mt-3 text-center w-50 bg-white border-0 text-primary"
+                className="d-block mx-auto mt-3 text-center bg-white border-0 text-primary"
               >
                 Promjene su uspješno spremljene!
               </Alert>
-            )}
+      </Fade>
           </>
         )}{" "}
       </div>
