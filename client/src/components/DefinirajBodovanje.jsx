@@ -255,14 +255,14 @@ function DefinirajBodovanje({
               </small>
             )}
 
-              <Fade in={success} mountOnEnter unmountOnExit appear>
+            <Fade in={success} mountOnEnter unmountOnExit appear>
               <Alert
                 variant="success"
-                className="d-block mx-auto mt-3 text-center bg-white border-0 text-primary"
+                className="d-block mx-auto mt-3 text-center p-1 w-75 text-success"
               >
                 Promjene su uspješno spremljene!
               </Alert>
-      </Fade>
+            </Fade>
           </>
         )}{" "}
       </div>
