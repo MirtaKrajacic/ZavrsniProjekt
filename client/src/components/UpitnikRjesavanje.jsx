@@ -15,11 +15,11 @@ function Upitnik({ xmlData, rezultatSpecs, setBodoviRoditelj }) {
   const sec = data.section; // section = sekcija pitanja u queXML
   const q = sec.question;
   const subQs = arr(q.subQuestion);
-  const pageSize = 5;
+  const pageSize = 3;
   const ukupnoPages = Math.ceil(subQs.length / pageSize);
 
   const [page, setPage] = useState(0);
-  const [currPitanja, setCurrPitanja] = useState(subQs.slice(0, 5));
+  const [currPitanja, setCurrPitanja] = useState(subQs.slice(0, 3));
   const [bodoviPitanja, setBodoviPitanja] = useState({}); // entry oblika: {varName:bodovi}
 
   const min = parseInt(rezultatSpecs.skala_odgovora[0]);
@@ -31,7 +31,11 @@ function Upitnik({ xmlData, rezultatSpecs, setBodoviRoditelj }) {
   //console.log(rezultatSpecs);
 
   useEffect(() => {
-    setCurrPitanja(subQs.slice(pageSize * page, pageSize * page + 5));
+    setCurrPitanja(subQs.slice(pageSize * page, pageSize * page + 3));
+  }, [page]);
+  
+  useEffect(() => {
+    window.scrollTo(0, 0);
   }, [page]);
 
   // definiranje skale odgovora pitanja q
@@ -112,18 +116,23 @@ function Upitnik({ xmlData, rezultatSpecs, setBodoviRoditelj }) {
 
   return (
     <div className="container">
-      <ListaPitanja
-        question={q}
-        subQs={currPitanja}
-        startInd={pageSize * page}
-      />
+      <div style={{ minHeight: "330px" }}>
+        <ListaPitanja
+          question={q}
+          subQs={currPitanja}
+          startInd={pageSize * page}
+        />
+      </div>
 
       <div className="d-flex justify-content-center align-items-center mt-4">
         <div className="d-flex justify-content-center align-items-center gap-3 my-3">
           <button
             className="btn btn-arrow px-3 py-1"
             disabled={page === 0}
-            onClick={() => setPage((p) => p - 1)}
+            onClick={() => {
+              setPage((p) => p - 1);
+              console.log(page);
+            }}
           >
             ‹
           </button>
@@ -135,7 +144,11 @@ function Upitnik({ xmlData, rezultatSpecs, setBodoviRoditelj }) {
           <button
             className="btn btn-arrow px-3 py-1"
             disabled={page + 1 === ukupnoPages}
-            onClick={() => setPage((p) => p + 1)}
+            onClick={() => {
+              setPage((p) => p + 1);
+              console.log(page);
+            }
+            }
           >
             ›
           </button>
