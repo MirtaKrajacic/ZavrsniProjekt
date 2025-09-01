@@ -7,8 +7,9 @@ dotenv.config();
 import nodemailer from "nodemailer";
 
 router.post("/send-result", async (req, res) => {
-  const { email, result } = req.body; 
   try {
+    const { email, result } = req.body; 
+    
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -21,7 +22,7 @@ router.post("/send-result", async (req, res) => {
       from: '"MindCheck" <mirta.krajacic@gmail.com>',
       to: email,
       subject: "Rezultati rješenog upitnika",
-      html: `${result}`, // HTML body
+      html: `${result}`, 
     });
 
     console.log("Message sent:", info.response);

@@ -45,11 +45,6 @@ function DefinirajBodovanje({
       const xmlString = builder.build(data);
       updateParentData(xmlString);
       //console.log(xmlString);
-      setMax(0);
-      setMin(0);
-      setVrednovanje({});
-      setSubskale([]);
-      setChecked(new Set());
     }
   }, [data, updateParentData]);
 

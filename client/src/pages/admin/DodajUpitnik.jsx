@@ -271,7 +271,7 @@ function AddUpitnik() {
           <Modal.Body>
             <Form className="d-flex align-items-end gap-2">
               <Form.Group className="w-100">
-                <Form.Label>URL upitnika</Form.Label>
+                <Form.Label><b>URL upitnika</b></Form.Label>
                 <Form.Control
                   type="text"
                   value={`http://localhost:3000/upitnik/p/${uuid}`}

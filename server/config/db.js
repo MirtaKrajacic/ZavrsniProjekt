@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 const { Pool } = pkg;
 
-const pool = new Pool(); // reuses existing connections instead of opening a new one for every query
+const pool = new Pool(); 
 
 // proba jesmo li se spojili na database
 try {

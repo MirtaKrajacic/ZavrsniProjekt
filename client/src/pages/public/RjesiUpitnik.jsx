@@ -252,14 +252,14 @@ function RjesiUpitnik({ mod }) {
       >
         <Modal.Header closeButton>
           <Modal.Title className="text-primary">
-            Dobij rezultate putem e-pošte
+            Dobijte rezultate putem e-pošte
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
             <Form.Group>
               <Form.Label>
-                Unesi adresu e-pošte na koju ćemo ti poslati rezultate upitnika
+                Unesite adresu e-pošte na koju ćemo vam poslati rezultate upitnika
               </Form.Label>
               <Form.Control
                 type="text"
