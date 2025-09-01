@@ -6,17 +6,17 @@ const secretKey = "secret-key";
 
 const register = async (req, res) => {
   const { name, email, password } = req.body;
-
-  const saltRounds = 10;
-  const hashedPassword = await bcrypt.hash(password, saltRounds);
-
   try {
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
     await pool.query(
-      "INSERT INTO korisnik (ime, email, sifra) VALUES ($1, $2, $3)",
+      "INSERT INTO korisnik (ime, email, lozinka) VALUES ($1, $2, $3)",
       [name, email, hashedPassword]
     );
+
     const result = await pool.query(
-      "SELECT id FROM korisnik WHERE email = $1 AND sifra = $2",
+      "SELECT id FROM korisnik WHERE email = $1 AND lozinka = $2",
       [email, hashedPassword]
     );
 
@@ -38,12 +38,12 @@ const login = async (req, res) => {
   const { email, password } = req.body;
   try {
     const result = await pool.query(
-      "SELECT id, ime, email, sifra FROM korisnik WHERE email = $1",
+      "SELECT id, ime, email, lozinka FROM korisnik WHERE email = $1",
       [email]
     );
     const user = result.rows[0];
 
-    const match = await bcrypt.compare(password, user.sifra);
+    const match = await bcrypt.compare(password, user.lozinka);
     if (!match) {
       return res.status(401).json("Invalid username or password");
     }

@@ -18,7 +18,7 @@ function DefinirajBodovanje({
   const [checked, setChecked] = useState(new Set()); // set id-eva podpitanja koja su obrnuto kodirana
   const [min, setMin] = useState(0); // min bodovi
   const [max, setMax] = useState(0); // max bodovi
-  const [vrednovanje, setVrednovanje] = useState(""); // key-value parovi gdje je key=imeSubskale, a value lista interpretacija za tu subskalu
+  const [vrednovanje, setVrednovanje] = useState({}); // key-value parovi gdje je key=imeSubskale, a value lista interpretacija za tu subskalu
   const [subskale, setSubskale] = useState([]);
   const [error, setError] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -45,6 +45,11 @@ function DefinirajBodovanje({
       const xmlString = builder.build(data);
       updateParentData(xmlString);
       //console.log(xmlString);
+      setMax(0);
+      setMin(0);
+      setVrednovanje({});
+      setSubskale([]);
+      setChecked(new Set());
     }
   }, [data, updateParentData]);
 
@@ -75,13 +80,13 @@ function DefinirajBodovanje({
 
   // aktivira se kilikom na "Spremi" button
   const handleSave = () => {
-    let likertRange = [];
+    let likertLjestvica = [];
     for (let i = min; i <= max; i++) {
-      likertRange.push(i);
+      likertLjestvica.push(i);
     }
 
     const resultSpecs = {
-      skala_odgovora: likertRange,
+      skala_odgovora: likertLjestvica,
       obrnuto_kodirana: [...checked],
       skupine_pitanja: subskale,
     };
@@ -126,7 +131,7 @@ function DefinirajBodovanje({
       <div key={q.varName || q.text} className="border rounded-3 p-3">
         <div className="row row-cols-2 row-cols-md-3">
           {subs.map((sq, ind) => (
-            <div key={sq.varName} className="col">
+            <div key={sq.varName || ind} className="col">
               <div className="form-check">
                 <input
                   type="checkbox"

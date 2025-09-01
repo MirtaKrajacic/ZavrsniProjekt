@@ -1,10 +1,20 @@
 // UpitnikIzrada.jsx — pregledna lista: pitanja + oblik odgovora
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 function UpitnikIzrada({ xmlData, obrnutoKodirani, min, max }) {
   /*useEffect(() => {
     console.log("data promijenjena:", xmlData);
   }, [xmlData]);*/
+  const [raspon, setRaspon] = useState([]);
+
+  useEffect(() => {
+    let likertLjestvica = [];
+    for (let i = min; i <= max; i++) {
+      likertLjestvica.push(i);
+    }
+    console.log(likertLjestvica);
+    setRaspon(likertLjestvica);
+  }, [min, max])
 
   function ListaPitanja({ data }) {
     const sections = [].concat(data.section);
@@ -20,7 +30,7 @@ function UpitnikIzrada({ xmlData, obrnutoKodirani, min, max }) {
           <h5>Format odgovora:</h5>
 
           <div className="g-2 mb-3">
-            {cats.map((c) => (
+            {cats.map((c, i) => (
               <div key={c.value} className="col">
                 <div className="form-check ms-1">
                   <input
@@ -34,6 +44,7 @@ function UpitnikIzrada({ xmlData, obrnutoKodirani, min, max }) {
                     htmlFor={`${q.varName}-${c.value}`}
                   >
                     {c.label}
+                    {max > min && raspon[i]>=0 && <span className="text-success">{' - bodovi: ' + raspon[i]}</span>} 
                   </label>
                 </div>
               </div>
@@ -44,7 +55,7 @@ function UpitnikIzrada({ xmlData, obrnutoKodirani, min, max }) {
           <ul className="list-group">
             {subQuestions.map((sq, i) => (
               <li
-                key={sq.varName}
+                key={sq.varName || i}
                 className="list-group-item d-flex justify-content-between align-items-center mb-2 border rounded-3 shadow-sm"
               >
                 <span>

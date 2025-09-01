@@ -1,8 +1,9 @@
 import { useState, useRef } from "react";
 import { Modal, Button, Form, Alert, Fade } from "react-bootstrap";
 import { v4 as uuidv4 } from "uuid";
-import DefinirajBodovanje from "../../components/DefinirajBodovanje.jsx";
 import { XMLParser } from "fast-xml-parser";
+
+import DefinirajBodovanje from "../../components/DefinirajBodovanje.jsx";
 
 import api from "../../api.js";
 

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Alert, Fade } from "react-bootstrap";
-// import validateXML from "./validateQueXML.js";
 
 import api from "../../api";
 

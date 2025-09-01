@@ -10,7 +10,6 @@ function verifyToken(req, res, next) {
       if (err) {
         res.status(401).send("provide valid token");
       } else {
-        //console.log("good token");
         req.userid = succ.userid; // spremi userid u req objekt koji se prosljeđuje ruteru
         next();
       }

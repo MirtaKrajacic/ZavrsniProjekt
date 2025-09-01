@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
 import Registracija from "./pages/public/Registracija";
-import Privatno from "./pages/public/Privatno";
+import Privatno from "./components/Privatno";
 import Prijava from "./pages/public/Prijava";
 import Naslovnica from "./pages/public/Naslovnica";
 import UrediProfil from "./pages/admin/UrediProfil";
@@ -37,6 +37,6 @@ function App() {
       <Footer />
     </BrowserRouter>
   );
-}
+} 
 
 export default App;

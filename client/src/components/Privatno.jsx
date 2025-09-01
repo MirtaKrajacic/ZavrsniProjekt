@@ -5,7 +5,7 @@ const PrivateComponent = () => {
   function isTokenValid(token) {
     try {
       const { exp } = jwtDecode(token);
-      return Date.now() < exp * 1000; // exp je u sekundama pa convertamo u milisekunde
+      return Date.now() < exp * 1000; 
     } catch {
       return false; // neispravan token
     }
@@ -14,7 +14,7 @@ const PrivateComponent = () => {
   const token = localStorage.getItem("token");
 
   if (!token || !isTokenValid(token)) {
-    localStorage.removeItem("token"); // ako je expired
+    localStorage.removeItem("token"); 
     return <Navigate to="/login" />;
   }
 

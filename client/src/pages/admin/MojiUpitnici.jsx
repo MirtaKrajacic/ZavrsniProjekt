@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Modal } from "react-bootstrap";
 
 import api from "../../api";
-import UpitniciCards from "../UpitniciCards";
+import UpitniciCards from "../../components/UpitniciCards";
 
 const MojiUpitnici = () => {
   const [upitnici, setUpitnici] = useState([]);
