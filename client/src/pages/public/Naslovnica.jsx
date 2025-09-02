@@ -69,7 +69,7 @@ const Naslovnica = () => {
                   style={{ textDecoration: "none", color: "inherit" }}
                   className="border-0 mt-3"
                 >
-                  <button className="btn btn-primary">Rješi</button>
+                  <button className="btn btn-primary">Riješi</button>
                 </Link>
               </div>
             </>
