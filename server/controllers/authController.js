@@ -5,8 +5,8 @@ import bcrypt from "bcrypt";
 const secretKey = "secret-key";
 
 const register = async (req, res) => {
-  const { name, email, password } = req.body;
   try {
+    const { name, email, password } = req.body;
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
@@ -43,10 +43,11 @@ const login = async (req, res) => {
       [email]
     );
     const user = result.rows[0];
+    const hashedPassword = user.lozinka;
 
-    const match = await bcrypt.compare(password, user.lozinka);
+    const match = await bcrypt.compare(password, hashedPassword);
     if (!match) {
-      return res.status(401).json("Invalid username or password");
+      return res.status(401).json("Netočno korisničko ime ili lozinka");
     }
 
     if (result.rows.length > 0) {
