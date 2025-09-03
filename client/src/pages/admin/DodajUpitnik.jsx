@@ -40,10 +40,10 @@ function AddUpitnik() {
         attributeNamePrefix: "",
       });
       const xmlObj = parser.parse(xmlData);
-      console.log(xmlObj)
+      console.log(xmlObj);
 
       const section = xmlObj.questionnaire.section;
-      const question = section.question;      
+      const question = section.question;
       const subQs = question.subQuestion;
       subQs.forEach((sq) => sq.varName);
       [].concat(question.response.fixed.category);
@@ -52,7 +52,7 @@ function AddUpitnik() {
       return true;
     } catch (e) {
       setXmlError(true);
-      console.log('error validating xml: ', e.message)
+      console.log("error validating xml: ", e.message);
       return false;
     }
   };
@@ -172,7 +172,7 @@ function AddUpitnik() {
           </div>
 
           <div className="mb-4">
-            <legend>Označi dostupnost upitnika</legend>
+            <label className="form-label fw-semibold">Označi dostupnost upitnika</label>
             <div className="form-check">
               <label className="form-check-label">
                 <input
@@ -260,6 +260,19 @@ function AddUpitnik() {
         >
           Dodaj upitnik
         </button>
+        <div className="text-center mt-2">
+          {(naslov === "" ||
+            opis === "" ||
+            status === "" ||
+            sadrzaj === "" ||
+            vrednovanje === "" ||
+            formula === null) &&
+            clicked && (
+              <small className="text-danger">
+                Molimo ispunite sva obavezna polja.
+              </small>
+            )}
+        </div>
 
         <Modal
           show={showShare}

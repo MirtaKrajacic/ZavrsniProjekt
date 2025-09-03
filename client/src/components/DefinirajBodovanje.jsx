@@ -194,7 +194,8 @@ function DefinirajBodovanje({
             </div>
 
             <h3 className="p-2 rounded-2 bg-success-subtle text-success">
-              U kojem se rasponu kreću bodovi Likertove ljestvice?*
+              U kojem se rasponu kreću bodovi Likertove ljestvice?
+              <span className="text-danger">*</span>
             </h3>
             <div className="d-flex align-items-center gap-4 my-3">
               <div className="input-group w-auto">
@@ -234,7 +235,7 @@ function DefinirajBodovanje({
             />
 
             <h3 className="p-2 rounded-2 bg-success-subtle text-success mt-3">
-              Opis vrednovanja rezultata*
+              Opis vrednovanja rezultata<span className="text-danger">*</span>
             </h3>
             <DefinirajInterpretacije
               setParentVrednovanje={setVrednovanje}
@@ -251,7 +252,7 @@ function DefinirajBodovanje({
 
             {error && (
               <small className="text-danger d-block text-center mt-2">
-                Molimo ispunite obavezna polja
+                Molimo ispunite sva obavezna polja.
               </small>
             )}
 
