@@ -35,8 +35,9 @@ const register = async (req, res) => {
 };
 
 const login = async (req, res) => {
-  const { email, password } = req.body;
   try {
+    const { email, password } = req.body;
+    
     const result = await pool.query(
       "SELECT id, ime, email, lozinka FROM korisnik WHERE email = $1",
       [email]
