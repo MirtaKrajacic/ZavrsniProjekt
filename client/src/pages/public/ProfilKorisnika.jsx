@@ -18,7 +18,7 @@ function ProfilKorisnika() {
 
   const dohvatiKorisnika = async () => {
     try {
-      const { data } = await api.get(`/upitnik/get-korisnik/${id}`);
+      const { data } = await api.get(`/korisnik/get-korisnik/${id}`);
 
       setIme(data.ime);
       setEmail(data.email);

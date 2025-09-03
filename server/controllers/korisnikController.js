@@ -1,7 +1,7 @@
 import pool from "../config/db.js";
 
 // dohvat podataka aktivnog korisnika iz baze
-const dohvatiKorisnika = async (req, res) => {
+export const dohvatiKorisnika = async (req, res) => {
   try {
     let result = await pool.query(
       "SELECT ime, email, opis FROM korisnik WHERE id = $1",
@@ -14,7 +14,7 @@ const dohvatiKorisnika = async (req, res) => {
   }
 };
 
-const updateKorisnika = async (req, res) => {
+export const updateKorisnika = async (req, res) => {
   try {
     const { ime, opis } = req.body;
 
@@ -33,4 +33,17 @@ const updateKorisnika = async (req, res) => {
   }
 };
 
-export { dohvatiKorisnika, updateKorisnika };
+export const dohvatiProfilKorisnika = async (req, res) => {
+  try {
+    const { id } = req.params;
+    let result = await pool.query(
+      "SELECT ime, email, opis FROM korisnik WHERE id = $1",
+      [id]
+    );
+    res.send(result.rows[0]);
+  } catch (err) {
+    console.log("Database error:", err);
+    res.status(500).send("Internal server error");
+  }
+};
+

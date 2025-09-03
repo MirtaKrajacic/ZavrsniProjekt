@@ -138,17 +138,5 @@ export const deleteUpitnik = async (req, res) => {
   }
 };
 
-export const dohvatiProfilKorisnika = async (req, res) => {
-  try {
-    const { id } = req.params;
-    let result = await pool.query(
-      "SELECT ime, email, opis FROM korisnik WHERE id = $1",
-      [id]
-    );
-    res.send(result.rows[0]);
-  } catch (err) {
-    console.log("Database error:", err);
-    res.status(500).send("Internal server error");
-  }
-};
+
 
