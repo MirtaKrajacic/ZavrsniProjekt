@@ -40,9 +40,10 @@ function AddUpitnik() {
         attributeNamePrefix: "",
       });
       const xmlObj = parser.parse(xmlData);
+      console.log(xmlObj)
 
       const section = xmlObj.questionnaire.section;
-      const question = section.question;
+      const question = section.question;      
       const subQs = question.subQuestion;
       subQs.forEach((sq) => sq.varName);
       [].concat(question.response.fixed.category);
@@ -51,6 +52,7 @@ function AddUpitnik() {
       return true;
     } catch (e) {
       setXmlError(true);
+      console.log('error validating xml: ', e.message)
       return false;
     }
   };
@@ -208,8 +210,15 @@ function AddUpitnik() {
 
           <div className="mb-5">
             <label htmlFor="xmlFile" className="form-label fw-semibold">
-              Učitaj XML datoteku upitnika
+              Učitaj queXML datoteku upitnika
             </label>
+            <p className="small">
+              Datoteka mora sadržavati samo jednu sekciju (section) te u njoj
+              jedno pitanje (question) unutar kojega su definirana podpitanja
+              (subQuestion) i odgovor (response). Ako upitnik ima više sekcija,
+              podijelite ga u više odvojenih upitnika, a pitanja grupirajte kao
+              podpitanja.
+            </p>
             <input
               id="xmlFile"
               type="file"
@@ -223,12 +232,7 @@ function AddUpitnik() {
             )}
             {xmlError && (
               <small className="text-danger">
-                Molimo učitajte ispravnu XML datoteku upitnika. Ona mora
-                sadržavati samo jednu sekciju (section) te u njoj jedno pitanje
-                (question) unutar kojega su definirana podpitanja (subQuestion)
-                i odgovor (response). Ako upitnik ima više sekcija, podijelite
-                ga u više odvojenih upitnika, a pitanja grupirajte kao
-                podpitanja.
+                Molimo učitajte ispravnu XML datoteku upitnika.
               </small>
             )}
           </div>
@@ -271,7 +275,9 @@ function AddUpitnik() {
           <Modal.Body>
             <Form className="d-flex align-items-end gap-2">
               <Form.Group className="w-100">
-                <Form.Label><b>URL upitnika</b></Form.Label>
+                <Form.Label>
+                  <b>URL upitnika</b>
+                </Form.Label>
                 <Form.Control
                   type="text"
                   value={`http://localhost:3000/upitnik/p/${uuid}`}
