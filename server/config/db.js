@@ -11,7 +11,7 @@ try {
   await pool.query('SELECT 1');
   console.log('Connected to the database!');
 } catch (err) {
-  console.error('Connection error', err.stack);
+  console.error('Database error');
 }
 
 export default pool;

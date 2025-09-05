@@ -1,6 +1,5 @@
 import pool from "../config/db.js";
 
-// 1 handler = 1 route
 export const listJavniUpitnici = async (req, res) => {
   try {
     const upitnici = await pool.query(`
@@ -12,7 +11,7 @@ export const listJavniUpitnici = async (req, res) => {
     if (upitnici.rows.length > 0) {
       res.send(upitnici.rows);
     } else {
-      res.json("nisu produnađeni upitnici");
+      res.json("nisu pronađeni upitnici");
     }
   } catch (err) {
     console.error("Database error:", err);
@@ -50,9 +49,14 @@ export const getUpitnikRjesavanje = async (req, res) => {
       upitnikId,
     ]);
     // result.rows - polje JS objekata gdje je svaki row tablice jedan objekt
-    res.json({ naslov: result.rows[0].naslov, xml: result.rows[0].sadrzaj, vrednovanje: result.rows[0].opis_vrednovanja, formula: result.rows[0].rezultat_formula }); // prikazuje sve koji matchaju sa searchom u imenu
+    res.json({
+      naslov: result.rows[0].naslov,
+      xml: result.rows[0].sadrzaj,
+      vrednovanje: result.rows[0].opis_vrednovanja,
+      formula: result.rows[0].rezultat_formula,
+    }); // prikazuje sve koji matchaju sa searchom u imenu
   } catch (err) {
-    res.status(500).send("Internal server error: " + err.message);
+    res.status(500).send("Internal server error");
     console.log(err.message);
   }
 };
@@ -67,10 +71,15 @@ export const getUpitnikRjesavanjePriv = async (req, res) => {
     if (result.rows.length === 0) {
       return res.status(404).send("Nema upitnika s danim tokenom");
     }
-    res.json({ naslov: result.rows[0].naslov, xml: result.rows[0].sadrzaj, vrednovanje: result.rows[0].opis_vrednovanja, formula: result.rows[0].rezultat_formula }); // prikazuje sve koji matchaju sa searchom u imenu
+    res.json({
+      naslov: result.rows[0].naslov,
+      xml: result.rows[0].sadrzaj,
+      vrednovanje: result.rows[0].opis_vrednovanja,
+      formula: result.rows[0].rezultat_formula,
+    }); // prikazuje sve koji matchaju sa searchom u imenu
   } catch (err) {
     res.status(500).send("Internal server error: " + err.message);
-    console.log(err.message); 
+    console.log(err.message);
   }
 };
 
@@ -78,7 +87,9 @@ export const addUpitnik = async (req, res) => {
   let { naslov, sadrzaj, status, kratki_opis, vrednovanje, formula } = req.body;
   try {
     await pool.query(
-      "INSERT INTO upitnik (naslov, autor_id, sadrzaj, status, kratki_opis, opis_vrednovanja, rezultat_formula) VALUES ($1, $2, $3, $4, $5, $6, $7)",
+    `INSERT INTO upitnik 
+    (naslov, autor_id, sadrzaj, status, kratki_opis, opis_vrednovanja, rezultat_formula) 
+    VALUES ($1, $2, $3, $4, $5, $6, $7)`,
       [naslov, req.userid, sadrzaj, status, kratki_opis, vrednovanje, formula]
     );
     res.status(201).send("upitnik dodan!");
@@ -92,8 +103,19 @@ export const addPrivatniUpitnik = async (req, res) => {
   let { naslov, sadrzaj, status, kratki_opis, vrednovanje, formula } = req.body;
   try {
     await pool.query(
-      "INSERT INTO upitnik (naslov, autor_id, sadrzaj, status, kratki_opis, link_token, opis_vrednovanja, rezultat_formula) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
-      [naslov, req.userid, sadrzaj, status, kratki_opis, req.params.uuid, vrednovanje, formula]
+      `INSERT INTO upitnik 
+      (naslov, autor_id, sadrzaj, status, kratki_opis, link_token, opis_vrednovanja, rezultat_formula) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+      [
+        naslov,
+        req.userid,
+        sadrzaj,
+        status,
+        kratki_opis,
+        req.params.uuid,
+        vrednovanje,
+        formula,
+      ]
     );
     res.status(201).send("upitnik dodan!");
   } catch (err) {
@@ -119,8 +141,7 @@ export const listMojiUpitnici = async (req, res) => {
       res.json("nisu pronađeni upitnici");
     }
   } catch (err) {
-    console.log(err);
-    console.error("Database error:", err);
+    console.log("Database error:", err);
     res.status(500).send("Internal server error");
   }
 };
@@ -137,6 +158,3 @@ export const deleteUpitnik = async (req, res) => {
     res.status(500).send("Internal server error");
   }
 };
-
-
-

@@ -25,8 +25,6 @@ router.post("/send-result", async (req, res) => {
       html: `${result}`, 
     });
 
-    console.log("Message sent:", info.response);
-
     res.json({ success: true });
   } catch (err) {
     console.error(err);

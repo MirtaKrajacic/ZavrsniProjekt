@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 
-const secretKey = "secret-key";
+const secretKey = "secret-key"; 
 
 function verifyToken(req, res, next) {
   let token = req.headers["authorization"];

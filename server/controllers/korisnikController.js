@@ -1,6 +1,6 @@
 import pool from "../config/db.js";
 
-// dohvat podataka aktivnog korisnika iz baze
+// dohvat podataka prijavljenog korisnika iz baze
 export const dohvatiKorisnika = async (req, res) => {
   try {
     let result = await pool.query(
@@ -29,6 +29,7 @@ export const updateKorisnika = async (req, res) => {
 
     res.status(200).json(result.rows[0]);
   } catch (err) {
+    console.log("Database error:", err);
     res.status(500).send("Internal server error: " + err.message);
   }
 };

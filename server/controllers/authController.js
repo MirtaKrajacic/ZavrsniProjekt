@@ -26,11 +26,9 @@ const register = async (req, res) => {
     res.json({
       auth: token,
     });
-    console.log("user saved!");
   } catch (err) {
-    console.error(err);
-    console.log("failed: " + err);
-    res.status(500).send("Database error");
+    console.log("Database error:", err);
+    res.status(500).send("Internal server error");
   }
 };
 
@@ -45,8 +43,8 @@ const login = async (req, res) => {
     const user = result.rows[0];
     const hashedPassword = user.lozinka;
 
-    const match = await bcrypt.compare(password, hashedPassword);
-    if (!match) {
+    const usporedba = await bcrypt.compare(password, hashedPassword);
+    if (!usporedba) {
       return res.status(401).json("Netočno korisničko ime ili lozinka");
     }
 
@@ -63,7 +61,7 @@ const login = async (req, res) => {
       res.status(401).json("No user found");
     }
   } catch (err) {
-    console.error("Database error:", err);
+    console.log("Database error:", err);
     res.status(500).send("Internal server error");
   }
 };

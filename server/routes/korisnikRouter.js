@@ -8,6 +8,7 @@ const router = express.Router();
 router.get("/get-korisnik", verifyToken, dohvatiKorisnika);
 router.put("/update-korisnik", verifyToken, updateKorisnika);
 
+// dohvacanje podataka korisnika radi prikaza profila javno u aplikaciji
 router.get("/get-korisnik/:id", dohvatiProfilKorisnika); 
 
 export default router;
