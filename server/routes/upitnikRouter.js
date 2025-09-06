@@ -23,7 +23,7 @@ router.get("/get-upitnici", listJavniUpitnici);
 // ruta za dohvacanje javnih upitnika koji matchaju search
 router.get("/search/:key", searchJavniUpitnici);
 
-// dohvacanje xml zapisa upitnika sa zadanim id-em
+// dohvacanje podataka upitnika sa zadanim id-em radi rjesavanja
 router.get("/get-upitnik/:id", getUpitnikRjesavanje);
 
 // dohvacanje xml zapisa privatnog upitnika sa zadanim uuid-em

@@ -8,7 +8,7 @@ const Naslovnica = () => {
   const [upitnici, setUpitnici] = useState([]);
 
   useEffect(() => {
-    document.title = "Naslovnica";
+    document.title = "MindCheck";
   }, []);
 
   useEffect(() => {

@@ -19,6 +19,7 @@ function RjesiUpitnik({ status }) {
   const [resetFunkcija, setResetFunkcija] = useState(true);
   const [error, setError] = useState(false);
   const [naslovUpitnika, setNaslovUpitnika] = useState("");
+  const [opisUpitnika, setOpisUpitnika] = useState("");
   const [lastPage, setLastPage] = useState(false);
 
   const params = useParams();
@@ -37,7 +38,10 @@ function RjesiUpitnik({ status }) {
       });
       const parsedObj = parser.parse(data.xml);
 
+      console.log(data);
+
       console.log("vrednovanje: ", data.vrednovanje);
+      setOpisUpitnika(data.opis);
       setNaslovUpitnika(data.naslov);
       setVrednovanje(data.vrednovanje);
       setRezultatSpecs(data.formula);
@@ -104,8 +108,12 @@ function RjesiUpitnik({ status }) {
       ${Object.entries(rezultat)
         .map(([subskala, rez]) =>
           subskala === "upitnik"
-            ? `<p style="margin:8px 0;">Ostvareni bodovi: <b>${rez.toFixed(0)}</b></p>`
-            : `<p style="margin:8px 0;">Ostvareni bodovi na skali <b>${subskala}</b>: ${rez.toFixed(0)}</p>`
+            ? `<p style="margin:8px 0;">Ostvareni bodovi: <b>${rez.toFixed(
+                0
+              )}</b></p>`
+            : `<p style="margin:8px 0;">Ostvareni bodovi na skali <b>${subskala}</b>: ${rez.toFixed(
+                0
+              )}</p>`
         )
         .join("")}
 
@@ -115,7 +123,7 @@ function RjesiUpitnik({ status }) {
 
     ${Object.entries(vrednovanje)
       .map(
-        ([subskala, interpretacije]) =>`
+        ([subskala, interpretacije]) => `
         <h3 style="color:#2ac6de; margin:10px;">
           ${subskala !== "upitnik" ? subskala : ""}
         </h3>
@@ -200,6 +208,14 @@ function RjesiUpitnik({ status }) {
       <h2 className="text-center my-4">
         <b>{naslovUpitnika}</b>
       </h2>
+
+      <details className="w-50 mx-auto text-center my-4">
+        <summary style={{ cursor: "pointer" }}><u>Opis</u></summary>
+        <p className="my-4 mx-auto text-start text-muted">
+          {opisUpitnika}
+        </p>
+      </details>
+
       {xmlData && (
         <div className="container mb-5 p-4 bg-primary-subtle rounded-3 d-flex flex-column align-items-center">
           <UpitnikRjesavanje

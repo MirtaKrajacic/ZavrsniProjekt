@@ -1,4 +1,10 @@
+import { useEffect } from "react";
+
 function About() {
+  useEffect(() => {
+    document.title = "O nama";
+  }, []);
+
   return (
     <main className="d-flex flex-column justify-content-center">
       <h1 className="text-primary fw-bold text-center mb-5">O nama</h1>
