@@ -23,8 +23,8 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/signup" element={<Registracija />} />
         <Route path="/login" element={<Prijava />} />
-        <Route path="/upitnik/:id" element={<RjesiUpitnik mod={"javni"} />} />
-        <Route path="/upitnik/p/:uuid" element={<RjesiUpitnik mod={"privatni"} />}/>
+        <Route path="/upitnik/:id" element={<RjesiUpitnik status={"javni"} />} />
+        <Route path="/upitnik/p/:uuid" element={<RjesiUpitnik status={"privatni"} />}/>
         <Route path="/profiles/:ime" element={<ProfilKorisnika />}/>
 
         {/* Privatne rute */}

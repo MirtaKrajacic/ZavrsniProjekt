@@ -21,12 +21,10 @@ const Login = () => {
       if (data.auth) {
         localStorage.setItem("token", data.auth);
         navigate("/");
-      } else {
-        alert("Please provide token");
-      }
+      } 
     } catch (err) {
       setError(true);
-      console.error(err);
+      console.log(err);
     }
   };
 
@@ -52,7 +50,7 @@ const Login = () => {
             type="password"
             className="form-control"
             placeholder="Unesite lozinku"
-            onChange={(e) => setPassword(e.target.value)} // e.target.value je curr value input elementa
+            onChange={(e) => setPassword(e.target.value)} 
             value={password}
           />
         </div>

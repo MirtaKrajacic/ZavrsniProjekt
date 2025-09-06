@@ -31,7 +31,7 @@ const Registracija = () => {
         localStorage.setItem("token", data.auth);
         navigate("/");
       } catch (err) {
-        console.error(err);
+        console.log(err);
       }
     }
   };

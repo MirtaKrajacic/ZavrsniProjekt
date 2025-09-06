@@ -2,10 +2,10 @@ import { Navigate, Outlet } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
 const PrivateComponent = () => {
-  function isTokenValid(token) {
+  function validanToken(token) {
     try {
-      const { exp } = jwtDecode(token);
-      return Date.now() < exp * 1000; 
+      const { exp } = jwtDecode(token); // exp je u sekundama
+      return Date.now() < exp * 1000; // now() je u milisekundama
     } catch {
       return false; // neispravan token
     }
@@ -13,7 +13,7 @@ const PrivateComponent = () => {
 
   const token = localStorage.getItem("token");
 
-  if (!token || !isTokenValid(token)) {
+  if (!token || !validanToken(token)) {
     localStorage.removeItem("token"); 
     return <Navigate to="/login" />;
   }

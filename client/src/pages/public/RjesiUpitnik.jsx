@@ -6,7 +6,7 @@ import { Modal, Form, Alert } from "react-bootstrap";
 import api from "../../api";
 import UpitnikRjesavanje from "../../components/UpitnikRjesavanje";
 
-function RjesiUpitnik({ mod }) {
+function RjesiUpitnik({ status }) {
   const [xmlData, setXmlData] = useState(null);
   const [email, setEmail] = useState("");
   const [showShare, setShowShare] = useState(false);
@@ -26,7 +26,7 @@ function RjesiUpitnik({ mod }) {
   useEffect(() => {
     const fetchData = async () => {
       const { data } = await api.get(
-        mod === "javni"
+        status === "javni"
           ? `/upitnik/get-upitnik/${params.id}`
           : `/upitnik/get-upitnik/private/${params.uuid}`
       );
@@ -37,7 +37,7 @@ function RjesiUpitnik({ mod }) {
       });
       const parsedObj = parser.parse(data.xml);
 
-      // console.log("dobio sam vrednovanje", data.vrednovanje);
+      console.log("vrednovanje: ", data.vrednovanje);
       setNaslovUpitnika(data.naslov);
       setVrednovanje(data.vrednovanje);
       setRezultatSpecs(data.formula);
@@ -46,7 +46,7 @@ function RjesiUpitnik({ mod }) {
     };
 
     fetchData();
-  }, [params.id, params.uuid, mod]);
+  }, [params.id, params.uuid, status]);
 
   const izracunajRezultat = () => {
     if (subskale.length > 0) {
@@ -89,28 +89,25 @@ function RjesiUpitnik({ mod }) {
   const formirajStringInterpretacije = (vrednovanje) => {
     return `
     <div style="margin:20px auto;
-              padding:20px;border:1px solid #ddd;
-              border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,0.1);
-              font-family:Arial,sans-serif;">
+                padding:20px;
+                border:1px solid #ddd;
+                border-radius:8px;"
+    >
 
-    <h1 style="color:#2ac6de;text-align:center;">Vaš rezultat</h1>
+      <h1 style="color:#2ac6de;text-align:center;">Vaš rezultat</h1>
 
-    <p>Rješili ste upitnik <b>${naslovUpitnika}</b> te ste na njemu ostvarili bodove navedene niže.
-    Taj se rezultat vrednuje kako je opisano u sekciji "Interpretacija rezultata".</p>
+      <p>
+      Rješili ste upitnik <b>${naslovUpitnika}</b> te ste na njemu ostvarili bodove navedene niže.
+      Taj se rezultat vrednuje kako je opisano u sekciji "Interpretacija rezultata".
+      </p>
 
-    ${Object.entries(rezultat)
-      .map(([skupina, rez]) =>
-        skupina === "upitnik"
-          ? `<p style="margin:8px 0;">Ostvareni bodovi: <b>${rez.toFixed(
-              0
-            )}</b></p>`
-          : `<p style="margin:8px 0;">Ostvareni bodovi na skali <b>${skupina}</b>: ${rez.toFixed(
-              0
-            )}</p>`
-      )
-      .join("")}
-
-    <div >
+      ${Object.entries(rezultat)
+        .map(([subskala, rez]) =>
+          subskala === "upitnik"
+            ? `<p style="margin:8px 0;">Ostvareni bodovi: <b>${rez.toFixed(0)}</b></p>`
+            : `<p style="margin:8px 0;">Ostvareni bodovi na skali <b>${subskala}</b>: ${rez.toFixed(0)}</p>`
+        )
+        .join("")}
 
     <h2 style="text-align:center;">
       Interpretacija rezultata
@@ -118,40 +115,39 @@ function RjesiUpitnik({ mod }) {
 
     ${Object.entries(vrednovanje)
       .map(
-        ([skupina, interpretacije]) =>
-          `
+        ([subskala, interpretacije]) =>`
         <h3 style="color:#2ac6de; margin:10px;">
-          ${skupina !== "upitnik" ? skupina : ""}
+          ${subskala !== "upitnik" ? subskala : ""}
         </h3>
-      <div style="margin-bottom:20px;border:1px solid #e3e3e3;
-                  border-radius:6px;overflow:hidden;">
-        
-        <table style="width:100%;border-collapse:collapse;">
-          <thead>
-            <tr style="background:#f8f9fa;text-align:left;">
-              <th style="padding:8px;border-bottom:1px solid #ddd;">Raspon bodova</th>
-              <th style="padding:8px;border-bottom:1px solid #ddd;">Interpretacija</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${interpretacije
-              .map(
-                (int) => `
-              <tr>
-                <td style="padding:8px;border-bottom:1px solid #eee;">${int.raspon}</td>
-                <td style="padding:8px;border-bottom:1px solid #eee;">${int.tekst}</td>
+        <div style="margin-bottom:20px;
+                    border:1px solid #e3e3e3;
+                    border-radius:6px;
+                    overflow:hidden;">
+          
+          <table style="width:100%;border-collapse:collapse;">
+            <thead>
+              <tr style="background:#f8f9fa;text-align:left;">
+                <th style="padding:8px;border-bottom:1px solid #ddd;">Raspon bodova</th>
+                <th style="padding:8px;border-bottom:1px solid #ddd;">Interpretacija</th>
               </tr>
-              `
-              )
-              .join("")}
-          </tbody>
-        </table>
-      </div>
-    `
+            </thead>
+            <tbody>
+              ${interpretacije
+                .map(
+                  (int) => `
+                <tr>
+                  <td style="padding:8px;border-bottom:1px solid #eee;">${int.raspon}</td>
+                  <td style="padding:8px;border-bottom:1px solid #eee;">${int.tekst}</td>
+                </tr>
+                `
+                )
+                .join("")}
+            </tbody>
+          </table>
+        </div>`
       )
       .join("")}
-    </div>
-  </div>`;
+    </div>`;
   };
 
   const handleSubmit = async () => {
@@ -257,16 +253,14 @@ function RjesiUpitnik({ mod }) {
         </Modal.Header>
         <Modal.Body>
           <Form>
-            <Form.Group>
-              <Form.Label>
-                Unesite adresu e-pošte na koju ćemo vam poslati rezultate upitnika
-              </Form.Label>
-              <Form.Control
-                type="text"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </Form.Group>
+            <Form.Label>
+              Unesite adresu e-pošte na koju ćemo vam poslati rezultate upitnika
+            </Form.Label>
+            <Form.Control
+              type="text"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
           </Form>
         </Modal.Body>
         <Modal.Footer>

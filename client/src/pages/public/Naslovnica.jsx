@@ -13,7 +13,7 @@ const Naslovnica = () => {
 
   useEffect(() => {
     getUpitnici();
-  }, []); // pokrece se samo pri prvom renderu komponente
+  }, []); 
 
   const getUpitnici = async () => {
     try {
@@ -29,7 +29,6 @@ const Naslovnica = () => {
       let key = event.target.value;
       if (key) {
         const { data } = await api.get(`/upitnik/search/${key}`);
-        console.log("search handle je dohvatio: ", data);
         if (data) {
           setUpitnici(data);
         }
