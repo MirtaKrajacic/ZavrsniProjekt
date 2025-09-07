@@ -21,8 +21,6 @@ const MojiUpitnici = () => {
   const getUpitnici = async () => {
     try {
       const { data } = await api.get(`/upitnik/get-moji-upitnici`);
-      console.log(data);
-
       if (Array.isArray(data)) {
         // provjera u slučaju da korisnik nema još ni jedan upitnik koji dolazi iz baze
         setUpitnici(data);
@@ -32,11 +30,6 @@ const MojiUpitnici = () => {
     } catch (err) {
       console.error(err);
     }
-  };
-
-  const setForDeletion = (upitnikId) => {
-    setId(upitnikId);
-    setShowShare(true);
   };
 
   const deleteUpitnik = async (id) => {
@@ -77,7 +70,10 @@ const MojiUpitnici = () => {
                   </Link>
                   <button
                     className="btn btn-danger btn-sm"
-                    onClick={() => setForDeletion(u.id)}
+                    onClick={() => {
+                      setId(u.id);
+                      setShowShare(true);
+                    }}
                   >
                     Izbriši
                   </button>

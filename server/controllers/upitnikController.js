@@ -74,6 +74,7 @@ export const getUpitnikRjesavanjePriv = async (req, res) => {
     }
     res.json({
       naslov: result.rows[0].naslov,
+      opis: result.rows[0].kratki_opis,
       xml: result.rows[0].sadrzaj,
       vrednovanje: result.rows[0].opis_vrednovanja,
       formula: result.rows[0].rezultat_formula,

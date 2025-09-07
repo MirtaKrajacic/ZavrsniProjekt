@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { XMLParser, XMLBuilder } from "fast-xml-parser";
+import { Alert, Fade } from "react-bootstrap";
+
 import UpitnikIzrada from "./UpitnikIzrada.jsx";
 import DefinirajSubskale from "./DefinirajSubskale.jsx";
 import DefinirajInterpretacije from "./DefinirajInterpretacije.jsx";
-import { Alert, Fade } from "react-bootstrap";
 
 // radim s pretpostavkom da svaki upitnik koji se unese ima jedan section i unutar njega jedan question
 // unutar questiona su subquestions
@@ -33,7 +34,7 @@ function DefinirajBodovanje({
     setData(parser.parse(xmlData)); // xml u obliku js objekta
   }, [xmlData]);
 
-  // kada se u data unesu brojčane vrijednosti za ljestvicu odgovora,
+  // kada se u data unesu brojcane vrijednosti za ljestvicu odgovora,
   // mijenjamo i xml string jer je on taj koji se sprema u bazu
   useEffect(() => {
     if (data) {
@@ -44,10 +45,10 @@ function DefinirajBodovanje({
 
       const xmlString = builder.build(data);
       updateParentData(xmlString);
-      //console.log(xmlString);
     }
   }, [data, updateParentData]);
 
+  // filtiramo vrednovanje da sadrzi samo subskale koje su definirane
   useEffect(() => {
     const subskaleImena = subskale.map((s) => s.ime);
     setVrednovanje((prev) => {
@@ -73,7 +74,6 @@ function DefinirajBodovanje({
     return true;
   };
 
-  // aktivira se kilikom na "Spremi" button
   const handleSave = () => {
     let likertLjestvica = [];
     for (let i = min; i <= max; i++) {
@@ -86,15 +86,14 @@ function DefinirajBodovanje({
       skupine_pitanja: subskale,
     };
 
-    console.log("resultSpecs:", resultSpecs);
-    console.log("vrednovanje: ", vrednovanje);
+    //console.log("resultSpecs:", resultSpecs);
+    //console.log("vrednovanje: ", vrednovanje);
 
     if (resultSpecs.skala_odgovora.length < 2 || !vrednovanjeValid()) {
       setError(true);
     } else {
       setParentVrednovanje(JSON.stringify(vrednovanje));
       setParentFormula(JSON.stringify(resultSpecs));
-
       setError(false);
       setSuccess(true);
       setTimeout(() => setSuccess(false), 1000);
@@ -116,16 +115,16 @@ function DefinirajBodovanje({
       count++;
     });
 
-    setData(newData); // updateamo data tako da svaki response ima brojevne vrijednosti
+    setData(newData); // updateamo data tako da response ima brojevne vrijednosti po kategorijama
   };
 
   function OznaciObrnutoKodirane({ q }) {
-    const subs = [].concat(q.subQuestion); // idemo po svim pitanjima unutar sekcije
+    const pitanja = [].concat(q.subQuestion); // idemo po svim pitanjima unutar sekcije
 
     return (
       <div key={q.varName || q.text} className="border rounded-3 p-3">
         <div className="row row-cols-2 row-cols-md-3">
-          {subs.map((sq, ind) => (
+          {pitanja.map((sq, ind) => (
             <div key={sq.varName || ind} className="col">
               <div className="form-check">
                 <input

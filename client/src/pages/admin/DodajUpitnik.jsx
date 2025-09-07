@@ -7,7 +7,7 @@ import DefinirajBodovanje from "../../components/DefinirajBodovanje.jsx";
 
 import api from "../../api.js";
 
-function AddUpitnik() {
+function DodajUpitnik() {
   const [naslov, setNaslov] = useState(""); // naslov upitnika
   const [opis, setOpis] = useState(""); // kratki opis upitnika
   const [status, setStatus] = useState(""); // status upitnika - 'javni' ili 'privatni'
@@ -16,7 +16,7 @@ function AddUpitnik() {
   const [uuid, setUuid] = useState(uuidv4());
   const [clicked, setClicked] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [vrednovanje, setVrednovanje] = useState("");
+  const [vrednovanje, setVrednovanje] = useState({});
   const [formula, setFormula] = useState(null);
   const [xmlError, setXmlError] = useState(false);
 
@@ -57,7 +57,7 @@ function AddUpitnik() {
     }
   };
 
-  const handleFileChange = (e) => {
+  const handleFile = (e) => {
     const file = e.target.files[0]; // dohvaćamo datoteku iz inputa
 
     if (file) {
@@ -66,7 +66,6 @@ function AddUpitnik() {
       // onload je funkcija koja se poziva kada se datoteka učita (load event)
       reader.onload = (event) => {
         const xmlSadrzaj = event.target.result; // sadrzaj datoteke (string)
-        //console.log(xmlSadrzaj);
         if (validateXml(xmlSadrzaj)) {
           setSadrzaj(xmlSadrzaj);
         }
@@ -78,10 +77,6 @@ function AddUpitnik() {
 
   const spremiUpitnik = async () => {
     try {
-      console.log("pozvali su me, spremiUpitnik!");
-      console.log("moja formula ", formula);
-      console.log("moje vrednovanje ", vrednovanje);
-
       if (status === "privatni") {
         setShowShare(true);
       } else {
@@ -93,11 +88,11 @@ function AddUpitnik() {
           vrednovanje: vrednovanje,
           formula: formula,
         });
-        console.log(result.data);
+        //console.log(result.data);
         resetView();
       }
     } catch (err) {
-      console.error(err);
+      console.log(err);
     }
   };
 
@@ -112,11 +107,11 @@ function AddUpitnik() {
         vrednovanje: vrednovanje,
         formula: formula,
       });
-      console.log(result.data);
+      //console.log(result.data);
       setShowShare(false);
       resetView();
     } catch (err) {
-      console.error(err);
+      console.log(err);
     }
   };
 
@@ -225,7 +220,7 @@ function AddUpitnik() {
               className="form-control"
               ref={fileInput}
               accept=".xml"
-              onChange={handleFileChange}
+              onChange={handleFile}
             />
             {clicked && sadrzaj === "" && (
               <small className="text-danger">Molimo učitajte datoteku.</small>
@@ -306,7 +301,7 @@ function AddUpitnik() {
                     await navigator.clipboard.writeText(url);
                     setCopied(true);
                   } catch (err) {
-                    console.error("Greška kod kopiranja:", err);
+                    console.log("Greška kod kopiranja:", err);
                   }
                 }}
               >
@@ -333,4 +328,4 @@ function AddUpitnik() {
   );
 }
 
-export default AddUpitnik;
+export default DodajUpitnik;

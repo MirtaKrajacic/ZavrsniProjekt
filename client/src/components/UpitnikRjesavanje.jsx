@@ -10,16 +10,16 @@ const arr = (x) => {
   return [];
 };
 
-function Upitnik({ xmlData, rezultatSpecs, setBodoviRoditelj, flagRoditelju }) {
+function UpitnikRjesavanje({ xmlData, rezultatSpecs, setBodoviRoditelj, flagRoditelju }) {
   const data = xmlData.questionnaire;
   const sec = data.section; // section = sekcija pitanja u queXML
   const q = sec.question;
-  const subQs = arr(q.subQuestion);
+  const subQs = arr(q.subQuestion); // lista svih pitanja u upitniku
   const pageSize = 3;
-  const ukupnoPages = Math.ceil(subQs.length / pageSize);
+  const ukupnoPages = Math.ceil(subQs.length / pageSize); 
 
   const [page, setPage] = useState(0);
-  const [currPitanja, setCurrPitanja] = useState(subQs.slice(0, 3));
+  const [currPitanja, setCurrPitanja] = useState(subQs.slice(0, 3)); // po tri pitanja na stranici
   const [bodoviPitanja, setBodoviPitanja] = useState({}); // entry oblika: {varName:bodovi}
 
   const min = parseInt(rezultatSpecs.skala_odgovora[0]);
@@ -98,6 +98,8 @@ function Upitnik({ xmlData, rezultatSpecs, setBodoviRoditelj, flagRoditelju }) {
   function ListaPitanja({ question, subQs, startInd }) {
     return (
       <section>
+        {page===0 && <p>{question.text}</p>}
+        
         {subQs.map((sq, ind) => (
           <div key={sq.varName} className="mt-4">
             <span className="fw-semibold">
@@ -109,7 +111,7 @@ function Upitnik({ xmlData, rezultatSpecs, setBodoviRoditelj, flagRoditelju }) {
                 ...sq,
                 response: {
                   ...question.response, // zelimo da svaki subQuestion ima svoj nezavisni response objekt
-                  varName: sq.varName, // i svoj varName
+                  varName: sq.varName, 
                 },
               }}
             />
@@ -136,7 +138,6 @@ function Upitnik({ xmlData, rezultatSpecs, setBodoviRoditelj, flagRoditelju }) {
             disabled={page === 0}
             onClick={() => {
               setPage((p) => p - 1);
-              console.log(page);
             }}
           >
             ‹
@@ -151,7 +152,6 @@ function Upitnik({ xmlData, rezultatSpecs, setBodoviRoditelj, flagRoditelju }) {
             disabled={page + 1 === ukupnoPages}
             onClick={() => {
               setPage((p) => p + 1);
-              console.log(page);
             }
             }
           >
@@ -163,4 +163,4 @@ function Upitnik({ xmlData, rezultatSpecs, setBodoviRoditelj, flagRoditelju }) {
   );
 }
 
-export default Upitnik;
+export default UpitnikRjesavanje;

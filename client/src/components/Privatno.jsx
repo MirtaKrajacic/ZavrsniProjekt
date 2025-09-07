@@ -1,7 +1,7 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
-const PrivateComponent = () => {
+function Privatno() {
   function validanToken(token) {
     try {
       const { exp } = jwtDecode(token); // exp je u sekundama
@@ -21,4 +21,4 @@ const PrivateComponent = () => {
   return <Outlet />;
 };
 
-export default PrivateComponent;
+export default Privatno;

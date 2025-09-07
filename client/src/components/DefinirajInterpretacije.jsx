@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
-function PoSubskalama({ s, setParentVrednovanje, save, setSave }) {
+// komponenta pomocu koje se definiraju interpretacije za jednu subskalu
+function PoSubskalama({ s, setParentVrednovanje, save, setSave }) { // s = imeSubskale
   const [rows, setRows] = useState([{ raspon: "", tekst: "" }]); // u svakoj subskali imam jednu skupinu interpretacija
 
   useEffect(() => {
@@ -8,7 +9,7 @@ function PoSubskalama({ s, setParentVrednovanje, save, setSave }) {
       setParentVrednovanje((prev) => {
         let copy = { ...prev };
         const novo = rows.filter((r) => r.raspon !== "" && r.tekst !== "");
-        if (novo.length > 0) copy[s] = (copy[s] || []).concat(novo);
+        if (novo.length > 0) copy[s] = (copy[s] || []).concat(novo); // dodajemo nove interpretacije roditelju za tu subskalu
         return copy;
       });
       setRows([{ raspon: "", tekst: "" }]);
@@ -22,8 +23,8 @@ function PoSubskalama({ s, setParentVrednovanje, save, setSave }) {
         <input
           type="text"
           className={`form-control form-control-sm mb-2`}
-          value={s}
           disabled
+          value={s}
         />
       )}
 
@@ -137,7 +138,7 @@ function DefinirajInterpretacije({
         </button>
       </div>
 
-      {Object.entries(vrednovanje).map(([s, lista]) => (
+      {Object.entries(vrednovanje).map(([s, interpretacije]) => (
         <div key={s} className="mb-3 mt-3">
           <div className="d-flex align-items-center justify-content-between">
             <span className="me-2 fw-semibold text-success">
@@ -146,13 +147,13 @@ function DefinirajInterpretacije({
           </div>
 
           <ul className="list-group list-group-flush mb-3">
-            {lista.map((r, i) => (
+            {interpretacije.map((r, i) => (
               <li
                 key={i}
                 className="list-group-item d-flex justify-content-between align-items-center mb-1 py-1 border bg-light rounded-3"
               >
                 <span className="badge text-dark border">{r.raspon}</span>
-                <div className="d-flex align-items-center gap-2">
+                <div className="d-flex ms-3">
                   <small>
                     <b>{r.tekst}</b>
                   </small>

@@ -11,7 +11,7 @@ function RjesiUpitnik({ status }) {
   const [email, setEmail] = useState("");
   const [showShare, setShowShare] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [vrednovanje, setVrednovanje] = useState([]);
+  const [vrednovanje, setVrednovanje] = useState({});
   const [rezultatSpecs, setRezultatSpecs] = useState(null);
   const [rezultat, setRezultat] = useState({}); // entry oblika: {ime_subskale:rezultat}; samo je jedna ako upitnik nema subskala
   const [bodoviPitanja, setBodoviPitanja] = useState({}); // entry oblika: {varName:bodovi}
@@ -38,9 +38,8 @@ function RjesiUpitnik({ status }) {
       });
       const parsedObj = parser.parse(data.xml);
 
-      console.log(data);
+      //console.log(data);
 
-      console.log("vrednovanje: ", data.vrednovanje);
       setOpisUpitnika(data.opis);
       setNaslovUpitnika(data.naslov);
       setVrednovanje(data.vrednovanje);
@@ -53,6 +52,7 @@ function RjesiUpitnik({ status }) {
   }, [params.id, params.uuid, status]);
 
   const izracunajRezultat = () => {
+    console.log(rezultatSpecs)
     if (subskale.length > 0) {
       subskale.forEach((s) => {
         const pitanja = s.pitanja; // lista varName-ova svih pitanja
@@ -108,12 +108,8 @@ function RjesiUpitnik({ status }) {
       ${Object.entries(rezultat)
         .map(([subskala, rez]) =>
           subskala === "upitnik"
-            ? `<p style="margin:8px 0;">Ostvareni bodovi: <b>${rez.toFixed(
-                0
-              )}</b></p>`
-            : `<p style="margin:8px 0;">Ostvareni bodovi na skali <b>${subskala}</b>: ${rez.toFixed(
-                0
-              )}</p>`
+            ? `<p style="margin:8px 0;">Ostvareni bodovi: <b>${rez.toFixed(1)}</b></p>`
+            : `<p style="margin:8px 0;">Ostvareni bodovi na skali <b>${subskala}</b>: ${rez.toFixed(1)}</p>`
         )
         .join("")}
 
@@ -168,7 +164,7 @@ function RjesiUpitnik({ status }) {
       setEmail("");
       if (data.success) {
         setSuccess(true);
-        setResetFunkcija((prev) => !prev);
+        setResetFunkcija((prev) => !prev); // remounta komponentu UpitnikRjesavanje
         setBodoviPitanja({});
         setTimeout(() => setSuccess(false), 2000);
       }
