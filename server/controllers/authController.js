@@ -21,7 +21,7 @@ const register = async (req, res) => {
     );
 
     const id = result.rows[0].id;
-    const token = jwt.sign({ userid: id }, secretKey, { expiresIn: "24h" });
+    const token = jwt.sign({ userid: id }, secretKey, { expiresIn: "1h" });
 
     res.json({
       auth: token,
